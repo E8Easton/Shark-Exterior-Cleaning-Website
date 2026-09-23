@@ -116,7 +116,9 @@ function initScrollReveal() {
       });
     },
     {
-      threshold: 0.15,
+      // Fire as soon as any part is on screen so very tall blocks
+      // (like long blog articles) never stay hidden.
+      threshold: 0,
       rootMargin: '0px 0px -50px 0px'
     }
   );
@@ -343,16 +345,29 @@ const wizardState = {
 
 // Add-on service map: primary service → related add-on service IDs
 const SVC_ADDONS = {
-  'exterior-windows':   ['interior-windows', 'screen-cleaning', 'track-detailing', 'pressure-washing'],
+  'exterior-windows':   ['interior-windows', 'screen-cleaning', 'track-detailing', 'gutters'],
   'interior-windows':   ['exterior-windows', 'screen-cleaning', 'track-detailing'],
   'track-detailing':    ['exterior-windows', 'interior-windows', 'screen-cleaning'],
-  'gutters':            ['pressure-washing', 'soft-washing'],
+  'gutters':            ['exterior-windows', 'soft-washing', 'pressure-washing'],
   'screen-cleaning':    ['exterior-windows', 'interior-windows', 'track-detailing'],
-  'pressure-washing':   ['gutters', 'soft-washing', 'exterior-windows'],
-  'solar-panel':        ['exterior-windows', 'soft-washing'],
-  'soft-washing':       ['pressure-washing', 'gutters', 'solar-panel'],
-  'christmas-lights':   ['exterior-windows', 'pressure-washing'],
+  'pressure-washing':   ['soft-washing', 'exterior-windows', 'gutters'],
+  'solar-panel':        ['exterior-windows', 'gutters', 'soft-washing'],
+  'soft-washing':       ['exterior-windows', 'pressure-washing', 'gutters'],
+  'christmas-lights':   ['exterior-windows', 'gutters'],
   'commercial-cleaning':['exterior-windows', 'pressure-washing', 'soft-washing'],
+};
+
+// Short label shown on each add-on card. The first add-on in a list is
+// always shown as the featured "Most Popular" pick.
+const ADDON_TAGS = {
+  'interior-windows': 'Inside & out',
+  'screen-cleaning':  'Pairs perfectly',
+  'track-detailing':  'Quick add',
+  'exterior-windows': 'Clear views',
+  'gutters':          'Recommended',
+  'soft-washing':     'Curb appeal',
+  'pressure-washing': 'Curb appeal',
+  'solar-panel':      'Great pairing',
 };
 
 // Image + display name map for all services
@@ -362,7 +377,7 @@ const SVC_INFO = {
   'track-detailing':    { img: 'images/svc-track.jpg',      name: 'Track Detailing',                 desc: 'Deep-cleaned tracks, sills & frames' },
   'gutters':            { img: 'images/svc-gutter.jpg',     name: 'Gutter Cleaning',                 desc: 'Free-flowing gutters, no clogs or damage' },
   'screen-cleaning':    { img: 'images/svc-screen.jpg',     name: 'Screen Cleaning',                 desc: 'Dust & grime removed from every screen' },
-  'pressure-washing':   { img: 'images/svc-powerwash.jpg',  name: 'Pressure Washing / Soft Washing', desc: 'Blast away dirt, mold & stains from surfaces' },
+  'pressure-washing':   { img: 'images/svc-powerwash.jpg',  name: 'Pressure Washing',                desc: 'Driveways, patios & walkways like new' },
   'solar-panel':        { img: 'images/svc-solar.jpg',      name: 'Solar Panel Cleaning',            desc: 'Max energy output — panels cleaned right' },
   'soft-washing':       { img: 'images/svc-softwash.jpg',   name: 'Soft Washing',                   desc: 'Gentle low-pressure clean for siding & roofs' },
   'christmas-lights':   { img: 'images/svc-christmas.jpg',  name: 'House Lighting Installation',    desc: 'Pro install, takedown & storage included' },
@@ -571,6 +586,14 @@ function renderStep(step) {
   // When entering step 5, inject selected services summary above the plan cards
   if (step === 5) {
     injectPlanServiceSummary();
+    preparePlanStep();
+  }
+
+  // When entering step 3, pre-select property type passed in the URL
+  if (step === 3 && wizardState.preselectedProperty) {
+    const card = document.querySelector(`.property-card[data-property="${wizardState.preselectedProperty}"]`);
+    if (card && !document.querySelector('.property-card.selected')) card.click();
+    wizardState.preselectedProperty = null;
   }
 
   // When entering step 6 (address), auto-fill city from location selection
@@ -773,7 +796,7 @@ function buildConfirmationSummary() {
   const zip = document.getElementById('prop-zip')?.value || '';
 
   const capitalize = s => s ? s.charAt(0).toUpperCase() + s.slice(1) : '';
-  const planLabels = { monthly: 'Monthly ($60 OFF)', quarterly: 'Quarterly ($35 OFF)', biannual: 'Bi-Annual ($20 OFF)', 'one-time': 'One-Time' };
+  const planLabels = { monthly: 'Monthly ($150 OFF per cleaning)', quarterly: 'Quarterly ($100 OFF per cleaning)', triannual: 'Tri-Annual ($75 OFF per cleaning)', biannual: 'Bi-Annual ($50 OFF per cleaning)', custom: 'Custom / One-Time Quote', 'one-time': 'One-Time' };
 
   summaryEl.innerHTML = `
     ${location ? `<strong>Location:</strong> ${location}<br>` : ''}
@@ -828,12 +851,20 @@ function initPageWizard() {
       if (card.classList.contains('selected')) return; // already selected
       triggerServiceSelect(card);
     });
+    card.addEventListener('keydown', (e) => {
+      if ((e.key === 'Enter' || e.key === ' ') && !card.classList.contains('selected')) {
+        e.preventDefault();
+        triggerServiceSelect(card);
+      }
+    });
   });
 
   // Read URL params and pre-select service / plan
   const params = new URLSearchParams(window.location.search);
   const preService = params.get('service');
   const prePlan    = params.get('plan');
+  const preProperty = params.get('property');
+  if (preProperty) wizardState.preselectedProperty = preProperty.toLowerCase();
 
   if (preService) wizardState.preselectedService = preService;
   if (prePlan)    wizardState.preselectedPlan    = prePlan.toLowerCase();
@@ -925,7 +956,7 @@ function showAddOns(serviceId) {
   const gridEl = document.getElementById('addons-grid');
   if (!panel || !gridEl) return;
 
-  const relatedIds = SVC_ADDONS[serviceId] || [];
+  const relatedIds = (SVC_ADDONS[serviceId] || []).filter(id => SVC_INFO[id]);
   if (relatedIds.length === 0) {
     panel.hidden = true;
     return;
@@ -933,41 +964,103 @@ function showAddOns(serviceId) {
 
   gridEl.innerHTML = '';
   const checkSvg = `<svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>`;
+  const cards = [];
 
-  relatedIds.forEach(id => {
+  // One tap adds every suggested service to the same visit
+  const bundle = document.createElement('button');
+  bundle.type = 'button';
+  bundle.className = 'qp-addon-bundle';
+  bundle.innerHTML = `
+    <span class="qp-addon-bundle-text">
+      <strong>Add everything in one visit</strong>
+      <span>${relatedIds.map(id => SVC_INFO[id].name).join(' + ')}</span>
+    </span>
+    <span class="qp-addon-bundle-btn">Add all</span>`;
+  gridEl.appendChild(bundle);
+
+  const syncBundle = () => {
+    const all = relatedIds.every(id => wizardState.addOns.includes(id));
+    bundle.classList.toggle('selected', all);
+    bundle.querySelector('.qp-addon-bundle-btn').textContent = all ? 'Added ✓' : 'Add all';
+  };
+
+  const setAddon = (id, card, on) => {
+    const idx = wizardState.addOns.indexOf(id);
+    if (on && idx === -1) wizardState.addOns.push(id);
+    if (!on && idx !== -1) wizardState.addOns.splice(idx, 1);
+    card.classList.toggle('selected', on);
+    card.setAttribute('aria-pressed', String(on));
+  };
+
+  relatedIds.forEach((id, i) => {
     const info = SVC_INFO[id];
-    if (!info) return;
-
+    const featured = i === 0;
     const isActive = wizardState.addOns.includes(id);
     const card = document.createElement('div');
-    card.className = 'qp-addon-card' + (isActive ? ' selected' : '');
+    card.className = 'qp-addon-card' + (featured ? ' qp-addon-card--featured' : '') + (isActive ? ' selected' : '');
     card.dataset.addon = id;
+    card.tabIndex = 0;
+    card.setAttribute('role', 'button');
+    card.setAttribute('aria-pressed', String(isActive));
     card.innerHTML = `
-      <div class="qp-addon-bg" style="background-image:url('${info.img}')"></div>
-      <div class="qp-addon-overlay"></div>
+      <div class="qp-addon-thumb" style="background-image:url('${info.img}')"></div>
       <div class="qp-addon-content">
         <div class="qp-addon-text">
+          <span class="qp-addon-tag">${featured ? 'Most Popular' : (ADDON_TAGS[id] || 'Add-on')}</span>
           <span class="qp-addon-name">${info.name}</span>
           ${info.desc ? `<span class="qp-addon-desc">${info.desc}</span>` : ''}
         </div>
         <div class="qp-addon-check">${checkSvg}</div>
       </div>`;
 
-    card.addEventListener('click', () => {
-      const idx = wizardState.addOns.indexOf(id);
-      if (idx === -1) {
-        wizardState.addOns.push(id);
-        card.classList.add('selected');
-      } else {
-        wizardState.addOns.splice(idx, 1);
-        card.classList.remove('selected');
-      }
-    });
-
+    const toggle = () => { setAddon(id, card, !wizardState.addOns.includes(id)); syncBundle(); };
+    card.addEventListener('click', toggle);
+    card.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); } });
+    cards.push([id, card]);
     gridEl.appendChild(card);
   });
 
+  bundle.addEventListener('click', () => {
+    const all = relatedIds.every(id => wizardState.addOns.includes(id));
+    cards.forEach(([id, card]) => setAddon(id, card, !all));
+    syncBundle();
+  });
+  syncBundle();
+
   panel.hidden = false;
+}
+
+/**
+ * Show the plans that fit the chosen property type and pre-select a plan
+ * passed in the URL (e.g. quote.html?plan=quarterly).
+ */
+function preparePlanStep() {
+  const property = document.querySelector('.property-card.selected')?.dataset.property || 'residential';
+  const cards = document.querySelectorAll('#wizard-step-5 .plan-card');
+  cards.forEach(card => {
+    const fits = (card.dataset.for || '').split(' ').includes(property);
+    card.hidden = !fits;
+    if (!fits && card.classList.contains('selected')) {
+      card.classList.remove('selected');
+      const rb = card.querySelector('input'); if (rb) rb.checked = false;
+    }
+  });
+
+  const customDesc = document.querySelector('#wizard-step-5 [data-custom-desc]');
+  if (customDesc) {
+    customDesc.textContent = property === 'commercial'
+      ? 'Need bi-annual visits, a one-time clean or a schedule built around your business? We\'ll put together a custom quote.'
+      : 'Want monthly service, a one-time clean or something built around your home? We\'ll put together a custom quote.';
+  }
+
+  if (wizardState.preselectedPlan) {
+    const wanted = wizardState.preselectedPlan.replace('-', '');
+    const match = Array.from(cards).find(c => !c.hidden && c.dataset.plan === wanted)
+      || (wanted === 'onetime' || wanted === 'monthly' || wanted === 'biannual'
+        ? Array.from(cards).find(c => !c.hidden && c.dataset.plan === 'custom') : null);
+    if (match) match.click();
+    wizardState.preselectedPlan = null;
+  }
 }
 
 /**
@@ -1210,7 +1303,9 @@ function collectQuoteData() {
   const planMap = {
     monthly:    'Monthly ($150 OFF per cleaning)',
     quarterly:  'Quarterly ($100 OFF per cleaning)',
+    triannual:  'Tri-Annual ($75 OFF per cleaning)',
     biannual:   'Bi-Annual ($50 OFF per cleaning)',
+    custom:     'Custom / One-Time Quote',
     'one-time': 'One-Time Visit',
   };
   const plan = planCard ? (planMap[planCard.dataset.plan] || planCard.dataset.plan) : 'Not specified';

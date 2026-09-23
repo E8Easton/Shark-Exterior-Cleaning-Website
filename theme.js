@@ -114,7 +114,7 @@
           setTimeout(() => el.classList.add('sx-settled'), 1100 + (parseInt(el.style.getPropertyValue('--d'), 10) || 0));
         }
       });
-    }, { threshold: 0.12, rootMargin: '0px 0px -60px 0px' });
+    }, { threshold: 0, rootMargin: '0px 0px -60px 0px' });
     items.forEach((el) => io.observe(el));
   }
 
@@ -151,6 +151,14 @@
   function initStepper() {
     document.querySelectorAll('[data-stepper]').forEach((root) => {
       const slides = Array.from(root.querySelectorAll('.sx-step'));
+      // Fetch and decode every step photo up front so switching steps never
+      // shows an empty frame (works for any photos added later too).
+      slides.forEach((slide) => slide.querySelectorAll('img').forEach((img) => {
+        img.loading = 'eager';
+        const pre = new Image();
+        pre.src = img.currentSrc || img.src;
+        if (pre.decode) pre.decode().catch(() => {});
+      }));
       const dots = Array.from(root.querySelectorAll('.sx-dot'));
       const fill = root.querySelector('[data-fill]');
       if (!slides.length) return;
