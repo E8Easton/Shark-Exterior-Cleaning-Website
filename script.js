@@ -1423,16 +1423,13 @@ function collectQuoteData() {
   const bundlePct = bundlePercent(allServices.length);
   const bundleLine = bundlePct ? `${bundlePct}% off whole visit (${allServices.length} services bundled)` : 'None';
 
-  const payChoice = document.querySelector('input[name="pay"]:checked')?.value;
   const planCard = document.querySelector('.plan-card.selected');
   const planMap = Object.fromEntries(Object.entries(SHARK_PRICING.plans).map(([id, p]) =>
     [id, `${p.name} membership — ${p.visits} cleanings/yr, $${p.offEach} off each (saves $${planSavings(id)}/yr)`]));
   planMap.custom = 'Custom / One-Time Quote';
   planMap['one-time'] = 'One-Time Visit';
   let plan = planCard ? (planMap[planCard.dataset.plan] || planCard.dataset.plan) : 'Not specified';
-  if (planCard && SHARK_PRICING.plans[planCard.dataset.plan]) {
-    plan += payChoice === 'per-visit' ? ' — wants to PAY PER VISIT' : ' — wants to PAY ONCE UPFRONT';
-  }
+  if (planCard && SHARK_PRICING.plans[planCard.dataset.plan]) plan += ' — paid upfront';
 
   const firstName  = document.getElementById('contact-first')?.value.trim()  || '';
   const lastName   = document.getElementById('contact-last')?.value.trim()   || '';
