@@ -20,6 +20,35 @@ const LEAF_NOTIFY = {
   sms_gateway:  '4023090128@vtext.com',
 };
 
+/* ----------------------------------------------------------
+   PRICING SETTINGS — edit these numbers to change what the quote
+   form shows. Keep the membership numbers in sync with the plan
+   cards on the homepage / service pages.
+   ---------------------------------------------------------- */
+const SHARK_PRICING = {
+  // Bundle discount on the whole visit, by how many services are booked together.
+  bundleTiers: [
+    { services: 2, percent: 10 },
+    { services: 3, percent: 15 },
+  ],
+  // Prepaid memberships: number of cleanings per year and dollars off each one.
+  plans: {
+    monthly:   { name: 'Monthly',    visits: 12, offEach: 150 },
+    quarterly: { name: 'Quarterly',  visits: 4,  offEach: 100 },
+    triannual: { name: 'Tri-Annual', visits: 3,  offEach: 75 },
+    biannual:  { name: 'Bi-Annual',  visits: 2,  offEach: 50 },
+  },
+};
+
+function planSavings(id) {
+  const p = SHARK_PRICING.plans[id];
+  return p ? p.visits * p.offEach : 0;
+}
+
+function bundlePercent(serviceCount) {
+  return SHARK_PRICING.bundleTiers.reduce((pct, t) => (serviceCount >= t.services ? t.percent : pct), 0);
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   initNavbar();
   initMobileMenu();
@@ -796,12 +825,15 @@ function buildConfirmationSummary() {
   const zip = document.getElementById('prop-zip')?.value || '';
 
   const capitalize = s => s ? s.charAt(0).toUpperCase() + s.slice(1) : '';
-  const planLabels = { monthly: 'Monthly ($150 OFF per cleaning)', quarterly: 'Quarterly ($100 OFF per cleaning)', triannual: 'Tri-Annual ($75 OFF per cleaning)', biannual: 'Bi-Annual ($50 OFF per cleaning)', custom: 'Custom / One-Time Quote', 'one-time': 'One-Time' };
+  const planLabels = Object.fromEntries(Object.entries(SHARK_PRICING.plans).map(([id, p]) => [id, `${p.name} — prepaid, ${p.visits} cleanings, save $${planSavings(id)}/yr`]));
+  planLabels.custom = 'Custom / One-Time Quote';
+  const bundlePct = bundlePercent(services.length);
 
   summaryEl.innerHTML = `
     ${location ? `<strong>Location:</strong> ${location}<br>` : ''}
     ${property ? `<strong>Property:</strong> ${capitalize(property)}<br>` : ''}
     ${services.length ? `<strong>Services:</strong> ${services.join(', ')}<br>` : ''}
+    ${bundlePct ? `<strong>Bundle savings:</strong> ${bundlePct}% off (${services.length} services)<br>` : ''}
     ${plan ? `<strong>Plan:</strong> ${planLabels[plan] || capitalize(plan)}<br>` : ''}
     <strong>Address:</strong> ${street}, ${city} ${zip}<br>
     <strong>Contact:</strong> ${firstName} ${lastName} · ${phone} · ${email}
@@ -966,13 +998,30 @@ function showAddOns(serviceId) {
   const checkSvg = `<svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>`;
   const cards = [];
 
+  const tiers = SHARK_PRICING.bundleTiers;
+  const maxPct = tiers[tiers.length - 1].percent;
+
+  // Live savings meter — fills up as services are added to the visit
+  const meter = document.createElement('div');
+  meter.className = 'qp-bundle-meter';
+  meter.innerHTML = `
+    <div class="qp-bundle-meter-top">
+      <span class="qp-bundle-meter-label"></span>
+      <span class="qp-bundle-meter-pct"><b>0%</b> off</span>
+    </div>
+    <div class="qp-bundle-meter-track">
+      <span class="qp-bundle-meter-fill"></span>
+      ${tiers.map(t => `<i style="left:${(t.services - 1) / (tiers[tiers.length - 1].services - 1) * 100}%"><em>${t.percent}%</em></i>`).join('')}
+    </div>`;
+  gridEl.appendChild(meter);
+
   // One tap adds every suggested service to the same visit
   const bundle = document.createElement('button');
   bundle.type = 'button';
   bundle.className = 'qp-addon-bundle';
   bundle.innerHTML = `
     <span class="qp-addon-bundle-text">
-      <strong>Add everything in one visit</strong>
+      <strong>Bundle everything &amp; save ${bundlePercent(1 + relatedIds.length)}%</strong>
       <span>${relatedIds.map(id => SVC_INFO[id].name).join(' + ')}</span>
     </span>
     <span class="qp-addon-bundle-btn">Add all</span>`;
@@ -982,6 +1031,19 @@ function showAddOns(serviceId) {
     const all = relatedIds.every(id => wizardState.addOns.includes(id));
     bundle.classList.toggle('selected', all);
     bundle.querySelector('.qp-addon-bundle-btn').textContent = all ? 'Added ✓' : 'Add all';
+
+    const count = 1 + wizardState.addOns.length;
+    const pct = bundlePercent(count);
+    const next = tiers.find(t => t.services > count);
+    const lastNeeded = tiers[tiers.length - 1].services;
+    meter.querySelector('.qp-bundle-meter-pct b').textContent = pct + '%';
+    meter.querySelector('.qp-bundle-meter-label').textContent = next
+      ? `Add ${next.services - count} more service${next.services - count > 1 ? 's' : ''} to save ${next.percent}% on your whole visit`
+      : `Bundle unlocked — you're saving ${pct}% on your whole visit`;
+    meter.querySelector('.qp-bundle-meter-fill').style.width = Math.min(1, (count - 1) / (lastNeeded - 1)) * 100 + '%';
+    meter.classList.toggle('is-max', pct === maxPct);
+    meter.classList.toggle('is-bump', true);
+    setTimeout(() => meter.classList.remove('is-bump'), 450);
   };
 
   const setAddon = (id, card, on) => {
@@ -1053,6 +1115,9 @@ function preparePlanStep() {
       : 'Want monthly service, a one-time clean or something built around your home? We\'ll put together a custom quote.';
   }
 
+  if (!wizardState.preselectedPlan && !document.querySelector('#wizard-step-5 .plan-card.selected:not([hidden])')) {
+    wizardState.preselectedPlan = 'quarterly';
+  }
   if (wizardState.preselectedPlan) {
     const wanted = wizardState.preselectedPlan.replace('-', '');
     const match = Array.from(cards).find(c => !c.hidden && c.dataset.plan === wanted)
@@ -1298,16 +1363,14 @@ function collectQuoteData() {
   const allServices = [primarySvc, ...addOnNames].filter(Boolean);
   const services = allServices.length ? allServices.join(', ') : 'Not specified';
   const addonsLine = addOnNames.length ? addOnNames.join(', ') : 'None';
+  const bundlePct = bundlePercent(allServices.length);
+  const bundleLine = bundlePct ? `${bundlePct}% off whole visit (${allServices.length} services bundled)` : 'None';
 
   const planCard = document.querySelector('.plan-card.selected');
-  const planMap = {
-    monthly:    'Monthly ($150 OFF per cleaning)',
-    quarterly:  'Quarterly ($100 OFF per cleaning)',
-    triannual:  'Tri-Annual ($75 OFF per cleaning)',
-    biannual:   'Bi-Annual ($50 OFF per cleaning)',
-    custom:     'Custom / One-Time Quote',
-    'one-time': 'One-Time Visit',
-  };
+  const planMap = Object.fromEntries(Object.entries(SHARK_PRICING.plans).map(([id, p]) =>
+    [id, `${p.name} membership — prepaid upfront, ${p.visits} cleanings/yr, $${p.offEach} off each (saves $${planSavings(id)}/yr)`]));
+  planMap.custom = 'Custom / One-Time Quote';
+  planMap['one-time'] = 'One-Time Visit';
   const plan = planCard ? (planMap[planCard.dataset.plan] || planCard.dataset.plan) : 'Not specified';
 
   const firstName  = document.getElementById('contact-first')?.value.trim()  || '';
@@ -1342,6 +1405,7 @@ function collectQuoteData() {
     `Property:  ${property}`,
     `Service:   ${services}`,
     `Add-ons:   ${addonsLine}`,
+    `Bundle:    ${bundleLine}`,
     `Plan:      ${plan}`,
     ``,
     `--- ADDRESS ---`,
@@ -1362,6 +1426,7 @@ function collectQuoteData() {
     property_type:    property,
     services:         services,
     addons:           addonsLine,
+    bundle:           bundleLine,
     plan:             plan,
     // Address
     street_address:   street,
