@@ -42,6 +42,44 @@ const SHARK_PRICING = {
   },
 };
 
+/* ----------------------------------------------------------
+   ANALYTICS HELPERS — Google Analytics 4 (tag is in each page <head>)
+   ---------------------------------------------------------- */
+function sxTrack(name, params) {
+  try { if (typeof gtag === 'function') gtag('event', name, params || {}); } catch (e) { /* never break the page */ }
+}
+
+// Remember where a visitor came from (ad campaign tags) so it reaches the quote email.
+const SX_ATTRIB_KEY = 'sx_attribution';
+(function captureAttribution() {
+  try {
+    const params = new URLSearchParams(location.search);
+    const keys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content', 'gclid', 'fbclid'];
+    const found = {};
+    keys.forEach(k => { const v = params.get(k); if (v) found[k] = v.slice(0, 150); });
+    if (Object.keys(found).length) {
+      found.landing_page = location.pathname;
+      found.captured_at = new Date().toISOString();
+      localStorage.setItem(SX_ATTRIB_KEY, JSON.stringify(found));
+    } else if (!localStorage.getItem(SX_ATTRIB_KEY) && document.referrer && !document.referrer.includes(location.hostname)) {
+      localStorage.setItem(SX_ATTRIB_KEY, JSON.stringify({ referrer: document.referrer.slice(0, 150), landing_page: location.pathname, captured_at: new Date().toISOString() }));
+    }
+  } catch (e) { /* storage blocked — attribution is optional */ }
+})();
+
+function sxAttribution() {
+  try {
+    const a = JSON.parse(localStorage.getItem(SX_ATTRIB_KEY) || 'null');
+    if (!a) return 'Direct / unknown';
+    if (a.utm_source || a.gclid || a.fbclid) {
+      return [a.utm_source && `source=${a.utm_source}`, a.utm_medium && `medium=${a.utm_medium}`, a.utm_campaign && `campaign=${a.utm_campaign}`,
+              a.utm_term && `term=${a.utm_term}`, a.utm_content && `content=${a.utm_content}`, a.gclid && 'Google Ads click', a.fbclid && 'Facebook/Instagram click',
+              `landing=${a.landing_page}`].filter(Boolean).join(', ');
+    }
+    return `Referral from ${a.referrer} (landing=${a.landing_page})`;
+  } catch (e) { return 'Direct / unknown'; }
+}
+
 function planSavings(id) {
   const p = SHARK_PRICING.plans[id];
   return p ? p.visits * p.offEach : 0;
@@ -597,6 +635,7 @@ function renderStep(step) {
 
   const prevStep = wizardState.currentStep;
   wizardState.currentStep = step;
+  if (step !== prevStep || step === 1) sxTrack('quote_step', { step_number: step, form_mode: wizardState.pageMode ? 'page' : 'modal' });
 
   // When navigating back to step 4, reset service grid so user can re-pick
   if (step === 4 && prevStep > 4) {
@@ -1429,6 +1468,7 @@ function collectQuoteData() {
     `Add-ons:   ${addonsLine}`,
     `Bundle:    ${bundleLine}`,
     `Plan:      ${plan}`,
+    `Source:    ${sxAttribution()}`,
     ``,
     `--- ADDRESS ---`,
     `${addressFull || 'Not provided'}`,
@@ -1450,6 +1490,7 @@ function collectQuoteData() {
     addons:           addonsLine,
     bundle:           bundleLine,
     plan:             plan,
+    lead_source:      sxAttribution(),
     // Address
     street_address:   street,
     city_state_zip:   `${city}, NE ${zip}`,
@@ -1476,7 +1517,17 @@ function submitQuoteNotification() {
   loadEmailJS(() => {
     // ── Owner email (single send — all data in {{message}}) ──
     emailjs.send(LEAF_NOTIFY.service_id, LEAF_NOTIFY.template_id, data)
-      .then(() => console.info('[Shark] Owner email sent ✓'))
+      .then(() => {
+        console.info('[Shark] Owner email sent ✓');
+        sxTrack('generate_lead', {
+          form_name: 'quote_form',
+          location: data.location,
+          property_type: data.property_type,
+          service: data.services,
+          plan: data.plan.split(' —')[0],
+          bundle: data.bundle,
+        });
+      })
       .catch(err => console.warn('[Shark] Owner email failed:', err));
   });
 }

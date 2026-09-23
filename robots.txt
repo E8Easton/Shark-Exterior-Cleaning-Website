@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 
 # Block nothing important; allow full crawl
-Sitemap: https://www.sharkexteriors.com/sitemap.xml
+Sitemap: https://sharkexteriorcleaning.com/sitemap.xml
