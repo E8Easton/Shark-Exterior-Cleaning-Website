@@ -192,7 +192,11 @@ function initSmoothScroll() {
 
       e.preventDefault();
 
-      const navbarH = document.querySelector('.navbar')?.offsetHeight || 80;
+      const navbarH = document.querySelector('.sx-nav, .navbar')?.offsetHeight || 80;
+      if (window.__sxLenis) {
+        window.__sxLenis.scrollTo(targetEl, { offset: -(navbarH + 20) });
+        return;
+      }
       const targetY = targetEl.getBoundingClientRect().top + window.scrollY - navbarH - 20;
 
       window.scrollTo({
