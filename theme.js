@@ -15,6 +15,7 @@
     initCarousels();
     initStepper();
     initChat();
+    initPageTransitions();
     document.querySelectorAll('[data-year]').forEach((el) => { el.textContent = new Date().getFullYear(); });
   });
 
@@ -27,7 +28,7 @@
     update();
 
     const here = location.pathname.split('/').pop() || 'index.html';
-    nav.querySelectorAll('.sx-nav-link[href]').forEach((a) => {
+    nav.querySelectorAll('.sx-nav-link[href], .sx-nav-menu a').forEach((a) => {
       if (a.getAttribute('href') === here) a.setAttribute('aria-current', 'page');
     });
   }
@@ -86,8 +87,11 @@
     const io = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
-          entry.target.classList.add('is-in');
-          io.unobserve(entry.target);
+          const el = entry.target;
+          el.classList.add('is-in');
+          io.unobserve(el);
+          // After the entrance finishes, drop the stagger delay so hovers feel instant
+          setTimeout(() => el.classList.add('sx-settled'), 1100 + (parseInt(el.style.getPropertyValue('--d'), 10) || 0));
         }
       });
     }, { threshold: 0.12, rootMargin: '0px 0px -60px 0px' });
@@ -164,6 +168,25 @@
         start();
       }
       show(0);
+    });
+  }
+
+  /* ---------- Page transitions ----------
+     Drops the navy curtain before leaving for another page on this site. */
+  function initPageTransitions() {
+    if (reduceMotion) return;
+    const root = document.documentElement;
+    window.addEventListener('pageshow', () => root.classList.remove('sx-leaving'));
+    document.addEventListener('click', (e) => {
+      if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      const a = e.target.closest('a[href]');
+      if (!a || a.target === '_blank' || a.hasAttribute('download')) return;
+      const url = new URL(a.getAttribute('href'), location.href);
+      if (url.origin !== location.origin || !/\.html$|\/$/.test(url.pathname)) return;
+      if (url.pathname === location.pathname) return; // same-page anchors scroll normally
+      e.preventDefault();
+      root.classList.add('sx-leaving');
+      setTimeout(() => { location.href = url.href; }, 420);
     });
   }
 
