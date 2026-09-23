@@ -20,6 +20,77 @@ const LEAF_NOTIFY = {
   sms_gateway:  '4023090128@vtext.com',
 };
 
+/* ----------------------------------------------------------
+   PRICING SETTINGS — edit these numbers to change what the quote
+   form shows. Keep the membership numbers in sync with the plan
+   cards on the homepage / service pages.
+   ---------------------------------------------------------- */
+const SHARK_PRICING = {
+  // Bundle discount on the whole visit, by how many services are booked together.
+  // Bundle savings can be combined with membership savings.
+  bundleTiers: [
+    { services: 2, percent: 10 },
+    { services: 3, percent: 15 },
+    { services: 4, percent: 20 },
+  ],
+  // Example per-cleaning price used to show the yearly breakdown on plan cards.
+  examplePrice: 300,
+  // Prepaid memberships: number of cleanings per year and dollars off each one.
+  plans: {
+    monthly:   { name: 'Monthly',    visits: 12, offEach: 150 },
+    quarterly: { name: 'Quarterly',  visits: 4,  offEach: 100 },
+    triannual: { name: 'Tri-Annual', visits: 3,  offEach: 75 },
+    biannual:  { name: 'Bi-Annual',  visits: 2,  offEach: 50 },
+  },
+};
+
+/* ----------------------------------------------------------
+   ANALYTICS HELPERS — Google Analytics 4 (tag is in each page <head>)
+   ---------------------------------------------------------- */
+function sxTrack(name, params) {
+  try { if (typeof gtag === 'function') gtag('event', name, params || {}); } catch (e) { /* never break the page */ }
+}
+
+// Remember where a visitor came from (ad campaign tags) so it reaches the quote email.
+const SX_ATTRIB_KEY = 'sx_attribution';
+(function captureAttribution() {
+  try {
+    const params = new URLSearchParams(location.search);
+    const keys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content', 'gclid', 'fbclid'];
+    const found = {};
+    keys.forEach(k => { const v = params.get(k); if (v) found[k] = v.slice(0, 150); });
+    if (Object.keys(found).length) {
+      found.landing_page = location.pathname;
+      found.captured_at = new Date().toISOString();
+      localStorage.setItem(SX_ATTRIB_KEY, JSON.stringify(found));
+    } else if (!localStorage.getItem(SX_ATTRIB_KEY) && document.referrer && !document.referrer.includes(location.hostname)) {
+      localStorage.setItem(SX_ATTRIB_KEY, JSON.stringify({ referrer: document.referrer.slice(0, 150), landing_page: location.pathname, captured_at: new Date().toISOString() }));
+    }
+  } catch (e) { /* storage blocked — attribution is optional */ }
+})();
+
+function sxAttribution() {
+  try {
+    const a = JSON.parse(localStorage.getItem(SX_ATTRIB_KEY) || 'null');
+    if (!a) return 'Direct / unknown';
+    if (a.utm_source || a.gclid || a.fbclid) {
+      return [a.utm_source && `source=${a.utm_source}`, a.utm_medium && `medium=${a.utm_medium}`, a.utm_campaign && `campaign=${a.utm_campaign}`,
+              a.utm_term && `term=${a.utm_term}`, a.utm_content && `content=${a.utm_content}`, a.gclid && 'Google Ads click', a.fbclid && 'Facebook/Instagram click',
+              `landing=${a.landing_page}`].filter(Boolean).join(', ');
+    }
+    return `Referral from ${a.referrer} (landing=${a.landing_page})`;
+  } catch (e) { return 'Direct / unknown'; }
+}
+
+function planSavings(id) {
+  const p = SHARK_PRICING.plans[id];
+  return p ? p.visits * p.offEach : 0;
+}
+
+function bundlePercent(serviceCount) {
+  return SHARK_PRICING.bundleTiers.reduce((pct, t) => (serviceCount >= t.services ? t.percent : pct), 0);
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   initNavbar();
   initMobileMenu();
@@ -566,6 +637,7 @@ function renderStep(step) {
 
   const prevStep = wizardState.currentStep;
   wizardState.currentStep = step;
+  if (step !== prevStep || step === 1) sxTrack('quote_step', { step_number: step, form_mode: wizardState.pageMode ? 'page' : 'modal' });
 
   // When navigating back to step 4, reset service grid so user can re-pick
   if (step === 4 && prevStep > 4) {
@@ -796,12 +868,15 @@ function buildConfirmationSummary() {
   const zip = document.getElementById('prop-zip')?.value || '';
 
   const capitalize = s => s ? s.charAt(0).toUpperCase() + s.slice(1) : '';
-  const planLabels = { monthly: 'Monthly ($150 OFF per cleaning)', quarterly: 'Quarterly ($100 OFF per cleaning)', triannual: 'Tri-Annual ($75 OFF per cleaning)', biannual: 'Bi-Annual ($50 OFF per cleaning)', custom: 'Custom / One-Time Quote', 'one-time': 'One-Time' };
+  const planLabels = Object.fromEntries(Object.entries(SHARK_PRICING.plans).map(([id, p]) => [id, `${p.name} — prepaid, ${p.visits} cleanings, save $${planSavings(id)}/yr`]));
+  planLabels.custom = 'Custom / One-Time Quote';
+  const bundlePct = bundlePercent(services.length);
 
   summaryEl.innerHTML = `
     ${location ? `<strong>Location:</strong> ${location}<br>` : ''}
     ${property ? `<strong>Property:</strong> ${capitalize(property)}<br>` : ''}
     ${services.length ? `<strong>Services:</strong> ${services.join(', ')}<br>` : ''}
+    ${bundlePct ? `<strong>Bundle savings:</strong> ${bundlePct}% off (${services.length} services)<br>` : ''}
     ${plan ? `<strong>Plan:</strong> ${planLabels[plan] || capitalize(plan)}<br>` : ''}
     <strong>Address:</strong> ${street}, ${city} ${zip}<br>
     <strong>Contact:</strong> ${firstName} ${lastName} · ${phone} · ${email}
@@ -871,6 +946,11 @@ function initPageWizard() {
 
   // Start at step 1
   renderStep(1);
+
+  // Pre-select the city when arriving from a Lincoln or Kearney page
+  const preLocation = (params.get('location') || '').toLowerCase();
+  const locCard = preLocation && document.querySelector(`.location-card[data-location="${preLocation}"]`);
+  if (locCard) locCard.click();
 }
 
 
@@ -966,13 +1046,30 @@ function showAddOns(serviceId) {
   const checkSvg = `<svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>`;
   const cards = [];
 
+  const tiers = SHARK_PRICING.bundleTiers;
+  const maxPct = tiers[tiers.length - 1].percent;
+
+  // Live savings meter — fills up as services are added to the visit
+  const meter = document.createElement('div');
+  meter.className = 'qp-bundle-meter';
+  meter.innerHTML = `
+    <div class="qp-bundle-meter-top">
+      <span class="qp-bundle-meter-label"></span>
+      <span class="qp-bundle-meter-pct"><b>0%</b> off</span>
+    </div>
+    <div class="qp-bundle-meter-track">
+      <span class="qp-bundle-meter-fill"></span>
+      ${tiers.map(t => `<i style="left:${(t.services - 1) / (tiers[tiers.length - 1].services - 1) * 100}%"><em>${t.percent}%</em></i>`).join('')}
+    </div>`;
+  gridEl.appendChild(meter);
+
   // One tap adds every suggested service to the same visit
   const bundle = document.createElement('button');
   bundle.type = 'button';
   bundle.className = 'qp-addon-bundle';
   bundle.innerHTML = `
     <span class="qp-addon-bundle-text">
-      <strong>Add everything in one visit</strong>
+      <strong>Bundle everything &amp; save ${bundlePercent(1 + relatedIds.length)}%</strong>
       <span>${relatedIds.map(id => SVC_INFO[id].name).join(' + ')}</span>
     </span>
     <span class="qp-addon-bundle-btn">Add all</span>`;
@@ -982,6 +1079,19 @@ function showAddOns(serviceId) {
     const all = relatedIds.every(id => wizardState.addOns.includes(id));
     bundle.classList.toggle('selected', all);
     bundle.querySelector('.qp-addon-bundle-btn').textContent = all ? 'Added ✓' : 'Add all';
+
+    const count = 1 + wizardState.addOns.length;
+    const pct = bundlePercent(count);
+    const next = tiers.find(t => t.services > count);
+    const lastNeeded = tiers[tiers.length - 1].services;
+    meter.querySelector('.qp-bundle-meter-pct b').textContent = pct + '%';
+    meter.querySelector('.qp-bundle-meter-label').textContent = next
+      ? `Add ${next.services - count} more service${next.services - count > 1 ? 's' : ''} to save ${next.percent}% on your whole visit`
+      : `Bundle unlocked — you're saving ${pct}% on your whole visit`;
+    meter.querySelector('.qp-bundle-meter-fill').style.width = Math.min(1, (count - 1) / (lastNeeded - 1)) * 100 + '%';
+    meter.classList.toggle('is-max', pct === maxPct);
+    meter.classList.toggle('is-bump', true);
+    setTimeout(() => meter.classList.remove('is-bump'), 450);
   };
 
   const setAddon = (id, card, on) => {
@@ -1046,6 +1156,17 @@ function preparePlanStep() {
     }
   });
 
+  // Fill in the yearly breakdown on each plan card from SHARK_PRICING
+  cards.forEach(card => {
+    const plan = SHARK_PRICING.plans[card.dataset.plan];
+    const box = card.querySelector('[data-example]');
+    if (!plan || !box) return;
+    const ex = SHARK_PRICING.examplePrice;
+    const regular = plan.visits * ex;
+    const fmt = n => '$' + n.toLocaleString('en-US');
+    box.innerHTML = `<span>${plan.visits} cleanings at ${fmt(ex)}</span><s>${fmt(regular)}</s><b>${fmt(regular - planSavings(card.dataset.plan))}</b><small>Example — your price depends on your home</small>`;
+  });
+
   const customDesc = document.querySelector('#wizard-step-5 [data-custom-desc]');
   if (customDesc) {
     customDesc.textContent = property === 'commercial'
@@ -1053,6 +1174,9 @@ function preparePlanStep() {
       : 'Want monthly service, a one-time clean or something built around your home? We\'ll put together a custom quote.';
   }
 
+  if (!wizardState.preselectedPlan && !document.querySelector('#wizard-step-5 .plan-card.selected:not([hidden])')) {
+    wizardState.preselectedPlan = 'quarterly';
+  }
   if (wizardState.preselectedPlan) {
     const wanted = wizardState.preselectedPlan.replace('-', '');
     const match = Array.from(cards).find(c => !c.hidden && c.dataset.plan === wanted)
@@ -1298,17 +1422,16 @@ function collectQuoteData() {
   const allServices = [primarySvc, ...addOnNames].filter(Boolean);
   const services = allServices.length ? allServices.join(', ') : 'Not specified';
   const addonsLine = addOnNames.length ? addOnNames.join(', ') : 'None';
+  const bundlePct = bundlePercent(allServices.length);
+  const bundleLine = bundlePct ? `${bundlePct}% off whole visit (${allServices.length} services bundled)` : 'None';
 
   const planCard = document.querySelector('.plan-card.selected');
-  const planMap = {
-    monthly:    'Monthly ($150 OFF per cleaning)',
-    quarterly:  'Quarterly ($100 OFF per cleaning)',
-    triannual:  'Tri-Annual ($75 OFF per cleaning)',
-    biannual:   'Bi-Annual ($50 OFF per cleaning)',
-    custom:     'Custom / One-Time Quote',
-    'one-time': 'One-Time Visit',
-  };
-  const plan = planCard ? (planMap[planCard.dataset.plan] || planCard.dataset.plan) : 'Not specified';
+  const planMap = Object.fromEntries(Object.entries(SHARK_PRICING.plans).map(([id, p]) =>
+    [id, `${p.name} membership — ${p.visits} cleanings/yr, $${p.offEach} off each (saves $${planSavings(id)}/yr)`]));
+  planMap.custom = 'Custom / One-Time Quote';
+  planMap['one-time'] = 'One-Time Visit';
+  let plan = planCard ? (planMap[planCard.dataset.plan] || planCard.dataset.plan) : 'Not specified';
+  if (planCard && SHARK_PRICING.plans[planCard.dataset.plan]) plan += ' — paid upfront';
 
   const firstName  = document.getElementById('contact-first')?.value.trim()  || '';
   const lastName   = document.getElementById('contact-last')?.value.trim()   || '';
@@ -1342,7 +1465,9 @@ function collectQuoteData() {
     `Property:  ${property}`,
     `Service:   ${services}`,
     `Add-ons:   ${addonsLine}`,
+    `Bundle:    ${bundleLine}`,
     `Plan:      ${plan}`,
+    `Source:    ${sxAttribution()}`,
     ``,
     `--- ADDRESS ---`,
     `${addressFull || 'Not provided'}`,
@@ -1362,7 +1487,9 @@ function collectQuoteData() {
     property_type:    property,
     services:         services,
     addons:           addonsLine,
+    bundle:           bundleLine,
     plan:             plan,
+    lead_source:      sxAttribution(),
     // Address
     street_address:   street,
     city_state_zip:   `${city}, NE ${zip}`,
@@ -1389,7 +1516,17 @@ function submitQuoteNotification() {
   loadEmailJS(() => {
     // ── Owner email (single send — all data in {{message}}) ──
     emailjs.send(LEAF_NOTIFY.service_id, LEAF_NOTIFY.template_id, data)
-      .then(() => console.info('[Shark] Owner email sent ✓'))
+      .then(() => {
+        console.info('[Shark] Owner email sent ✓');
+        sxTrack('generate_lead', {
+          form_name: 'quote_form',
+          location: data.location,
+          property_type: data.property_type,
+          service: data.services,
+          plan: data.plan.split(' —')[0],
+          bundle: data.bundle,
+        });
+      })
       .catch(err => console.warn('[Shark] Owner email failed:', err));
   });
 }

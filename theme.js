@@ -19,6 +19,7 @@
     initStepper();
     initChat();
     initPageTransitions();
+    initCallTracking();
     document.querySelectorAll('[data-year]').forEach((el) => { el.textContent = new Date().getFullYear(); });
   });
 
@@ -72,7 +73,7 @@
     drawer.addEventListener('click', (e) => { if (e.target === drawer) setOpen(false); });
     drawer.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => setOpen(false)));
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape') setOpen(false); });
-    window.addEventListener('resize', () => { if (window.innerWidth > 1100) setOpen(false); });
+    window.addEventListener('resize', () => { if (window.innerWidth > 1240) setOpen(false); });
   }
 
   /* ---------- Services dropdown: click / keyboard support ---------- */
@@ -218,6 +219,16 @@
     });
   }
 
+  /* ---------- Click-to-call tracking ---------- */
+  function initCallTracking() {
+    document.addEventListener('click', (e) => {
+      const a = e.target.closest && e.target.closest('a[href^="tel:"]');
+      if (!a || typeof window.sxTrack !== 'function') return;
+      const where = a.closest('.sx-nav, .sx-drawer, .sx-hero, .sx-final, .sx-footer, .qp-brand, .sx-side-cta, .sx-chat')?.className.split(' ')[0] || 'page';
+      window.sxTrack('click_to_call', { link_location: where, page: location.pathname });
+    }, true);
+  }
+
   /* ---------- Floating contact form ---------- */
   function initChat() {
     const chat = document.getElementById('sx-chat');
@@ -256,6 +267,7 @@
         if (ok) {
           form.hidden = true;
           done.hidden = false;
+          if (typeof window.sxTrack === 'function') window.sxTrack('generate_lead', { form_name: 'contact_bubble', page: location.pathname });
         } else {
           err.textContent = "Your message didn't send. Please call or text us at (402) 309-0128.";
         }
@@ -274,7 +286,8 @@
         submitted_at: new Date().toLocaleString(),
         services: 'Website message',
         special_notes: message,
-        message: `Website message from ${name} (${contact}):\n\n${message}\n\nPage: ${location.href}`,
+        lead_source: typeof window.sxAttribution === 'function' ? window.sxAttribution() : '',
+        message: `Website message from ${name} (${contact}):\n\n${message}\n\nPage: ${location.href}\nSource: ${typeof window.sxAttribution === 'function' ? window.sxAttribution() : 'unknown'}`,
       };
       loadEmailJS(() => {
         emailjs.send(cfg.service_id, cfg.template_id, payload)
