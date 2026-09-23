@@ -31,6 +31,8 @@ const SHARK_PRICING = {
     { services: 2, percent: 10 },
     { services: 3, percent: 15 },
   ],
+  // Example per-cleaning price used to show the yearly breakdown on plan cards.
+  examplePrice: 300,
   // Prepaid memberships: number of cleanings per year and dollars off each one.
   plans: {
     monthly:   { name: 'Monthly',    visits: 12, offEach: 150 },
@@ -903,6 +905,11 @@ function initPageWizard() {
 
   // Start at step 1
   renderStep(1);
+
+  // Pre-select the city when arriving from a Lincoln or Kearney page
+  const preLocation = (params.get('location') || '').toLowerCase();
+  const locCard = preLocation && document.querySelector(`.location-card[data-location="${preLocation}"]`);
+  if (locCard) locCard.click();
 }
 
 
@@ -1106,6 +1113,17 @@ function preparePlanStep() {
       card.classList.remove('selected');
       const rb = card.querySelector('input'); if (rb) rb.checked = false;
     }
+  });
+
+  // Fill in the yearly breakdown on each plan card from SHARK_PRICING
+  cards.forEach(card => {
+    const plan = SHARK_PRICING.plans[card.dataset.plan];
+    const box = card.querySelector('[data-example]');
+    if (!plan || !box) return;
+    const ex = SHARK_PRICING.examplePrice;
+    const regular = plan.visits * ex;
+    const fmt = n => '$' + n.toLocaleString('en-US');
+    box.innerHTML = `<span>${plan.visits} cleanings at ${fmt(ex)}</span><s>${fmt(regular)}</s><b>${fmt(regular - planSavings(card.dataset.plan))}</b><small>Example — your price depends on your home</small>`;
   });
 
   const customDesc = document.querySelector('#wizard-step-5 [data-custom-desc]');
@@ -1366,12 +1384,16 @@ function collectQuoteData() {
   const bundlePct = bundlePercent(allServices.length);
   const bundleLine = bundlePct ? `${bundlePct}% off whole visit (${allServices.length} services bundled)` : 'None';
 
+  const payChoice = document.querySelector('input[name="pay"]:checked')?.value;
   const planCard = document.querySelector('.plan-card.selected');
   const planMap = Object.fromEntries(Object.entries(SHARK_PRICING.plans).map(([id, p]) =>
-    [id, `${p.name} membership — prepaid upfront, ${p.visits} cleanings/yr, $${p.offEach} off each (saves $${planSavings(id)}/yr)`]));
+    [id, `${p.name} membership — ${p.visits} cleanings/yr, $${p.offEach} off each (saves $${planSavings(id)}/yr)`]));
   planMap.custom = 'Custom / One-Time Quote';
   planMap['one-time'] = 'One-Time Visit';
-  const plan = planCard ? (planMap[planCard.dataset.plan] || planCard.dataset.plan) : 'Not specified';
+  let plan = planCard ? (planMap[planCard.dataset.plan] || planCard.dataset.plan) : 'Not specified';
+  if (planCard && SHARK_PRICING.plans[planCard.dataset.plan]) {
+    plan += payChoice === 'per-visit' ? ' — wants to PAY PER VISIT' : ' — wants to PAY ONCE UPFRONT';
+  }
 
   const firstName  = document.getElementById('contact-first')?.value.trim()  || '';
   const lastName   = document.getElementById('contact-last')?.value.trim()   || '';

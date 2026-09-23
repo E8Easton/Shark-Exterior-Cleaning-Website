@@ -72,7 +72,7 @@
     drawer.addEventListener('click', (e) => { if (e.target === drawer) setOpen(false); });
     drawer.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => setOpen(false)));
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape') setOpen(false); });
-    window.addEventListener('resize', () => { if (window.innerWidth > 1100) setOpen(false); });
+    window.addEventListener('resize', () => { if (window.innerWidth > 1240) setOpen(false); });
   }
 
   /* ---------- Services dropdown: click / keyboard support ---------- */
