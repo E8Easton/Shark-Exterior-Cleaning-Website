@@ -223,108 +223,88 @@
     <!-- STEP 4 — Services -->
     <div class="qp-step" id="wizard-step-4" hidden>
       <h2 class="qp-title">Select Your Service</h2>
-      <p class="qp-subtitle">Pick the service you need a quote for</p>
+      <p class="qp-subtitle">Pick your main service — you can add more on the next screen</p>
       <div class="qp-img-svc-grid" id="svc-img-grid">
-
-        <!-- Large featured: Exterior & Interior -->
-        <div class="qp-img-svc-card qp-img-svc-card--large service-radio-card" data-service="exterior-windows">
+        <div class="qp-img-svc-card service-radio-card qp-img-svc-card--large" data-service="exterior-windows" tabindex="0" role="button" aria-label="Exterior Window Cleaning">
+          <span class="qp-svc-badge">Most Popular</span>
           <div class="qp-img-svc-bg" style="background-image:url('images/svc-exterior.jpg')"></div>
           <div class="qp-img-svc-overlay"></div>
           <div class="qp-img-svc-content">
             <span class="qp-img-svc-name">Exterior Window Cleaning</span>
-            <div class="qp-img-svc-check"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></div>
+            <span class="qp-img-svc-desc">Streak-free glass on every exterior pane</span>
           </div>
         </div>
-
-        <div class="qp-img-svc-card qp-img-svc-card--large service-radio-card" data-service="interior-windows">
+        <div class="qp-img-svc-card service-radio-card qp-img-svc-card--large" data-service="interior-windows" tabindex="0" role="button" aria-label="Interior Window Cleaning">
           <div class="qp-img-svc-bg" style="background-image:url('images/svc-interior.jpg')"></div>
           <div class="qp-img-svc-overlay"></div>
           <div class="qp-img-svc-content">
             <span class="qp-img-svc-name">Interior Window Cleaning</span>
-            <div class="qp-img-svc-check"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></div>
+            <span class="qp-img-svc-desc">Crystal-clear inside views, safely done</span>
           </div>
         </div>
-
-        <!-- Smaller service cards -->
-
-        <!-- TRACK DETAILING: Add-on only, not a primary service — re-enable here if needed -->
-        <!--
-        <div class="qp-img-svc-card service-radio-card" data-service="track-detailing">
-          <div class="qp-img-svc-bg" style="background-image:url('images/svc-track.jpg')"></div>
+        <div class="qp-img-svc-card service-radio-card" data-service="soft-washing" tabindex="0" role="button" aria-label="Soft Washing">
+          <div class="qp-img-svc-bg" style="background-image:url('images/svc-softwash.jpg')"></div>
           <div class="qp-img-svc-overlay"></div>
           <div class="qp-img-svc-content">
-            <span class="qp-img-svc-name">Track Detailing</span>
-            <div class="qp-img-svc-check"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></div>
+            <span class="qp-img-svc-name">Soft Washing</span>
+            <span class="qp-img-svc-desc">Gentle low-pressure clean for siding &amp; roofs</span>
           </div>
         </div>
-        -->
-
-        <div class="qp-img-svc-card service-radio-card" data-service="gutters">
+        <div class="qp-img-svc-card service-radio-card" data-service="pressure-washing" tabindex="0" role="button" aria-label="Pressure Washing">
+          <div class="qp-img-svc-bg" style="background-image:url('images/svc-powerwash.jpg')"></div>
+          <div class="qp-img-svc-overlay"></div>
+          <div class="qp-img-svc-content">
+            <span class="qp-img-svc-name">Pressure Washing</span>
+            <span class="qp-img-svc-desc">Driveways, patios &amp; walkways like new</span>
+          </div>
+        </div>
+        <div class="qp-img-svc-card service-radio-card" data-service="gutters" tabindex="0" role="button" aria-label="Gutter Cleaning">
           <div class="qp-img-svc-bg" style="background-image:url('images/svc-gutter.jpg')"></div>
           <div class="qp-img-svc-overlay"></div>
           <div class="qp-img-svc-content">
             <span class="qp-img-svc-name">Gutter Cleaning</span>
-            <div class="qp-img-svc-check"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></div>
+            <span class="qp-img-svc-desc">Free-flowing gutters, no clogs or overflow</span>
           </div>
         </div>
-
-        <div class="qp-img-svc-card service-radio-card" data-service="screen-cleaning">
+        <div class="qp-img-svc-card service-radio-card qp-img-svc-card--wide" data-service="screen-cleaning" tabindex="0" role="button" aria-label="Screen Cleaning">
           <div class="qp-img-svc-bg" style="background-image:url('images/svc-screen.jpg')"></div>
           <div class="qp-img-svc-overlay"></div>
           <div class="qp-img-svc-content">
             <span class="qp-img-svc-name">Screen Cleaning</span>
-            <div class="qp-img-svc-check"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></div>
+            <span class="qp-img-svc-desc">Dust &amp; grime removed from every screen</span>
           </div>
         </div>
-
-        <div class="qp-img-svc-card service-radio-card" data-service="pressure-washing">
-          <div class="qp-img-svc-bg" style="background-image:url('images/svc-powerwash.jpg')"></div>
-          <div class="qp-img-svc-overlay"></div>
-          <div class="qp-img-svc-content">
-            <span class="qp-img-svc-name">Pressure Washing / Soft Washing</span>
-            <div class="qp-img-svc-check"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></div>
-          </div>
-        </div>
-
-        <div class="qp-img-svc-card service-radio-card" data-service="solar-panel">
+        <div class="qp-img-svc-card service-radio-card qp-img-svc-card--wide" data-service="solar-panel" tabindex="0" role="button" aria-label="Solar Panel Cleaning">
           <div class="qp-img-svc-bg" style="background-image:url('images/svc-solar.jpg')"></div>
           <div class="qp-img-svc-overlay"></div>
           <div class="qp-img-svc-content">
             <span class="qp-img-svc-name">Solar Panel Cleaning</span>
-            <div class="qp-img-svc-check"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></div>
+            <span class="qp-img-svc-desc">Max energy output — panels cleaned right</span>
           </div>
         </div>
-
-        <!-- CHRISTMAS LIGHTS: Re-enable for holiday season -->
-        <!--
-        <div class="qp-img-svc-card service-radio-card" data-service="christmas-lights">
+        <!-- SEASONAL / OPTIONAL — remove the comment markers to show these again.
+        <div class="qp-img-svc-card service-radio-card qp-img-svc-card--wide" data-service="christmas-lights" tabindex="0" role="button" aria-label="House Lighting Installation">
           <div class="qp-img-svc-bg" style="background-image:url('images/svc-christmas.jpg')"></div>
           <div class="qp-img-svc-overlay"></div>
-          <div class="qp-img-svc-content">
-            <span class="qp-img-svc-name">House Lighting Installation</span>
-            <div class="qp-img-svc-check"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></div>
-          </div>
+          <div class="qp-img-svc-content"><span class="qp-img-svc-name">House Lighting Installation</span><span class="qp-img-svc-desc">Pro install, takedown &amp; storage included</span></div>
         </div>
-        -->
-
-        <!-- COMMERCIAL CLEANING: Re-enable for winter season — customers must contact us directly -->
-        <!--
-        <div class="qp-img-svc-card service-radio-card" data-service="commercial-cleaning">
+        <div class="qp-img-svc-card service-radio-card qp-img-svc-card--wide" data-service="commercial-cleaning" tabindex="0" role="button" aria-label="Commercial Cleaning">
           <div class="qp-img-svc-bg" style="background-image:url('images/svc-commercial.jpg')"></div>
           <div class="qp-img-svc-overlay"></div>
-          <div class="qp-img-svc-content">
-            <span class="qp-img-svc-name">Commercial Cleaning</span>
-            <div class="qp-img-svc-check"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></div>
-          </div>
+          <div class="qp-img-svc-content"><span class="qp-img-svc-name">Commercial Cleaning</span><span class="qp-img-svc-desc">High-rise, storefront &amp; office specialists</span></div>
+        </div>
+        <div class="qp-img-svc-card service-radio-card" data-service="track-detailing" tabindex="0" role="button" aria-label="Track Detailing">
+          <div class="qp-img-svc-bg" style="background-image:url('images/svc-track.jpg')"></div>
+          <div class="qp-img-svc-overlay"></div>
+          <div class="qp-img-svc-content"><span class="qp-img-svc-name">Track Detailing</span><span class="qp-img-svc-desc">Deep-cleaned tracks, sills &amp; frames</span></div>
         </div>
         -->
-
       </div>
 
       <!-- Add-ons panel — shown after a service is selected -->
       <div class="qp-addons-panel" id="addons-panel" hidden>
-        <h3 class="qp-addons-title">Add-On Services</h3>
-        <p class="qp-addons-sub">Popular add-ons to bundle with your service — optional</p>
+        <h3 class="qp-addons-title">Make It a Complete Clean</h3>
+        <p class="qp-addons-sub">We're already at your home — add these to the same visit. Optional.</p>
         <div class="qp-addons-grid" id="addons-grid"></div>
       </div>
 
@@ -334,67 +314,63 @@
     <!-- STEP 5 — Plan -->
     <div class="qp-step" id="wizard-step-5" hidden>
       <h2 class="qp-title">Choose Your Plan</h2>
-      <p class="qp-subtitle">Pick what works best for you</p>
+      <p class="qp-subtitle">Save on every cleaning with a membership — or ask for a custom quote</p>
       <div class="qp-plan-grid">
-
-        <label class="qp-plan-card plan-card" data-plan="monthly">
+        <label class="qp-plan-card plan-card" data-plan="monthly" data-for="commercial">
           <input type="radio" name="plan" value="monthly">
-          <div class="qp-plan-badge">Most Frequent</div>
+          <div class="qp-plan-badge">&nbsp;</div>
           <div class="qp-plan-name">Monthly</div>
           <div class="qp-plan-savings">$150 <span>OFF</span></div>
           <div class="qp-plan-sub">per cleaning · 12 visits/yr</div>
-          <p class="qp-plan-desc">Always clean, always fresh — year-round coverage.</p>
-          <ul class="qp-plan-features">
-            <li class="feat-yes">FREE Shark RainBlock Tech</li>
-            <li class="feat-yes">7 Day Rain Guarantee</li>
-            <li class="feat-yes">FREE Hard Water Removal</li>
-          </ul>
-          <div class="qp-card-check"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></div>
+          <p class="qp-plan-desc">Always clean — ideal for storefronts and offices.</p>
+          <ul class="qp-plan-features"><li class="feat-yes">FREE Shark RainBlock Tech</li><li class="feat-yes">FREE 7 Day Rain Guarantee</li><li class="feat-yes">FREE Hard Water Removal</li></ul>
         </label>
-
-        <label class="qp-plan-card qp-plan-card--featured plan-card plan-card--featured" data-plan="quarterly">
+        <label class="qp-plan-card plan-card" data-plan="triannual" data-for="residential">
+          <input type="radio" name="plan" value="triannual">
+          <div class="qp-plan-badge">&nbsp;</div>
+          <div class="qp-plan-name">Tri-Annual</div>
+          <div class="qp-plan-savings">$75 <span>OFF</span></div>
+          <div class="qp-plan-sub">per cleaning · 3 visits/yr</div>
+          <p class="qp-plan-desc">Spring, summer &amp; fall — clean all season.</p>
+          <ul class="qp-plan-features"><li class="feat-yes">FREE Shark RainBlock Tech</li><li class="feat-yes">FREE 7 Day Rain Guarantee</li><li class="feat-no">Hard Water Removal</li></ul>
+        </label>
+        <label class="qp-plan-card plan-card qp-plan-card--featured plan-card--featured" data-plan="quarterly" data-for="residential commercial">
           <input type="radio" name="plan" value="quarterly">
           <div class="qp-plan-badge">Most Popular</div>
           <div class="qp-plan-name">Quarterly</div>
           <div class="qp-plan-savings">$100 <span>OFF</span></div>
           <div class="qp-plan-sub">per cleaning · 4 visits/yr</div>
           <p class="qp-plan-desc">The perfect balance of value and care every season.</p>
-          <ul class="qp-plan-features">
-            <li class="feat-yes">FREE Shark RainBlock Tech</li>
-            <li class="feat-yes">7 Day Rain Guarantee</li>
-            <li class="feat-yes">FREE Hard Water Removal</li>
-          </ul>
-          <div class="qp-card-check"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></div>
+          <ul class="qp-plan-features"><li class="feat-yes">FREE Shark RainBlock Tech</li><li class="feat-yes">FREE 7 Day Rain Guarantee</li><li class="feat-yes">FREE Hard Water Removal</li></ul>
         </label>
-
-        <label class="qp-plan-card plan-card" data-plan="biannual">
+        <label class="qp-plan-card plan-card" data-plan="triannual" data-for="commercial">
+          <input type="radio" name="plan" value="triannual">
+          <div class="qp-plan-badge">&nbsp;</div>
+          <div class="qp-plan-name">Tri-Annual</div>
+          <div class="qp-plan-savings">$75 <span>OFF</span></div>
+          <div class="qp-plan-sub">per cleaning · 3 visits/yr</div>
+          <p class="qp-plan-desc">Spring, summer &amp; fall — clean all season.</p>
+          <ul class="qp-plan-features"><li class="feat-yes">FREE Shark RainBlock Tech</li><li class="feat-yes">FREE 7 Day Rain Guarantee</li><li class="feat-no">Hard Water Removal</li></ul>
+        </label>
+        <label class="qp-plan-card plan-card" data-plan="biannual" data-for="residential">
           <input type="radio" name="plan" value="biannual">
-          <div class="qp-plan-badge">Best Value</div>
+          <div class="qp-plan-badge">&nbsp;</div>
           <div class="qp-plan-name">Bi-Annual</div>
           <div class="qp-plan-savings">$50 <span>OFF</span></div>
           <div class="qp-plan-sub">per cleaning · 2 visits/yr</div>
-          <p class="qp-plan-desc">Spring &amp; Fall deep cleans — the full seasonal package.</p>
-          <ul class="qp-plan-features">
-            <li class="feat-no">Shark RainBlock Tech</li>
-            <li class="feat-no">7 Day Rain Guarantee</li>
-            <li class="feat-no">Hard Water Removal</li>
-          </ul>
-          <div class="qp-card-check"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></div>
+          <p class="qp-plan-desc">Spring &amp; fall deep cleans — the seasonal refresh.</p>
+          <ul class="qp-plan-features"><li class="feat-no">Shark RainBlock Tech</li><li class="feat-no">7 Day Rain Guarantee</li><li class="feat-no">Hard Water Removal</li></ul>
         </label>
-
-        <!-- ONE-TIME PLAN: Removed — customers call for one-time quotes (402-309-0128) -->
-        <!--
-        <label class="qp-plan-card qp-plan-card--onetime plan-card plan-card--onetime" data-plan="one-time">
-          <input type="radio" name="plan" value="one-time">
-          <div class="qp-plan-name">One-Time</div>
-          <div class="qp-plan-sub">No membership — pay per visit</div>
-          <p class="qp-plan-desc">No commitment. Book when you need us.</p>
-          <div class="qp-card-check"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></div>
+        <label class="qp-plan-card plan-card qp-plan-card--custom" data-plan="custom" data-for="residential commercial">
+          <input type="radio" name="plan" value="custom">
+          <div class="qp-plan-custom-text">
+            <div class="qp-plan-name">Custom or One-Time Clean</div>
+            <p class="qp-plan-desc" data-custom-desc></p>
+          </div>
+          <span class="qp-plan-custom-pill">We'll call you</span>
         </label>
-        -->
-
       </div>
-      <p class="qp-plan-onetime-note">Need a one-time clean? Give us a call at <a href="tel:4023090128">402-309-0128</a> and we'll get you a custom quote.</p>
+      <p class="qp-plan-onetime-note">Every plan includes our 100% satisfaction guarantee. Questions? Call <a href="tel:4023090128">(402) 309-0128</a>.</p>
       <p class="qp-error" id="step5-error"></p>
     </div>
 
