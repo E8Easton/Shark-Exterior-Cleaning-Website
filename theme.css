@@ -1956,3 +1956,6 @@ body.qp .qp-plan-example small { grid-column: 1 / -1; }
   .sx-nav-links { display: none; }
   .sx-burger { display: flex; }
 }
+/* bundle meter: three tier markers */
+body.qp .qp-bundle-meter-track i:nth-of-type(2) { margin-left: -9px; }
+body.qp .qp-bundle-meter-track i:first-of-type { margin-left: -9px; }

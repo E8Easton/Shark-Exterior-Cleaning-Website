@@ -27,9 +27,11 @@ const LEAF_NOTIFY = {
    ---------------------------------------------------------- */
 const SHARK_PRICING = {
   // Bundle discount on the whole visit, by how many services are booked together.
+  // Bundle savings can be combined with membership savings.
   bundleTiers: [
     { services: 2, percent: 10 },
     { services: 3, percent: 15 },
+    { services: 4, percent: 20 },
   ],
   // Example per-cleaning price used to show the yearly breakdown on plan cards.
   examplePrice: 300,
