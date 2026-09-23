@@ -10,6 +10,7 @@
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   document.addEventListener('DOMContentLoaded', () => {
+    initSmoothScroll();
     initHeader();
     initDrawer();
     initDropdown();
@@ -20,6 +21,22 @@
     initPageTransitions();
     document.querySelectorAll('[data-year]').forEach((el) => { el.textContent = new Date().getFullYear(); });
   });
+
+  /* ---------- Smooth scrolling ----------
+     Evens out mouse-wheel / trackpad scrolling so every section moves at the
+     same pace. Touch screens keep their native scrolling. */
+  function initSmoothScroll() {
+    if (reduceMotion || typeof window.Lenis !== 'function' || window.__sxLenis) return;
+    const lenis = new window.Lenis({
+      lerp: 0.1,
+      wheelMultiplier: 1,
+      smoothWheel: true,
+      prevent: (node) => !!(node.closest && node.closest('.sx-drawer, .sx-chat-panel, .wizard-overlay, [data-lenis-prevent]')),
+    });
+    window.__sxLenis = lenis;
+    const raf = (time) => { lenis.raf(time); requestAnimationFrame(raf); };
+    requestAnimationFrame(raf);
+  }
 
   /* ---------- Header: solid background once scrolled ---------- */
   function initHeader() {
@@ -48,6 +65,7 @@
       btn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
       drawer.setAttribute('aria-hidden', String(!open));
       document.body.classList.toggle('sx-lock', open);
+      if (window.__sxLenis) open ? window.__sxLenis.stop() : window.__sxLenis.start();
     };
 
     btn.addEventListener('click', () => setOpen(!drawer.classList.contains('open')));
