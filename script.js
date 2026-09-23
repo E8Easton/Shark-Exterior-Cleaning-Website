@@ -1315,7 +1315,7 @@ function submitQuoteNotification() {
    → Paste this into the Body (HTML or text):
 
    ─────────────────────────────────────────
-   NEW QUOTE REQUEST — Shark Exteriors
+   NEW QUOTE REQUEST — Shark Exterior
    Submitted: {{submitted_at}}
 
    CUSTOMER
@@ -1362,7 +1362,7 @@ function submitQuoteNotification() {
    STEP 6 — Gmail auto-label (one-time, 2 minutes)
    → In Gmail → Settings (gear) → See all settings
    → Filters and Blocked Addresses → Create a new filter
-   → In "Subject" box type:  New Quote Request — Shark Exteriors
+   → In "Subject" box type:  New Quote Request — Shark Exterior
    → Click "Create filter"
    → Check "Apply the label" → New label → name it "Shark Quotes"
    → Check "Also apply filter to matching conversations"
