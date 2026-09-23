@@ -5,6 +5,8 @@
    ========================================================== */
 
 (function () {
+  // Tells the inline safety net in <head> that the theme script loaded.
+  window.__sxReady = true;
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   document.addEventListener('DOMContentLoaded', () => {
