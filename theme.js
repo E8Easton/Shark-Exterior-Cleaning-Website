@@ -19,6 +19,7 @@
     initTeamGallery();
     initBlogFilter();
     initJourney();
+    initWind();
     initChat();
     initPageTransitions();
     initHashLanding();
@@ -146,6 +147,27 @@
         const amount = reduceMotion ? 1 : p;
         fill.style.transform = vertical() ? `scaleY(${amount})` : `scaleX(${amount})`;
         steps.forEach((st, i) => st.classList.toggle('is-lit', amount >= (i / Math.max(1, steps.length - 1)) - 0.02));
+      };
+      const onScroll = () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } };
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll);
+      update();
+    });
+  }
+
+  /* ---------- Winding process path: draws itself as you scroll ---------- */
+  function initWind() {
+    document.querySelectorAll('[data-wind]').forEach((root) => {
+      const draw = root.querySelector('[data-wind-draw]');
+      const steps = [...root.querySelectorAll('.sx-wind-step')];
+      let ticking = false;
+      const update = () => {
+        ticking = false;
+        const r = root.getBoundingClientRect();
+        const vh = window.innerHeight;
+        const p = reduceMotion ? 1 : Math.min(1, Math.max(0, (vh * 0.7 - r.top) / r.height));
+        if (draw) draw.style.strokeDashoffset = String(1 - p);
+        steps.forEach((st, i) => st.classList.toggle('is-lit', p >= (i + 0.5) / steps.length - 0.06));
       };
       const onScroll = () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } };
       window.addEventListener('scroll', onScroll, { passive: true });

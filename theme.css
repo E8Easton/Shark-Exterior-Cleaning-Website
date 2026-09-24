@@ -2920,3 +2920,119 @@ body.qp .qp-done-summary { padding: 0; border: 0; background: none; border-radiu
 }
 body.qp .qp-done-summary { display: block; width: 100%; max-width: none; margin: 0; text-align: left; }
 body.qp .qp-done-row > div { flex: 1; min-width: 0; }
+
+/* ==========================================================
+   Breathing room between the last section and the curved CTA
+   ========================================================== */
+.sx-section:has(+ .sx-final), .sx-band:has(+ .sx-final) { padding-bottom: calc(var(--sx-section) + 90px); }
+@media (max-width: 680px) { .sx-section:has(+ .sx-final), .sx-band:has(+ .sx-final) { padding-bottom: calc(var(--sx-section) + 50px); } }
+
+/* ==========================================================
+   SOFT WASHING — steps winding down a path
+   ========================================================== */
+.sx-wind-section {
+  background:
+    radial-gradient(700px 400px at 0% 0%, rgba(15, 163, 224, .16), transparent 70%),
+    radial-gradient(700px 420px at 100% 100%, rgba(4, 99, 238, .14), transparent 70%),
+    linear-gradient(180deg, #EAF3FF 0%, #F4F9FF 100%);
+}
+.sx-wind-section::before {
+  content: ''; position: absolute; inset: 0; pointer-events: none; opacity: .5;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='40' viewBox='0 0 120 40'%3E%3Cpath d='M0 20c20-12 40-12 60 0s40 12 60 0' fill='none' stroke='%230463EE' stroke-opacity='.07' stroke-width='2'/%3E%3C/svg%3E");
+}
+.sx-wind { position: relative; max-width: 980px; margin: 0 auto 10px; }
+.sx-wind-path { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+.sx-wind-track, .sx-wind-draw { fill: none; stroke-linecap: round; }
+.sx-wind-track { stroke: rgba(4, 99, 238, .14); stroke-width: 1.1; }
+.sx-wind-draw { stroke: #0FA3E0; stroke-width: 1.1; stroke-dasharray: 1; stroke-dashoffset: 1; transition: stroke-dashoffset .15s linear; filter: drop-shadow(0 4px 10px rgba(15, 163, 224, .45)); }
+.sx-wind-list { list-style: none; margin: 0; padding: 0; position: relative; }
+.sx-wind-step { position: relative; display: grid; grid-template-columns: 1fr 1fr; align-items: center; min-height: 230px; }
+.sx-wind-node {
+  position: absolute; top: 50%; left: 75%; transform: translate(-50%, -50%);
+  width: 92px; height: 92px; border-radius: 50%; display: grid; place-items: center;
+  background: #fff; color: #0FA3E0; border: 4px solid #D3E9FA;
+  box-shadow: 0 18px 36px -18px rgba(4, 20, 60, .5);
+  transition: background-color .5s, color .5s, border-color .5s, transform .6s cubic-bezier(.34, 1.56, .64, 1), box-shadow .5s;
+}
+.sx-wind-node svg { width: 38px; height: 38px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.sx-wind-node b { position: absolute; right: -6px; top: -6px; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; background: var(--sx-navy); color: #fff; font-size: .85rem; font-weight: 800; }
+.sx-wind-step.is-lit .sx-wind-node { background: linear-gradient(135deg, #0463EE, #0FA3E0); color: #fff; border-color: #fff; transform: translate(-50%, -50%) scale(1.08); box-shadow: 0 0 0 10px rgba(15, 163, 224, .15), 0 22px 40px -16px rgba(4, 99, 238, .7); }
+.sx-wind-card { grid-column: 1; margin-right: 90px; padding: 26px 28px; border-radius: 22px; background: #fff; border: 1.5px solid #D6E6FF; box-shadow: 0 24px 50px -34px rgba(4, 20, 60, .55); text-align: right; transition: transform .45s var(--sx-ease), box-shadow .45s var(--sx-ease); }
+.sx-wind-step:nth-child(even) .sx-wind-node { left: 25%; }
+.sx-wind-step:nth-child(even) .sx-wind-card { grid-column: 2; margin: 0 0 0 90px; text-align: left; }
+.sx-wind-card:hover { transform: translateY(-5px); box-shadow: 0 30px 56px -30px rgba(4, 99, 238, .55); }
+.sx-wind-kicker { color: #0FA3E0; font-size: .76rem; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; }
+.sx-wind-card h3 { margin: 6px 0 8px; color: var(--sx-navy); font-size: 1.35rem; font-weight: 800; }
+.sx-wind-card p { margin: 0; color: var(--sx-text); font-size: 1rem; line-height: 1.6; }
+@media (max-width: 760px) {
+  .sx-wind-path { display: none; }
+  .sx-wind::before { content: ''; position: absolute; left: 34px; top: 20px; bottom: 20px; width: 6px; border-radius: 6px; background: linear-gradient(#0463EE, #0FA3E0); opacity: .35; }
+  .sx-wind-step, .sx-wind-step:nth-child(even) { grid-template-columns: 1fr; min-height: 0; padding: 12px 0 12px 88px; }
+  .sx-wind-node, .sx-wind-step:nth-child(even) .sx-wind-node { left: 37px; width: 68px; height: 68px; }
+  .sx-wind-node svg { width: 28px; height: 28px; }
+  .sx-wind-card, .sx-wind-step:nth-child(even) .sx-wind-card { grid-column: 1; margin: 0; text-align: left; padding: 20px; }
+}
+
+/* ==========================================================
+   GUTTER CLEANING — steps hanging from a gutter
+   ========================================================== */
+.sx-trough-section { background: linear-gradient(180deg, #F2F5F9 0%, #E9EEF5 100%); }
+.sx-trough-roof { position: absolute; left: 0; right: 0; top: 0; height: 70px; pointer-events: none; opacity: .5;
+  background: repeating-linear-gradient(90deg, transparent 0 58px, rgba(4, 20, 60, .06) 58px 60px), linear-gradient(180deg, rgba(4, 20, 60, .12), transparent); }
+.sx-trough { position: relative; max-width: 1180px; margin: 0 auto; padding-top: 10px; }
+.sx-trough-gutter { position: relative; height: 34px; margin: 0 70px 0 0; border-radius: 6px 6px 18px 18px;
+  background: linear-gradient(180deg, #FFFFFF 0%, #E8EDF4 60%, #D5DDE8 100%);
+  box-shadow: inset 0 -4px 0 rgba(4, 20, 60, .08), 0 14px 26px -16px rgba(4, 20, 60, .5); overflow: visible; }
+.sx-trough-gutter::before { content: ''; position: absolute; left: 10px; right: 10px; top: 5px; height: 12px; border-radius: 0 0 10px 10px; background: rgba(4, 20, 60, .08); }
+.sx-trough-water { position: absolute; left: 12px; right: 12px; top: 8px; height: 8px; overflow: hidden; border-radius: 6px; }
+.sx-trough-water i { position: absolute; top: 0; left: -40px; width: 34px; height: 8px; border-radius: 8px; background: linear-gradient(90deg, rgba(15, 163, 224, 0), #0FA3E0); animation: sx-flow 3.2s linear infinite; animation-delay: calc(var(--i) * -.55s); }
+@keyframes sx-flow { to { transform: translateX(1200px); } }
+.sx-trough-spout { position: absolute; right: -58px; top: 6px; width: 60px; height: 40px; border-radius: 0 18px 0 0; border: 14px solid #DDE4EE; border-left: 0; border-bottom: 0; }
+.sx-trough-spout::after { content: ''; position: absolute; right: -14px; top: 26px; width: 28px; height: 140px; border-radius: 0 0 8px 8px; background: linear-gradient(90deg, #E8EDF4, #D0D8E4); box-shadow: 0 10px 20px -12px rgba(4, 20, 60, .5); }
+.sx-trough-stream { position: absolute; right: -8px; top: 170px; width: 16px; height: 50px; border-radius: 0 0 50% 50%; background: linear-gradient(180deg, rgba(15, 163, 224, .8), rgba(15, 163, 224, 0)); animation: sx-drip 1.6s ease-in infinite; }
+@keyframes sx-drip { 0% { opacity: 0; transform: translateY(-10px) scaleY(.6); } 40% { opacity: 1; } 100% { opacity: 0; transform: translateY(24px) scaleY(1.1); } }
+.sx-trough-list { list-style: none; margin: 0 70px 0 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 22px; }
+.sx-trough-step { position: relative; padding-top: 44px; }
+.sx-trough-hanger { position: absolute; left: 50%; top: -2px; width: 4px; height: 46px; transform: translateX(-50%); background: linear-gradient(#B8C3D2, #8E9BAE); border-radius: 2px; }
+.sx-trough-hanger::before { content: ''; position: absolute; left: 50%; top: -8px; width: 22px; height: 10px; transform: translateX(-50%); border-radius: 4px; background: #8E9BAE; }
+.sx-trough-card { position: relative; height: 100%; padding: 30px 22px 24px; border-radius: 20px; background: #fff; border: 1.5px solid #D9E2EE; box-shadow: 0 26px 46px -32px rgba(4, 20, 60, .6); transform-origin: 50% -44px; transition: transform .6s cubic-bezier(.34, 1.56, .64, 1), box-shadow .45s var(--sx-ease); }
+.sx-trough-step:hover .sx-trough-card { transform: rotate(-2deg); box-shadow: 0 34px 56px -30px rgba(4, 99, 238, .5); }
+.sx-trough-step:nth-child(even):hover .sx-trough-card { transform: rotate(2deg); }
+.sx-trough-ico { display: grid; place-items: center; width: 60px; height: 60px; margin-bottom: 16px; border-radius: 18px; background: linear-gradient(135deg, #0463EE, #0FA3E0); color: #fff; box-shadow: 0 14px 26px -12px rgba(4, 99, 238, .7); }
+.sx-trough-step:nth-child(3) .sx-trough-ico { background: linear-gradient(135deg, #0A2152, #0463EE); }
+.sx-trough-step:nth-child(4) .sx-trough-ico { background: linear-gradient(135deg, var(--sx-orange), var(--sx-orange-300)); box-shadow: 0 14px 26px -12px rgba(248, 106, 5, .7); }
+.sx-trough-ico svg { width: 30px; height: 30px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.sx-trough-num { position: absolute; right: 18px; top: 14px; color: rgba(4, 20, 60, .08); font-size: 3.2rem; font-weight: 900; line-height: 1; }
+.sx-trough-card h3 { margin: 0 0 8px; color: var(--sx-navy); font-size: 1.2rem; font-weight: 800; }
+.sx-trough-card p { margin: 0; color: var(--sx-text); font-size: .96rem; line-height: 1.6; }
+@media (max-width: 900px) {
+  .sx-trough-gutter { display: none; }
+  .sx-trough::before { content: ''; position: absolute; left: 14px; top: 0; bottom: 0; width: 22px; border-radius: 8px; background: linear-gradient(90deg, #E8EDF4, #D0D8E4); box-shadow: 0 10px 20px -12px rgba(4, 20, 60, .5); }
+  .sx-trough-list { grid-template-columns: 1fr; margin: 0; gap: 16px; }
+  .sx-trough-step { padding: 0 0 0 58px; }
+  .sx-trough-hanger { left: 24px; top: 40px; width: 36px; height: 4px; transform: none; }
+  .sx-trough-hanger::before { display: none; }
+}
+@media (prefers-reduced-motion: reduce) { .sx-trough-water i, .sx-trough-stream { animation: none; } }
+
+/* ==========================================================
+   POWER WASHING timeline — photo background + photo cards
+   ========================================================== */
+.sx-journey-section--photo { background: var(--sx-navy); isolation: isolate; }
+.sx-journey-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -2; opacity: .28; filter: saturate(1.1); }
+.sx-journey-section--photo::after { content: ''; position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, rgba(4, 20, 60, .88) 0%, rgba(4, 20, 60, .72) 45%, rgba(4, 20, 60, .92) 100%); }
+.sx-journey-section--photo .sx-sub { color: rgba(255, 255, 255, .8); }
+.sx-journey-section--photo .sx-journey-line { background: rgba(255, 255, 255, .16); }
+.sx-journey-section--photo .sx-journey-node { border-color: rgba(255, 255, 255, .25); background: rgba(255, 255, 255, .1); }
+.sx-journey-section--photo .sx-journey-num { color: rgba(255, 255, 255, .7); }
+.sx-journey-section--photo .sx-journey-card { padding: 0 0 24px; overflow: visible; border-color: transparent; }
+.sx-journey-section--photo .sx-journey-card::before { background: #fff; border-color: transparent; }
+.sx-journey-photo { margin: 0; height: 150px; overflow: hidden; border-radius: 18px 18px 0 0; }
+.sx-journey-photo img { width: 100%; height: 100%; object-fit: cover; transition: transform .8s var(--sx-ease); }
+.sx-journey-card:hover .sx-journey-photo img { transform: scale(1.06); }
+.sx-journey-ico--solid { position: relative; z-index: 1; width: 58px; height: 58px; margin: -30px 0 12px 22px; border-radius: 18px; background: linear-gradient(135deg, #0463EE, #0FA3E0); color: #fff; border: 4px solid #fff; box-shadow: 0 14px 26px -10px rgba(4, 99, 238, .7); }
+.sx-journey-step:last-child .sx-journey-ico--solid { background: linear-gradient(135deg, var(--sx-orange), var(--sx-orange-300)); box-shadow: 0 14px 26px -10px rgba(248, 106, 5, .7); color: #fff; }
+.sx-journey-ico--solid svg { width: 28px; height: 28px; fill: currentColor; stroke: none; }
+.sx-journey-section--photo .sx-journey-card h3,
+.sx-journey-section--photo .sx-journey-card p { padding: 0 22px; }
+@media (max-width: 900px) { .sx-journey-photo { height: 130px; } }
