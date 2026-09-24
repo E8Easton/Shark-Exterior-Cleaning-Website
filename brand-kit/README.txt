@@ -7,7 +7,8 @@ Shark-Exterior-Brand-Guidelines.pdf  How to use the logos, colors and fonts.
 
 01-Logos/Stacked      Main logo (fin above the name). PNG files are 4000 px wide.
 01-Logos/Horizontal   Wide logo (fin beside the name), for headers, signatures and invoices.
-   Versions: full-color, reversed (for dark backgrounds), white, navy, black, orange-fin
+   Versions: full-color, reversed (for dark backgrounds), white, navy, black, orange-fin,
+             orange (all orange), blue (all blue)
 02-Icons/Mark         The fin on its own (2000 px PNG).
 02-Icons/App-Icon     The fin on a rounded square (2048 px PNG) for profile pictures and apps.
 03-Social             Link preview (1200x630), Facebook cover, profile pictures, Instagram post.

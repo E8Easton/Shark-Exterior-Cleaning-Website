@@ -11,6 +11,8 @@ WAYS={
  'navy':(NAVY,)*4,
  'black':('#000000',)*4,
  'orange-fin':(ORANGE,BLUE,NAVY,ORANGE),
+ 'orange':(ORANGE,)*4,
+ 'blue':(BLUE,)*4,
 }
 def body(way):
     f,w,s,e=WAYS[way]
