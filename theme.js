@@ -320,7 +320,7 @@
       if (url.pathname === location.pathname) return; // same-page anchors scroll normally
       e.preventDefault();
       root.classList.add('sx-leaving');
-      setTimeout(() => { location.href = url.href; }, 420);
+      setTimeout(() => { location.href = url.href; }, 300);
     });
   }
 
