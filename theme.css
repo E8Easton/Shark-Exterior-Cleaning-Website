@@ -2725,3 +2725,93 @@ body.qp .qp-plan--onetime .qp-plan-card--custom { max-width: 560px; margin-inlin
   .sx-hero--page .sx-in, .page-header .container > *, .blog-post-header .container > * { animation: none !important; }
   .sx-js .sx-seq > *, .sx-js .sx-ptile--icon.sx-r .sx-ptile-ico, .sx-js .sx-ptile--icon.sx-r .sx-ptile-num { opacity: 1 !important; transform: none !important; }
 }
+
+/* ==========================================================
+   QUOTE STEP 4 — silky service cards
+   ========================================================== */
+@keyframes qp-svc-in { from { opacity: 0; transform: translate3d(0, 26px, 0) scale(.96); } to { opacity: 1; transform: none; } }
+/* "backwards" (not "both") so the entrance never locks the hover transform afterwards */
+body.qp #wizard-step-4:not([hidden]) .qp-img-svc-card { animation: qp-svc-in .6s cubic-bezier(.22, 1, .36, 1) backwards; }
+body.qp #wizard-step-4:not([hidden]) .qp-img-svc-card:nth-child(1) { animation-delay: .04s; }
+body.qp #wizard-step-4:not([hidden]) .qp-img-svc-card:nth-child(2) { animation-delay: .09s; }
+body.qp #wizard-step-4:not([hidden]) .qp-img-svc-card:nth-child(3) { animation-delay: .14s; }
+body.qp #wizard-step-4:not([hidden]) .qp-img-svc-card:nth-child(4) { animation-delay: .19s; }
+body.qp #wizard-step-4:not([hidden]) .qp-img-svc-card:nth-child(5) { animation-delay: .24s; }
+body.qp #wizard-step-4:not([hidden]) .qp-img-svc-card:nth-child(6) { animation-delay: .29s; }
+body.qp #wizard-step-4:not([hidden]) .qp-img-svc-card:nth-child(7) { animation-delay: .34s; }
+body.qp #wizard-step-4:not([hidden]) .qp-img-svc-card:nth-child(n+8) { animation-delay: .39s; }
+body.qp #wizard-step-4:not([hidden]) .qp-img-svc-card.selected,
+body.qp #wizard-step-4:not([hidden]) .qp-img-svc-card.svc-fade-out { animation: none; }
+body.qp #wizard-step-4:not([hidden]) .qp-img-svc-card.svc-return { animation: qp-svc-in .55s cubic-bezier(.22, 1, .36, 1) backwards; animation-delay: calc(var(--i, 0) * 45ms); }
+/* Only animate cheap properties (no width/height tweening = no jitter) */
+body.qp .qp-img-svc-card { transition: transform .5s cubic-bezier(.22, 1, .36, 1), box-shadow .45s var(--sx-ease), opacity .35s ease; will-change: transform; backface-visibility: hidden; }
+body.qp .qp-img-svc-card:hover { transform: translate3d(0, -6px, 0) scale(1.015); }
+body.qp .qp-img-svc-bg { transition: transform .9s cubic-bezier(.22, 1, .36, 1); will-change: transform; }
+body.qp .qp-img-svc-card.svc-fade-out { opacity: 0; transform: scale(.92); pointer-events: none; transition: opacity .32s ease, transform .34s cubic-bezier(.4, 0, .2, 1); }
+body.qp .qp-img-svc-grid.service-selected .qp-img-svc-card.selected { animation: none; }
+body.qp .qp-img-svc-grid.service-selected .qp-img-svc-card.selected:hover { transform: none; }
+/* Add-ons slide up after a service is picked */
+@keyframes qp-panel-in { from { opacity: 0; transform: translate3d(0, 30px, 0); } to { opacity: 1; transform: none; } }
+body.qp .qp-addons-panel.qp-panel-in { animation: qp-panel-in .65s cubic-bezier(.22, 1, .36, 1) .12s backwards; }
+body.qp .qp-addons-panel.qp-panel-in .qp-addon-card { animation: qp-svc-in .55s cubic-bezier(.22, 1, .36, 1) backwards; }
+body.qp .qp-addons-panel.qp-panel-in .qp-addon-card:nth-of-type(1) { animation-delay: .3s; }
+body.qp .qp-addons-panel.qp-panel-in .qp-addon-card:nth-of-type(2) { animation-delay: .38s; }
+body.qp .qp-addons-panel.qp-panel-in .qp-addon-card:nth-of-type(3) { animation-delay: .46s; }
+body.qp .qp-addons-panel.qp-panel-in .qp-addon-card:nth-of-type(4) { animation-delay: .54s; }
+@media (prefers-reduced-motion: reduce) {
+  body.qp .qp-img-svc-card, body.qp .qp-addons-panel.qp-panel-in, body.qp .qp-addons-panel.qp-panel-in .qp-addon-card { animation: none !important; }
+}
+
+/* Quote form: labelled Exit pill (icon-only on phones) */
+.qp-close-label { display: none; }
+@media (min-width: 681px) {
+  body.qp .qp-brand { padding-right: 128px; }
+  body.qp .qp-close-float { width: auto; height: 42px; padding: 0 16px 0 13px; gap: 7px; border-radius: 999px; font-family: var(--sx-font); font-size: .88rem; font-weight: 600; }
+  body.qp .qp-close-float:hover { transform: none; }
+  body.qp .qp-close-float:hover svg { transform: rotate(90deg); }
+  body.qp .qp-close-float svg { transition: transform .35s var(--sx-ease); }
+  .qp-close-label { display: inline; }
+}
+
+/* Dropdowns: see-through navy glass that matches the floating header */
+.sx-nav-menu {
+  background:
+    radial-gradient(240px 160px at 100% 0%, rgba(248, 106, 5, .16), transparent 70%),
+    linear-gradient(165deg, rgba(10, 33, 82, .9) 0%, rgba(4, 20, 60, .86) 100%);
+  border: 1px solid rgba(255, 255, 255, .16);
+  box-shadow: 0 30px 60px -24px rgba(2, 12, 38, .75), inset 0 1px 0 rgba(255, 255, 255, .12);
+  backdrop-filter: blur(18px) saturate(150%);
+  -webkit-backdrop-filter: blur(18px) saturate(150%);
+}
+.sx-nav-menu a { color: rgba(255, 255, 255, .88); }
+.sx-nav-menu a:hover { background: rgba(255, 255, 255, .1); color: #fff; }
+.sx-nav-menu a[aria-current="page"] { background: rgba(4, 99, 238, .45); color: #fff; }
+
+/* ==========================================================
+   PAGE TRANSITIONS — content flows up and in (no curtain)
+   ========================================================== */
+html.sx-js::after { display: none !important; }
+@keyframes sx-page-in { from { opacity: 0; transform: translate3d(0, 28px, 0); } to { opacity: 1; transform: none; } }
+@keyframes sx-page-out { to { opacity: 0; transform: translate3d(0, -18px, 0); } }
+html.sx-js body > :is(main, section, footer, header.page-header, header.blog-post-header) {
+  animation: sx-page-in .75s cubic-bezier(.22, 1, .36, 1) both;
+}
+html.sx-js body > :is(section, footer) { animation-delay: .06s; }
+html.sx-js.sx-leaving body > :is(main, section, footer, header.page-header, header.blog-post-header) {
+  animation: sx-page-out .3s cubic-bezier(.4, 0, 1, 1) both;
+}
+html.sx-js.sx-leaving .sx-nav-inner { opacity: .6; transition: opacity .3s; }
+@media (prefers-reduced-motion: reduce) {
+  html.sx-js body > :is(main, section, footer, header.page-header, header.blog-post-header) { animation: none !important; }
+}
+
+/* Quote plan perks: clear blue checks on every card, selected or not */
+body.qp .qp-plan-features { margin: 16px auto 0; }
+body.qp .qp-plan-card .qp-plan-features .feat-yes,
+body.qp .qp-plan-card.selected .qp-plan-features .feat-yes { color: var(--sx-navy); font-weight: 500; }
+body.qp .qp-plan-card .qp-plan-features .feat-yes::before,
+body.qp .qp-plan-card.selected .qp-plan-features .feat-yes::before {
+  background-color: var(--sx-blue-100);
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20 6L9 17l-5-5' stroke='%230463EE' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+body.qp .qp-plan-card.selected .qp-plan-features .feat-no { color: var(--sx-muted); }

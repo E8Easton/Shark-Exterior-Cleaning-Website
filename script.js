@@ -974,25 +974,42 @@ function initPageWizard() {
  */
 function triggerServiceSelect(card) {
   const grid = document.getElementById('svc-img-grid');
-  if (!grid) return;
+  if (!grid || grid.dataset.busy) return;
+  grid.dataset.busy = '1';
 
   const allCards = Array.from(grid.querySelectorAll('.qp-img-svc-card'));
+  const others = allCards.filter(c => c !== card);
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  // Phase 1 — fade out the losers
-  allCards.forEach(c => {
-    if (c !== card) c.classList.add('svc-fade-out');
-  });
+  // Phase 1 — the other cards gently fade and shrink away
+  others.forEach(c => c.classList.add('svc-fade-out'));
 
-  // Phase 2 — after fade completes, collapse grid to single selected card
   setTimeout(() => {
-    allCards.forEach(c => {
-      if (c !== card) c.style.display = 'none';
-    });
+    // Phase 2 — FLIP: remember where the chosen card is, collapse the grid,
+    // then glide the card from its old spot into its new centred position.
+    const first = card.getBoundingClientRect();
+    others.forEach(c => { c.style.display = 'none'; });
     card.classList.add('selected');
-    card.classList.remove('svc-fade-out');
     grid.classList.add('service-selected');
+    const last = card.getBoundingClientRect();
 
-    // Inject "Change service" button into selected card
+    if (!reduce) {
+      const dx = first.left - last.left;
+      const dy = first.top - last.top;
+      const sx = first.width / last.width;
+      const sy = first.height / last.height;
+      card.style.transition = 'none';
+      card.style.transformOrigin = 'top left';
+      card.style.transform = `translate(${dx}px, ${dy}px) scale(${sx}, ${sy})`;
+      card.getBoundingClientRect(); // commit the starting position
+      requestAnimationFrame(() => {
+        card.style.transition = 'transform .6s cubic-bezier(.22, 1, .36, 1)';
+        card.style.transform = '';
+      });
+      setTimeout(() => { card.style.transition = ''; card.style.transformOrigin = ''; }, 650);
+    }
+
+    // "Change service" pill on the selected card
     if (!card.querySelector('.qp-svc-change-btn')) {
       const changeBtn = document.createElement('button');
       changeBtn.type = 'button';
@@ -1002,19 +1019,31 @@ function triggerServiceSelect(card) {
         e.preventDefault();
         e.stopPropagation();
         resetServiceGrid();
-        window.scrollTo({ top: document.getElementById('wizard-step-4')?.offsetTop - 80 || 0, behavior: 'smooth' });
+        sxScrollTo(document.getElementById('wizard-step-4'), -80);
       });
       card.appendChild(changeBtn);
     }
 
     showAddOns(card.dataset.service);
+    const panel = document.getElementById('addons-panel');
+    if (panel && !panel.hidden) {
+      panel.classList.remove('qp-panel-in');
+      void panel.offsetWidth;
+      panel.classList.add('qp-panel-in');
+    }
+    delete grid.dataset.busy;
 
-    // Scroll the Next button into view so users don't have to hunt for it
-    setTimeout(() => {
-      const nav = document.getElementById('qp-nav');
-      if (nav) nav.scrollIntoView({ behavior: 'smooth', block: 'end' });
-    }, 480); // slight delay so add-ons have finished sliding in
-  }, 450); // match .svc-fade-out transition duration (0.42s)
+    // Bring the add-ons into view once everything has settled
+    setTimeout(() => sxScrollTo(panel && !panel.hidden ? panel : document.getElementById('qp-nav'), -110), 650);
+  }, reduce ? 0 : 340);
+}
+
+/** Smooth scroll that plays nicely with the site's Lenis smooth scrolling. */
+function sxScrollTo(el, offset) {
+  if (!el) return;
+  const y = el.getBoundingClientRect().top + window.scrollY + (offset || 0);
+  if (window.__sxLenis) window.__sxLenis.scrollTo(y, { duration: 1.1 });
+  else window.scrollTo({ top: y, behavior: 'smooth' });
 }
 
 /**
@@ -1023,12 +1052,19 @@ function triggerServiceSelect(card) {
 function resetServiceGrid() {
   const grid = document.getElementById('svc-img-grid');
   if (!grid) return;
+  delete grid.dataset.busy;
 
-  grid.querySelectorAll('.qp-img-svc-card').forEach(c => {
+  grid.querySelectorAll('.qp-img-svc-card').forEach((c, i) => {
     c.style.display = '';
+    c.style.transform = '';
     c.classList.remove('selected', 'svc-fade-out');
     const btn = c.querySelector('.qp-svc-change-btn');
     if (btn) btn.remove();
+    // Cards float back in one after another
+    c.classList.remove('svc-return');
+    void c.offsetWidth;
+    c.style.setProperty('--i', i);
+    c.classList.add('svc-return');
   });
   grid.classList.remove('service-selected');
 
