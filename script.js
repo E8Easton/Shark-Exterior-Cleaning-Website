@@ -49,6 +49,9 @@ const SHARK_PRICING = {
    ---------------------------------------------------------- */
 function sxTrack(name, params) {
   try { if (typeof gtag === 'function') gtag('event', name, params || {}); } catch (e) { /* never break the page */ }
+  // Same event as a plain dataLayer entry so Google Tag Manager triggers
+  // (Custom Event: generate_lead, click_to_call, quote_step) can use it.
+  try { (window.dataLayer = window.dataLayer || []).push(Object.assign({ event: 'sx_' + name }, params || {})); } catch (e) { /* ignore */ }
 }
 
 // Remember where a visitor came from (ad campaign tags) so it reaches the quote email.
