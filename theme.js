@@ -19,6 +19,7 @@
     initStepper();
     initTeamGallery();
     initBlogFilter();
+    initJourney();
     initChat();
     initPageTransitions();
     initCallTracking();
@@ -125,6 +126,30 @@
       });
     }, { threshold: 0, rootMargin: '0px 0px -60px 0px' });
     items.forEach((el) => io.observe(el));
+  }
+
+  /* ---------- Process timeline: line fills and steps light up as you scroll ---------- */
+  function initJourney() {
+    document.querySelectorAll('[data-journey]').forEach((root) => {
+      const fill = root.querySelector('[data-journey-fill]');
+      const steps = [...root.querySelectorAll('.sx-journey-step')];
+      const vertical = () => window.matchMedia('(max-width: 900px)').matches;
+      let ticking = false;
+      const update = () => {
+        ticking = false;
+        const r = root.getBoundingClientRect();
+        const vh = window.innerHeight;
+        // 0 when the timeline enters the lower third, 1 when its end reaches the middle
+        const p = Math.min(1, Math.max(0, (vh * 0.75 - r.top) / (r.height + vh * 0.25)));
+        const amount = reduceMotion ? 1 : p;
+        fill.style.transform = vertical() ? `scaleY(${amount})` : `scaleX(${amount})`;
+        steps.forEach((st, i) => st.classList.toggle('is-lit', amount >= (i / Math.max(1, steps.length - 1)) - 0.02));
+      };
+      const onScroll = () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } };
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll);
+      update();
+    });
   }
 
   /* ---------- Blog: filter guides by topic ---------- */
