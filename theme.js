@@ -10,7 +10,6 @@
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   document.addEventListener('DOMContentLoaded', () => {
-    initSmoothScroll();
     initHeader();
     initDrawer();
     initDropdown();
@@ -319,7 +318,7 @@
     if (!el) return false;
     const y = el.getBoundingClientRect().top + window.scrollY - sxHeaderOffset();
     if (window.__sxLenis) window.__sxLenis.scrollTo(y, { immediate: !!immediate, duration: 1.1 });
-    else window.scrollTo({ top: y, behavior: immediate ? 'auto' : 'smooth' });
+    else window.scrollTo({ top: y, behavior: immediate ? 'instant' : 'smooth' });
     return true;
   }
   window.sxScrollToHash = sxScrollToHash;
