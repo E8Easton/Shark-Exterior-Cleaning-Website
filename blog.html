@@ -164,9 +164,58 @@
   <!-- BLOG LISTING -->
   <section class="blog-section" style="background: var(--leaf-light);">
     <div class="container">
-      <div class="blog-grid" style="margin-top: 0; padding-top: 56px;">
+      <div class="sx-picks-wrap">
+        <div class="sx-picks-head sx-r">
+          <span class="sx-eyebrow">Start Here</span>
+          <h2 class="sx-title sx-title--left">Our Top Picks</h2>
+        </div>
+        <div class="sx-picks">
+          <a class="sx-pick sx-pick--lead sx-r" style="--d:0ms" href="blog-window-cleaning-frequency-nebraska.html">
+            <img src="images/svc-exterior.jpg" alt="" loading="eager" width="1200" height="800">
+            <span class="sx-pick-shade" aria-hidden="true"></span>
+            <span class="sx-pick-badge">&#9733; Top Pick</span>
+            <span class="sx-pick-body">
+              <span class="sx-pick-cat">Window Cleaning</span>
+              <span class="sx-pick-title">How Often Should You Clean Your Windows in Lincoln and Kearney, Nebraska?</span>
+              <span class="sx-pick-exc">Nebraska's harsh seasons — from pollen-heavy springs to dusty summers — make windows dirty faster than most homeowners expect. Find out the right schedule for your home.</span>
+              <span class="sx-pick-go">Read the guide <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></span>
+            </span>
+          </a>
+          <a class="sx-pick sx-r" style="--d:100ms" href="blog-soft-washing-vs-pressure-washing-nebraska.html">
+            <img src="images/svc-softwash.jpg" alt="" loading="lazy" width="1200" height="800">
+            <span class="sx-pick-shade" aria-hidden="true"></span>
+            <span class="sx-pick-badge">&#9733; Top Pick</span>
+            <span class="sx-pick-body">
+              <span class="sx-pick-cat">Exterior Cleaning</span>
+              <span class="sx-pick-title">Soft Washing vs. Pressure Washing: Which Does Your Nebraska Home Need?</span>
+              
+              <span class="sx-pick-go">Read the guide <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></span>
+            </span>
+          </a>
+          <a class="sx-pick sx-r" style="--d:200ms" href="blog-gutter-cleaning-signs-nebraska.html">
+            <img src="images/svc-gutter.jpg" alt="" loading="lazy" width="1200" height="800">
+            <span class="sx-pick-shade" aria-hidden="true"></span>
+            <span class="sx-pick-badge">&#9733; Top Pick</span>
+            <span class="sx-pick-body">
+              <span class="sx-pick-cat">Gutter Cleaning</span>
+              <span class="sx-pick-title">5 Signs Your Gutters Need Cleaning Before Winter in Nebraska</span>
+              
+              <span class="sx-pick-go">Read the guide <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></span>
+            </span>
+          </a>
+        </div>
+      </div>
+      <div class="sx-blog-filter sx-r" role="toolbar" aria-label="Filter guides by topic">
+        <button type="button" class="sx-chip is-active" data-filter="all" aria-pressed="true">All Guides</button>
+        <button type="button" class="sx-chip" data-filter="windows" aria-pressed="false">Window Cleaning</button>
+        <button type="button" class="sx-chip" data-filter="exterior" aria-pressed="false">Soft &amp; Power Washing</button>
+        <button type="button" class="sx-chip" data-filter="gutters" aria-pressed="false">Gutters</button>
+        <button type="button" class="sx-chip" data-filter="solar" aria-pressed="false">Solar</button>
+        <button type="button" class="sx-chip" data-filter="seasonal" aria-pressed="false">Holiday Lighting</button>
+      </div>
+      <div class="blog-grid" style="margin-top: 0; padding-top: 28px;">
 
-        <a href="blog-window-cleaning-frequency-nebraska.html" class="blog-card reveal">
+        <a href="blog-window-cleaning-frequency-nebraska.html" class="blog-card reveal" data-cat="windows">
           <img src="images/svc-exterior.jpg" alt="Window cleaning frequency Lincoln and Kearney Nebraska" class="blog-card-image" loading="lazy" width="1200" height="800">
           <div class="blog-card-body">
             <span class="blog-card-category">Window Cleaning</span>
@@ -182,7 +231,7 @@
           </div>
         </a>
 
-        <a href="blog-soft-washing-vs-pressure-washing-nebraska.html" class="blog-card reveal">
+        <a href="blog-soft-washing-vs-pressure-washing-nebraska.html" class="blog-card reveal" data-cat="exterior">
           <img src="images/svc-softwash.jpg" alt="Soft washing vs pressure washing Nebraska" class="blog-card-image" loading="lazy" width="1200" height="800">
           <div class="blog-card-body">
             <span class="blog-card-category">Exterior Cleaning</span>
@@ -198,7 +247,7 @@
           </div>
         </a>
 
-        <a href="blog-christmas-light-installation-kearney-lincoln.html" class="blog-card reveal">
+        <a href="blog-christmas-light-installation-kearney-lincoln.html" class="blog-card reveal" data-cat="seasonal">
           <img src="images/svc-christmas.jpg" alt="Christmas light installation Lincoln and Kearney Nebraska" class="blog-card-image" loading="lazy" width="1200" height="800">
           <div class="blog-card-body">
             <span class="blog-card-category">Seasonal Services</span>
@@ -214,7 +263,7 @@
           </div>
         </a>
 
-        <a href="blog-gutter-cleaning-signs-nebraska.html" class="blog-card reveal">
+        <a href="blog-gutter-cleaning-signs-nebraska.html" class="blog-card reveal" data-cat="gutters">
           <img src="images/svc-gutter.jpg" alt="Gutter cleaning signs Nebraska" class="blog-card-image" loading="lazy" width="1400" height="1045">
           <div class="blog-card-body">
             <span class="blog-card-category">Gutter Cleaning</span>
@@ -230,7 +279,7 @@
           </div>
         </a>
 
-        <a href="blog-solar-panel-cleaning-nebraska.html" class="blog-card reveal">
+        <a href="blog-solar-panel-cleaning-nebraska.html" class="blog-card reveal" data-cat="solar">
           <img src="images/svc-solar.jpg" alt="Solar panel cleaning Nebraska" class="blog-card-image" loading="lazy" width="1400" height="1045">
           <div class="blog-card-body">
             <span class="blog-card-category">Solar Panel Cleaning</span>
@@ -246,7 +295,7 @@
           </div>
         </a>
 
-        <a href="blog-best-window-cleaner-lincoln-ne.html" class="blog-card reveal">
+        <a href="blog-best-window-cleaner-lincoln-ne.html" class="blog-card reveal" data-cat="windows">
           <img src="images/svc-exterior.jpg" alt="Best window cleaners Lincoln Nebraska" class="blog-card-image" loading="lazy" width="1200" height="800">
           <div class="blog-card-body">
             <span class="blog-card-category">Window Cleaning</span>
@@ -262,7 +311,7 @@
           </div>
         </a>
 
-        <a href="blog-what-is-soft-washing-kearney-ne.html" class="blog-card reveal">
+        <a href="blog-what-is-soft-washing-kearney-ne.html" class="blog-card reveal" data-cat="exterior">
           <img src="images/svc-softwash.jpg" alt="What is soft washing Lincoln NE" class="blog-card-image" loading="lazy" width="1200" height="800">
           <div class="blog-card-body">
             <span class="blog-card-category">Soft Washing</span>
@@ -278,7 +327,7 @@
           </div>
         </a>
 
-        <a href="blog-driveway-pressure-washing-kearney-lincoln.html" class="blog-card reveal">
+        <a href="blog-driveway-pressure-washing-kearney-lincoln.html" class="blog-card reveal" data-cat="exterior">
           <img src="images/svc-powerwash.jpg" alt="Driveway pressure washing Lincoln and Kearney Nebraska" class="blog-card-image" loading="lazy" width="1200" height="800">
           <div class="blog-card-body">
             <span class="blog-card-category">Power Washing</span>
@@ -294,7 +343,7 @@
           </div>
         </a>
 
-        <a href="blog-gutter-cleaning-cost-kearney-lincoln.html" class="blog-card reveal">
+        <a href="blog-gutter-cleaning-cost-kearney-lincoln.html" class="blog-card reveal" data-cat="gutters">
           <img src="images/svc-gutter.jpg" alt="Gutter cleaning cost Lincoln and Kearney Nebraska" class="blog-card-image" loading="lazy" width="1400" height="1045">
           <div class="blog-card-body">
             <span class="blog-card-category">Gutter Cleaning</span>
@@ -310,7 +359,7 @@
           </div>
         </a>
 
-        <a href="blog-exterior-home-cleaning-kearney-lincoln.html" class="blog-card reveal">
+        <a href="blog-exterior-home-cleaning-kearney-lincoln.html" class="blog-card reveal" data-cat="exterior">
           <img src="images/new-service-2.jpg" alt="Exterior home cleaning Lincoln and Kearney Nebraska" class="blog-card-image" loading="lazy" width="1600" height="900">
           <div class="blog-card-body">
             <span class="blog-card-category">Exterior Cleaning</span>

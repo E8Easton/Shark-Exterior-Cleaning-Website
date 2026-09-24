@@ -608,6 +608,8 @@ function handleNext() {
     buildConfirmationSummary();
     submitQuoteNotification(); // send email + SMS to owner
     renderStep(7); // confirmation
+  } else if (currentStep === 4 && offerBundlePopup(() => renderStep(5))) {
+    // Bundle pop-up is open; it continues to the plan step when closed
   } else {
     renderStep(currentStep + 1);
   }
@@ -1155,6 +1157,93 @@ function showAddOns(serviceId) {
   syncBundle();
 
   panel.hidden = false;
+}
+
+/**
+ * "Add one more service & save" pop-up, shown once when leaving the
+ * services step if another bundle tier is within reach.
+ * Returns true when the pop-up was opened (it calls onDone to continue).
+ */
+let bundlePopupShown = false;
+function offerBundlePopup(onDone) {
+  if (bundlePopupShown) return false;
+  const mainSvc = document.querySelector('.service-radio-card.selected')?.dataset.service;
+  if (!mainSvc) return false;
+  const tiers = SHARK_PRICING.bundleTiers;
+  const count = 1 + wizardState.addOns.length;
+  const next = tiers.find(t => t.services > count);
+  const options = (SVC_ADDONS[mainSvc] || []).filter(id => SVC_INFO[id] && !wizardState.addOns.includes(id));
+  if (!next || !options.length) return false;
+  bundlePopupShown = true;
+
+  const picked = new Set();
+  const pop = document.createElement('div');
+  pop.className = 'qp-bundle-pop';
+  pop.setAttribute('role', 'dialog');
+  pop.setAttribute('aria-modal', 'true');
+  pop.setAttribute('aria-labelledby', 'qp-bundle-pop-title');
+  pop.innerHTML = `
+    <div class="qp-bundle-pop-card">
+      <button type="button" class="qp-bundle-pop-x" aria-label="Close">&times;</button>
+      <span class="qp-bundle-pop-badge">${next.percent}% off</span>
+      <h3 id="qp-bundle-pop-title">Add ${next.services - count === 1 ? 'one more service' : `${next.services - count} more services`}, save ${next.percent}%</h3>
+      <p class="qp-bundle-pop-sub">We're already coming out &mdash; add to the same visit and save on the <b>whole visit</b>.</p>
+      <div class="qp-bundle-pop-list">
+        ${options.map(id => `
+          <button type="button" class="qp-bundle-pop-opt" data-id="${id}" aria-pressed="false">
+            <span class="qp-bundle-pop-thumb" style="background-image:url('${SVC_INFO[id].img}')"></span>
+            <span class="qp-bundle-pop-text"><b>${SVC_INFO[id].name}</b><small>${SVC_INFO[id].desc || ''}</small></span>
+            <span class="qp-bundle-pop-add">Add</span>
+          </button>`).join('')}
+      </div>
+      <p class="qp-bundle-pop-status" aria-live="polite"></p>
+      <div class="qp-bundle-pop-actions">
+        <button type="button" class="qp-bundle-pop-skip">No thanks</button>
+        <button type="button" class="qp-bundle-pop-go" disabled>Add &amp; continue &rarr;</button>
+      </div>
+    </div>`;
+  document.body.appendChild(pop);
+  requestAnimationFrame(() => pop.classList.add('is-open'));
+
+  const status = pop.querySelector('.qp-bundle-pop-status');
+  const go = pop.querySelector('.qp-bundle-pop-go');
+  const refresh = () => {
+    const pct = bundlePercent(count + picked.size);
+    go.disabled = picked.size === 0;
+    status.innerHTML = picked.size ? `You'll save <b>${pct}%</b> on your whole visit` : '';
+  };
+  const close = (cont) => {
+    pop.classList.remove('is-open');
+    document.removeEventListener('keydown', onKey);
+    setTimeout(() => pop.remove(), 300);
+    if (cont) onDone();
+  };
+  const onKey = (e) => { if (e.key === 'Escape') close(false); };
+  document.addEventListener('keydown', onKey);
+
+  pop.querySelectorAll('.qp-bundle-pop-opt').forEach(opt => opt.addEventListener('click', () => {
+    const id = opt.dataset.id;
+    if (picked.has(id)) picked.delete(id); else picked.add(id);
+    const on = picked.has(id);
+    opt.classList.toggle('selected', on);
+    opt.setAttribute('aria-pressed', String(on));
+    opt.querySelector('.qp-bundle-pop-add').textContent = on ? 'Added ✓' : 'Add';
+    refresh();
+  }));
+  pop.querySelector('.qp-bundle-pop-x').addEventListener('click', () => close(false));
+  pop.addEventListener('click', (e) => { if (e.target === pop) close(false); });
+  pop.querySelector('.qp-bundle-pop-skip').addEventListener('click', () => {
+    sxTrack('bundle_popup', { action: 'skip' });
+    close(true);
+  });
+  go.addEventListener('click', () => {
+    picked.forEach(id => { if (!wizardState.addOns.includes(id)) wizardState.addOns.push(id); });
+    sxTrack('bundle_popup', { action: 'add', added: picked.size });
+    showAddOns(mainSvc); // keep the add-on panel in sync if they come back
+    close(true);
+  });
+  setTimeout(() => pop.querySelector('.qp-bundle-pop-opt')?.focus(), 350);
+  return true;
 }
 
 /**

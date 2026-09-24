@@ -18,6 +18,7 @@
     initCarousels();
     initStepper();
     initTeamGallery();
+    initBlogFilter();
     initChat();
     initPageTransitions();
     initCallTracking();
@@ -126,6 +127,28 @@
     items.forEach((el) => io.observe(el));
   }
 
+  /* ---------- Blog: filter guides by topic ---------- */
+  function initBlogFilter() {
+    const bar = document.querySelector('.sx-blog-filter');
+    if (!bar) return;
+    const cards = [...document.querySelectorAll('.blog-grid .blog-card[data-cat]')];
+    bar.addEventListener('click', (e) => {
+      const chip = e.target.closest('[data-filter]');
+      if (!chip) return;
+      const f = chip.dataset.filter;
+      bar.querySelectorAll('[data-filter]').forEach((c) => {
+        const on = c === chip;
+        c.classList.toggle('is-active', on);
+        c.setAttribute('aria-pressed', String(on));
+      });
+      cards.forEach((card) => {
+        const show = f === 'all' || card.dataset.cat === f;
+        card.hidden = !show;
+        if (show) { card.classList.add('revealed'); card.classList.remove('sx-filter-in'); void card.offsetWidth; card.classList.add('sx-filter-in'); }
+      });
+    });
+  }
+
   /* ---------- Team photos: dots + slow crossfade when a member has several photos ---------- */
   function initTeamGallery() {
     document.querySelectorAll('[data-member-gallery]').forEach((box) => {
@@ -203,7 +226,7 @@
       let current = 0;
       let timer = null;
 
-      const show = (i) => {
+      let show = (i) => {
         current = (i + slides.length) % slides.length;
         slides.forEach((s, n) => {
           const on = n === current;
@@ -218,19 +241,39 @@
         if (fill) fill.style.width = (current / (slides.length - 1)) * 100 + '%';
       };
 
-      const start = () => { if (!reduceMotion && !timer) timer = setInterval(() => show(current + 1), 5000); };
-      const stop = () => { clearInterval(timer); timer = null; };
+      // Autoplay: moves to the next step every few seconds while on screen.
+      // A click pauses it; after a short idle it picks back up on its own.
+      const STEP_MS = 4500;
+      const IDLE_MS = 8000;
+      let visible = false;
+      let resumeTimer = null;
+      const start = () => {
+        if (timer || !visible) return;
+        root.classList.add('is-playing');
+        timer = setInterval(() => show(current + 1), STEP_MS);
+      };
+      const stop = () => { clearInterval(timer); timer = null; root.classList.remove('is-playing'); };
+      const restartBar = () => { root.classList.remove('is-ticking'); void root.offsetWidth; if (timer) root.classList.add('is-ticking'); };
+      const origShow = show;
+      show = (i) => { origShow(i); restartBar(); };
 
-      dots.forEach((d) => d.addEventListener('click', () => { show(Number(d.dataset.go)); stop(); start(); }));
-      root.addEventListener('mouseenter', stop);
-      root.addEventListener('mouseleave', start);
+      dots.forEach((d) => d.addEventListener('click', () => {
+        stop();
+        clearTimeout(resumeTimer);
+        show(Number(d.dataset.go));
+        resumeTimer = setTimeout(() => { start(); restartBar(); }, IDLE_MS);
+      }));
 
       // Only run the autoplay while the stepper is on screen
       if ('IntersectionObserver' in window) {
         new IntersectionObserver((entries) => {
-          entries.forEach((e) => (e.isIntersecting ? start() : stop()));
+          entries.forEach((e) => {
+            visible = e.isIntersecting;
+            if (visible) { start(); restartBar(); } else { stop(); clearTimeout(resumeTimer); }
+          });
         }, { threshold: 0.3 }).observe(root);
       } else {
+        visible = true;
         start();
       }
       show(0);
