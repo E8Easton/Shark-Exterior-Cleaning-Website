@@ -358,57 +358,42 @@
     <!-- STEP 5 — Plan -->
     <div class="qp-step" id="wizard-step-5" hidden>
       <h2 class="qp-title">Choose Your Plan</h2>
-      <p class="qp-subtitle">Lock in your savings for the year — we handle the scheduling. <a href="terms.html#memberships" target="_blank" rel="noopener">How memberships work</a></p>
+      <p class="qp-subtitle">Pick how often you&rsquo;d like us out. We&rsquo;ll send your quote first and walk you through the details. <a href="terms.html#memberships" target="_blank" rel="noopener">How memberships work</a></p>
       <div class="qp-plan-grid">
         <label class="qp-plan-card plan-card" data-plan="monthly" data-for="commercial">
           <input type="radio" name="plan" value="monthly">
           <div class="qp-plan-badge">&nbsp;</div>
           <div class="qp-plan-name">Monthly</div>
-          <div class="qp-plan-savings"><small>Save</small> $1,800<span>/yr</span></div>
-          <div class="qp-plan-sub">$150 off each of 12 cleanings</div>
-          <div class="qp-plan-example" data-example></div>
-          <p class="qp-plan-desc">Always clean — ideal for storefronts and offices.</p>
-          <ul class="qp-plan-features"><li class="feat-yes">FREE Shark RainBlock Tech</li><li class="feat-yes">FREE 7 Day Rain Guarantee</li><li class="feat-yes">FREE Hard Water Removal</li></ul>
+          <div class="qp-plan-off"><b>$150</b><span>off every<br>cleaning</span></div>
+          <div class="qp-plan-sub">12 cleanings a year</div>
         </label>
         <label class="qp-plan-card plan-card" data-plan="triannual" data-for="residential">
           <input type="radio" name="plan" value="triannual">
           <div class="qp-plan-badge">&nbsp;</div>
           <div class="qp-plan-name">Tri-Annual</div>
-          <div class="qp-plan-savings"><small>Save</small> $225<span>/yr</span></div>
-          <div class="qp-plan-sub">$75 off each of 3 cleanings</div>
-          <div class="qp-plan-example" data-example></div>
-          <p class="qp-plan-desc">Spring, summer &amp; fall — clean all season.</p>
-          <ul class="qp-plan-features"><li class="feat-yes">FREE Shark RainBlock Tech</li><li class="feat-yes">FREE 7 Day Rain Guarantee</li><li class="feat-no">Hard Water Removal</li></ul>
+          <div class="qp-plan-off"><b>$75</b><span>off every<br>cleaning</span></div>
+          <div class="qp-plan-sub">3 cleanings a year</div>
         </label>
         <label class="qp-plan-card plan-card qp-plan-card--featured plan-card--featured" data-plan="quarterly" data-for="residential commercial">
           <input type="radio" name="plan" value="quarterly">
           <div class="qp-plan-badge">Most Popular</div>
           <div class="qp-plan-name">Quarterly</div>
-          <div class="qp-plan-savings"><small>Save</small> $400<span>/yr</span></div>
-          <div class="qp-plan-sub">$100 off each of 4 cleanings</div>
-          <div class="qp-plan-example" data-example></div>
-          <p class="qp-plan-desc">The perfect balance of value and care every season.</p>
-          <ul class="qp-plan-features"><li class="feat-yes">FREE Shark RainBlock Tech</li><li class="feat-yes">FREE 7 Day Rain Guarantee</li><li class="feat-yes">FREE Hard Water Removal</li></ul>
+          <div class="qp-plan-off"><b>$100</b><span>off every<br>cleaning</span></div>
+          <div class="qp-plan-sub">4 cleanings a year</div>
         </label>
         <label class="qp-plan-card plan-card" data-plan="triannual" data-for="commercial">
           <input type="radio" name="plan" value="triannual">
           <div class="qp-plan-badge">&nbsp;</div>
           <div class="qp-plan-name">Tri-Annual</div>
-          <div class="qp-plan-savings"><small>Save</small> $225<span>/yr</span></div>
-          <div class="qp-plan-sub">$75 off each of 3 cleanings</div>
-          <div class="qp-plan-example" data-example></div>
-          <p class="qp-plan-desc">Spring, summer &amp; fall — clean all season.</p>
-          <ul class="qp-plan-features"><li class="feat-yes">FREE Shark RainBlock Tech</li><li class="feat-yes">FREE 7 Day Rain Guarantee</li><li class="feat-no">Hard Water Removal</li></ul>
+          <div class="qp-plan-off"><b>$75</b><span>off every<br>cleaning</span></div>
+          <div class="qp-plan-sub">3 cleanings a year</div>
         </label>
         <label class="qp-plan-card plan-card" data-plan="biannual" data-for="residential">
           <input type="radio" name="plan" value="biannual">
           <div class="qp-plan-badge">&nbsp;</div>
           <div class="qp-plan-name">Bi-Annual</div>
-          <div class="qp-plan-savings"><small>Save</small> $100<span>/yr</span></div>
-          <div class="qp-plan-sub">$50 off each of 2 cleanings</div>
-          <div class="qp-plan-example" data-example></div>
-          <p class="qp-plan-desc">Spring &amp; fall deep cleans — the seasonal refresh.</p>
-          <ul class="qp-plan-features"><li class="feat-no">Shark RainBlock Tech</li><li class="feat-no">7 Day Rain Guarantee</li><li class="feat-no">Hard Water Removal</li></ul>
+          <div class="qp-plan-off"><b>$50</b><span>off every<br>cleaning</span></div>
+          <div class="qp-plan-sub">2 cleanings a year</div>
         </label>
         <label class="qp-plan-card plan-card qp-plan-card--custom" data-plan="custom" data-for="residential commercial">
           <input type="radio" name="plan" value="custom">
@@ -453,6 +438,7 @@
     <!-- INLINE NAV — appears right below active step -->
     <div class="qp-nav" id="qp-nav">
       <button class="qp-back-btn" id="wizard-back" style="display:none;">← Back</button>
+      <span class="qp-savings-chip" id="qp-savings-chip" aria-live="polite" hidden></span>
       <button class="qp-next-btn" id="wizard-next">Next →</button>
     </div>
 

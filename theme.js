@@ -79,23 +79,29 @@
 
   /* ---------- Services dropdown: click / keyboard support ---------- */
   function initDropdown() {
-    document.querySelectorAll('.sx-nav-drop').forEach((drop) => {
+    const drops = [...document.querySelectorAll('.sx-nav-drop')];
+    const close = (drop) => {
+      drop.classList.remove('is-open');
+      drop.querySelector('.sx-nav-drop-btn')?.setAttribute('aria-expanded', 'false');
+    };
+    drops.forEach((drop) => {
       const btn = drop.querySelector('.sx-nav-drop-btn');
       if (!btn) return;
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
         const open = !drop.classList.contains('is-open');
+        drops.forEach((d) => { if (d !== drop) close(d); });
         drop.classList.toggle('is-open', open);
         btn.setAttribute('aria-expanded', String(open));
       });
-      document.addEventListener('click', () => {
-        drop.classList.remove('is-open');
-        btn.setAttribute('aria-expanded', 'false');
-      });
+      // Only one menu at a time: hovering a menu closes the others, leaving it closes it
+      drop.addEventListener('mouseenter', () => drops.forEach((d) => { if (d !== drop) close(d); }));
+      drop.addEventListener('mouseleave', () => close(drop));
       drop.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') { drop.classList.remove('is-open'); btn.focus(); }
+        if (e.key === 'Escape') { close(drop); btn.focus(); }
       });
     });
+    document.addEventListener('click', () => drops.forEach(close));
   }
 
   /* ---------- Reveal on scroll (plays once) ---------- */
