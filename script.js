@@ -417,6 +417,9 @@ const wizardState = {
   addOns: [],           // add-on service IDs selected in step 4
 };
 
+// Services that memberships apply to (window-cleaning side)
+const WINDOW_SERVICES = ['exterior-windows', 'interior-windows', 'screen-cleaning', 'track-detailing'];
+
 // Add-on service map: primary service → related add-on service IDs
 const SVC_ADDONS = {
   'exterior-windows':   ['interior-windows', 'screen-cleaning', 'track-detailing', 'gutters'],
@@ -1203,6 +1206,35 @@ function preparePlanStep() {
     const fmt = n => '$' + n.toLocaleString('en-US');
     box.innerHTML = `<span>${plan.visits} cleanings at ${fmt(ex)}</span><s>${fmt(regular)}</s><b>${fmt(regular - planSavings(card.dataset.plan))}</b><small>Example — your price depends on your home</small>`;
   });
+
+  // Memberships are for window cleaning (and commercial). A home booking only
+  // non-window services (pressure washing, gutters, lights...) gets a one-time quote.
+  const step5 = document.getElementById('wizard-step-5');
+  const mainSvc = document.querySelector('.service-radio-card.selected')?.dataset.service;
+  const picked = [mainSvc, ...wizardState.addOns];
+  const oneTimeOnly = property === 'residential' && !!mainSvc && !picked.some(id => WINDOW_SERVICES.includes(id));
+  const title = step5.querySelector('.qp-title');
+  const sub = step5.querySelector('.qp-subtitle');
+  const customCard = step5.querySelector('.plan-card[data-plan="custom"]');
+  const customLabel = customCard?.querySelector('.qp-plan-custom-label');
+  const customPill = customCard?.querySelector('.qp-plan-custom-pill');
+  [title, sub, customLabel, customPill].forEach(el => { if (el && el.dataset.orig == null) el.dataset.orig = el.innerHTML; });
+  step5.classList.toggle('qp-plan--onetime', oneTimeOnly);
+  if (oneTimeOnly) {
+    const svcName = SVC_INFO[mainSvc]?.name || 'This service';
+    const lights = mainSvc === 'christmas-lights';
+    cards.forEach(card => { if (card.dataset.plan !== 'custom') { card.hidden = true; card.classList.remove('selected'); const rb = card.querySelector('input'); if (rb) rb.checked = false; } });
+    title.textContent = lights ? 'Your Holiday Lighting Quote' : 'One-Time Cleaning';
+    sub.innerHTML = lights
+      ? 'We design, install, take down and store your lights &mdash; every display is quoted per project.'
+      : `${svcName} is booked one visit at a time &mdash; no membership needed. Add window cleaning to your visit to unlock our memberships.`;
+    customLabel.textContent = lights ? 'Holiday lighting — install, takedown & storage' : `${svcName} — single visit`;
+    customPill.textContent = lights ? 'Project quote' : 'One-time quote';
+    if (!customCard.classList.contains('selected')) customCard.click();
+    wizardState.preselectedPlan = null;
+  } else {
+    [title, sub, customLabel, customPill].forEach(el => { if (el) el.innerHTML = el.dataset.orig; });
+  }
 
   const customDesc = document.querySelector('#wizard-step-5 [data-custom-desc]');
   if (customDesc) {
