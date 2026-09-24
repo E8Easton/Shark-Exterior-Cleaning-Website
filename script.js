@@ -878,19 +878,39 @@ function buildConfirmationSummary() {
   const zip = document.getElementById('prop-zip')?.value || '';
 
   const capitalize = s => s ? s.charAt(0).toUpperCase() + s.slice(1) : '';
-  const planLabels = Object.fromEntries(Object.entries(SHARK_PRICING.plans).map(([id, p]) => [id, `${p.name} — prepaid, ${p.visits} cleanings, save $${planSavings(id)}/yr`]));
-  planLabels.custom = 'Custom / One-Time Quote';
+  const esc = v => String(v).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const planLabels = Object.fromEntries(Object.entries(SHARK_PRICING.plans).map(([id, p]) => [id, `${p.name} membership — ${p.visits} cleanings a year, $${p.offEach} off each`]));
+  const oneTime = document.getElementById('wizard-step-5')?.classList.contains('qp-plan--onetime');
+  planLabels.custom = oneTime ? 'One-time cleaning' : 'Custom / one-time quote';
   const bundlePct = bundlePercent(services.length);
 
-  summaryEl.innerHTML = `
-    ${location ? `<strong>Location:</strong> ${location}<br>` : ''}
-    ${property ? `<strong>Property:</strong> ${capitalize(property)}<br>` : ''}
-    ${services.length ? `<strong>Services:</strong> ${services.join(', ')}<br>` : ''}
-    ${bundlePct ? `<strong>Bundle savings:</strong> ${bundlePct}% off (${services.length} services)<br>` : ''}
-    ${plan ? `<strong>Plan:</strong> ${planLabels[plan] || capitalize(plan)}<br>` : ''}
-    <strong>Address:</strong> ${street}, ${city} ${zip}<br>
-    <strong>Contact:</strong> ${firstName} ${lastName} · ${phone} · ${email}
-  `;
+  const ico = {
+    pin: '<path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/>',
+    home: '<path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>',
+    spark: '<path d="M12 2l2.4 7.2H22l-6 4.6 2.3 7.2L12 16.6 5.7 21l2.3-7.2-6-4.6h7.6z"/>',
+    tag: '<path d="M21.41 11.58l-9-9C12.05 2.22 11.55 2 11 2H4c-1.1 0-2 .9-2 2v7c0 .55.22 1.05.59 1.42l9 9c.36.36.86.58 1.41.58s1.05-.22 1.41-.59l7-7c.37-.36.59-.86.59-1.41s-.23-1.06-.59-1.42zM5.5 7C4.67 7 4 6.33 4 5.5S4.67 4 5.5 4 7 4.67 7 5.5 6.33 7 5.5 7z"/>',
+    cal: '<path d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V6a2 2 0 00-2-2zm0 16H5V10h14v10z"/>',
+    user: '<path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>',
+  };
+  const row = (icon, label, value) => value ? `
+    <div class="qp-done-row"><span class="qp-done-ico"><svg viewBox="0 0 24 24" aria-hidden="true">${ico[icon]}</svg></span>
+      <div><small>${label}</small><div>${value}</div></div></div>` : '';
+  const address = [street, [city, zip].filter(Boolean).join(' ')].filter(Boolean).join(', ');
+
+  summaryEl.innerHTML =
+    row('pin', 'Location', esc(location)) +
+    row('home', 'Property', esc(capitalize(property))) +
+    row('spark', 'Services', services.map(n => `<span class="qp-done-chip">${esc(n)}</span>`).join('')) +
+    row('tag', 'Bundle savings', bundlePct ? `<b class="qp-done-save">${bundlePct}% off</b> your whole visit (${services.length} services)` : '') +
+    row('cal', 'Plan', plan ? esc(planLabels[plan] || capitalize(plan)) : '') +
+    row('pin', 'Address', esc(address)) +
+    row('user', 'Contact', [firstName + ' ' + lastName, phone, email].filter(v => v.trim()).map(esc).join(' · '));
+
+  // Personal touch in the heading, and a pre-filled email subject
+  const title = document.getElementById('qp-done-title');
+  if (title) title.innerHTML = firstName ? `You&rsquo;re all set, ${esc(firstName)}!` : 'You&rsquo;re All Set!';
+  const mail = document.getElementById('qp-done-email');
+  if (mail) mail.href = 'mailto:dirtysharkexterior@gmail.com?subject=' + encodeURIComponent(`Quote request — ${firstName} ${lastName}`.trim());
 }
 
 

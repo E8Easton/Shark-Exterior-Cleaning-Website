@@ -22,6 +22,7 @@
     initJourney();
     initChat();
     initPageTransitions();
+    initHashLanding();
     initCallTracking();
     document.querySelectorAll('[data-year]').forEach((el) => { el.textContent = new Date().getFullYear(); });
   });
@@ -31,10 +32,12 @@
      same pace. Touch screens keep their native scrolling. */
   function initSmoothScroll() {
     if (reduceMotion || typeof window.Lenis !== 'function' || window.__sxLenis) return;
+    // One steady feel on every page: a slightly quicker glide, same everywhere
     const lenis = new window.Lenis({
-      lerp: 0.1,
-      wheelMultiplier: 1,
+      lerp: 0.13,
+      wheelMultiplier: 1.15,
       smoothWheel: true,
+      syncTouch: false,
       prevent: (node) => !!(node.closest && node.closest('.sx-drawer, .sx-chat-panel, .wizard-overlay, [data-lenis-prevent]')),
     });
     window.__sxLenis = lenis;
@@ -268,7 +271,7 @@
 
       // Autoplay: moves to the next step every few seconds while on screen.
       // A click pauses it; after a short idle it picks back up on its own.
-      const STEP_MS = 4500;
+      const STEP_MS = 5500;
       const IDLE_MS = 8000;
       let visible = false;
       let resumeTimer = null;
@@ -305,6 +308,30 @@
     });
   }
 
+  /* ---------- Section links: land exactly on the section, below the header ---------- */
+  function sxHeaderOffset() {
+    const nav = document.querySelector('.sx-nav-inner, .qp-brand');
+    return nav ? nav.getBoundingClientRect().bottom + 16 : 90;
+  }
+  function sxScrollToHash(hash, immediate) {
+    let el = null;
+    try { el = document.querySelector(decodeURIComponent(hash)); } catch (err) { return false; }
+    if (!el) return false;
+    const y = el.getBoundingClientRect().top + window.scrollY - sxHeaderOffset();
+    if (window.__sxLenis) window.__sxLenis.scrollTo(y, { immediate: !!immediate, duration: 1.1 });
+    else window.scrollTo({ top: y, behavior: immediate ? 'auto' : 'smooth' });
+    return true;
+  }
+  window.sxScrollToHash = sxScrollToHash;
+  function initHashLanding() {
+    if (!location.hash || location.hash.length < 2) return;
+    if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+    const land = () => { window.__sxLenis?.resize?.(); sxScrollToHash(location.hash, true); };
+    // Once now, again after images/fonts settle so the section is exactly in place
+    requestAnimationFrame(land);
+    window.addEventListener('load', () => { land(); setTimeout(land, 350); }, { once: true });
+  }
+
   /* ---------- Page transitions ----------
      Drops the navy curtain before leaving for another page on this site. */
   function initPageTransitions() {
@@ -317,7 +344,15 @@
       if (!a || a.target === '_blank' || a.hasAttribute('download')) return;
       const url = new URL(a.getAttribute('href'), location.href);
       if (url.origin !== location.origin || !/\.html$|\/$/.test(url.pathname)) return;
-      if (url.pathname === location.pathname) return; // same-page anchors scroll normally
+      const samePage = (a, b) => a.replace(/\/index\.html$/, '/') === b.replace(/\/index\.html$/, '/');
+      if (samePage(url.pathname, location.pathname)) {
+        // Same page (e.g. "/" and "/index.html#reviews"): glide to the section, no reload
+        if (url.hash && sxScrollToHash(url.hash)) {
+          e.preventDefault();
+          history.pushState(null, '', url.hash);
+        }
+        return;
+      }
       e.preventDefault();
       root.classList.add('sx-leaving');
       setTimeout(() => { location.href = url.href; }, 300);
