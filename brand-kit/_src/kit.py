@@ -44,8 +44,8 @@ ICONS={'blue':(BLUE,'#FFFFFF','#FFFFFF'),'orange':(ORANGE,'#FFFFFF','#FFFFFF'),'
 for k,(bg,f,w) in ICONS.items():
     files[f'02-Icons/App-Icon/SVG/shark-app-icon-{k}.svg']=app(bg,f,w)
 # favicon (blue rounded square)
-files['04-Favicon/favicon.svg']=app(BLUE,'#FFFFFF','#FFFFFF',radius=190,frac=.80)
-files['04-Favicon/_apple.svg']=app(BLUE,'#FFFFFF','#FFFFFF',radius=0,frac=.68)
+files['04-Favicon/favicon.svg']=app(BLUE,'#FFFFFF','#FFFFFF')
+files['04-Favicon/_apple.svg']=app(BLUE,'#FFFFFF','#FFFFFF',radius=0,frac=.64)
 files['04-Favicon/_maskable.svg']=app(BLUE,'#FFFFFF','#FFFFFF',radius=0,frac=.52)
 for p,c in files.items():
     os.makedirs(os.path.dirname(f'{K}/{p}'),exist_ok=True); open(f'{K}/{p}','w').write(c)
