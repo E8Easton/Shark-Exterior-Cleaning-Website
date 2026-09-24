@@ -1,0 +1,24 @@
+SHARK EXTERIOR — PRINT FILES
+============================
+Upload the PDF from "PDF-Print-Ready" to your printer (Vistaprint, GotPrint, a local shop, etc.).
+Every PDF includes a 0.125 in bleed on all sides, and all text stays inside the safe zone.
+"PNG-Preview" images are for viewing and sharing, not for printing.
+
+ITEM                          TRIM SIZE      FILE(S)
+Business card (front)         3.5 x 2 in     business-card-front.pdf
+Business card (back)          3.5 x 2 in     business-card-back-easton.pdf  /  business-card-back-team.pdf (no name)
+Flyer                         8.5 x 11 in    flyer-8.5x11.pdf
+Door hanger                   4.25 x 11 in   door-hanger-4.25x11.pdf   (top 1.9 in kept clear for the hole; printer applies die cut)
+Postcard (front / back)       9 x 6 in       postcard-6x9-front.pdf / postcard-6x9-back.pdf
+Yard sign                     24 x 18 in     yard-sign-24x18.pdf  (general) / yard-sign-24x18-job.pdf ("another home" job-site sign)
+Vinyl banner                  6 x 3 ft       banner-6x3ft.pdf  (edges kept clear for grommets/hem)
+Car door magnet               24 x 12 in     car-magnet-24x12.pdf  (order 2, one per door)
+Email signature               600 x 150 px   PNG-Preview/email-signature.png
+
+QR CODES
+Every QR code opens sharkexteriorcleaning.com/quote.html with a tracking tag
+(utm_source = business_card, flyer, door_hanger, postcard), so Google Analytics shows which piece brought in each lead.
+
+SUGGESTED STOCK
+Business cards: 16 pt matte or soft-touch · Flyers: 100 lb gloss text · Door hangers & postcards: 14 pt gloss/UV
+Yard signs: 4 mm corrugated plastic, printed double-sided with H-stakes · Banner: 13 oz vinyl with hem and grommets
