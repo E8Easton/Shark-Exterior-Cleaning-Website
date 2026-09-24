@@ -543,6 +543,7 @@ function openQuoteWizard(serviceId = null, planName = null) {
   wizardState.preselectedService = serviceId;
   wizardState.preselectedPlan = planName;
   wizardState.addOns = [];
+  if (typeof updateSavingsChip === 'function') setTimeout(updateSavingsChip, 0);
 
   // Clear all radio/checkbox card selections
   overlay.querySelectorAll('.location-card, .property-card, .plan-card').forEach(card => {
@@ -640,6 +641,7 @@ function renderStep(step) {
 
   const prevStep = wizardState.currentStep;
   wizardState.currentStep = step;
+  setTimeout(updateSavingsChip, 0);
   if (step !== prevStep || step === 1) sxTrack('quote_step', { step_number: step, form_mode: wizardState.pageMode ? 'page' : 'modal' });
 
   // When navigating back to step 4, reset service grid so user can re-pick
@@ -1029,6 +1031,7 @@ function resetServiceGrid() {
   const addonsPanel = document.getElementById('addons-panel');
   if (addonsPanel) addonsPanel.hidden = true;
   wizardState.addOns = [];
+  if (typeof updateSavingsChip === 'function') setTimeout(updateSavingsChip, 0);
 }
 
 /**
@@ -1093,6 +1096,14 @@ function showAddOns(serviceId) {
       : `Bundle unlocked — you're saving ${pct}% on your whole visit`;
     meter.querySelector('.qp-bundle-meter-fill').style.width = Math.min(1, (count - 1) / (lastNeeded - 1)) * 100 + '%';
     meter.classList.toggle('is-max', pct === maxPct);
+    cards.forEach(([cid, c]) => {
+      const on = wizardState.addOns.includes(cid);
+      const gain = bundlePercent(count + 1);
+      c.querySelector('[data-addon-hint]').textContent = on
+        ? `Added · ${pct}% off your visit`
+        : (gain > pct ? `Add & save ${gain}% on your visit` : `Add to the same visit`);
+    });
+    updateSavingsChip();
     meter.classList.toggle('is-bump', true);
     setTimeout(() => meter.classList.remove('is-bump'), 450);
   };
@@ -1116,14 +1127,14 @@ function showAddOns(serviceId) {
     card.setAttribute('role', 'button');
     card.setAttribute('aria-pressed', String(isActive));
     card.innerHTML = `
-      <div class="qp-addon-thumb" style="background-image:url('${info.img}')"></div>
+      <div class="qp-addon-thumb" style="background-image:url('${info.img}')">
+        <span class="qp-addon-tag">${featured ? 'Most Popular' : (ADDON_TAGS[id] || 'Add-on')}</span>
+        <span class="qp-addon-check">${checkSvg}</span>
+      </div>
       <div class="qp-addon-content">
-        <div class="qp-addon-text">
-          <span class="qp-addon-tag">${featured ? 'Most Popular' : (ADDON_TAGS[id] || 'Add-on')}</span>
-          <span class="qp-addon-name">${info.name}</span>
-          ${info.desc ? `<span class="qp-addon-desc">${info.desc}</span>` : ''}
-        </div>
-        <div class="qp-addon-check">${checkSvg}</div>
+        <span class="qp-addon-name">${info.name}</span>
+        ${info.desc ? `<span class="qp-addon-desc">${info.desc}</span>` : ''}
+        <span class="qp-addon-hint" data-addon-hint></span>
       </div>`;
 
     const toggle = () => { setAddon(id, card, !wizardState.addOns.includes(id)); syncBundle(); };
@@ -1141,6 +1152,29 @@ function showAddOns(serviceId) {
   syncBundle();
 
   panel.hidden = false;
+}
+
+/**
+ * Small "you're saving X%" chip beside Back / Next so the bundle
+ * discount stays visible while moving through the form.
+ */
+function updateSavingsChip() {
+  const chip = document.getElementById('qp-savings-chip');
+  if (!chip) return;
+  const hasService = !!document.querySelector('#svc-img-grid.service-selected');
+  const panel = document.getElementById('addons-panel');
+  if (!hasService || !panel || panel.hidden || wizardState.currentStep < 4 || wizardState.currentStep > 6) {
+    chip.hidden = true;
+    return;
+  }
+  const count = 1 + wizardState.addOns.length;
+  const pct = bundlePercent(count);
+  const next = SHARK_PRICING.bundleTiers.find(t => t.services > count);
+  chip.hidden = false;
+  chip.classList.toggle('is-saving', pct > 0);
+  chip.innerHTML = pct > 0
+    ? `<b>${pct}% off</b> your whole visit`
+    : `Add ${next.services - count} more service → <b>${next.percent}% off</b>`;
 }
 
 /**
