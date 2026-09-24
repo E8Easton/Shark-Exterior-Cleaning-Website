@@ -2280,8 +2280,10 @@ body.qp .qp-bundle-meter-track i:first-of-type { margin-left: -9px; }
 }
 .sx-member-role--blue { background: var(--sx-blue); box-shadow: 0 10px 24px -8px rgba(4, 99, 238, .8); }
 .sx-member-thumbs { position: absolute; z-index: 2; right: 16px; bottom: 16px; display: flex; gap: 8px; }
-.sx-member-thumbs button { width: 12px; height: 12px; padding: 0; border-radius: 50%; border: 2px solid #fff; background: transparent; cursor: pointer; transition: background-color .3s, transform .3s; }
-.sx-member-thumbs button[aria-current="true"] { background: #fff; transform: scale(1.2); }
+.sx-member-thumbs { gap: 2px; }
+.sx-member-thumbs button { display: grid; place-items: center; width: 26px; height: 26px; min-width: 0; min-height: 0; padding: 0; border: 0; border-radius: 50%; background: none; cursor: pointer; }
+.sx-member-thumbs button::before { content: ''; width: 12px; height: 12px; border-radius: 50%; border: 2px solid #fff; box-sizing: border-box; transition: background-color .3s, transform .3s; }
+.sx-member-thumbs button[aria-current="true"]::before { background: #fff; transform: scale(1.2); }
 .sx-member-body { padding: 28px 30px 32px; }
 .sx-member-body h3 { margin: 0; color: var(--sx-navy); font-size: 1.6rem; font-weight: 800; }
 .sx-member-title { margin: 4px 0 14px; color: var(--sx-blue); font-size: .9rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; }
