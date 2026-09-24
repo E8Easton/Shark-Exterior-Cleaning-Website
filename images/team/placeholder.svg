@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0A2152"/><stop offset="1" stop-color="#04143C"/></linearGradient>
+    <radialGradient id="o" cx=".85" cy=".1" r=".6"><stop offset="0" stop-color="#F86A05" stop-opacity=".35"/><stop offset="1" stop-color="#F86A05" stop-opacity="0"/></radialGradient>
+    <radialGradient id="b" cx=".1" cy=".95" r=".7"><stop offset="0" stop-color="#0463EE" stop-opacity=".45"/><stop offset="1" stop-color="#0463EE" stop-opacity="0"/></radialGradient>
+  </defs>
+  <rect width="800" height="1000" fill="url(#g)"/><rect width="800" height="1000" fill="url(#o)"/><rect width="800" height="1000" fill="url(#b)"/>
+  <circle cx="400" cy="400" r="130" fill="#fff" fill-opacity=".12"/>
+  <path d="M170 860c0-140 103-240 230-240s230 100 230 240" fill="#fff" fill-opacity=".12"/>
+  <text x="400" y="940" text-anchor="middle" font-family="Lexend, Arial, sans-serif" font-size="34" font-weight="600" letter-spacing="4" fill="#fff" fill-opacity=".55">PHOTO COMING SOON</text>
+</svg>

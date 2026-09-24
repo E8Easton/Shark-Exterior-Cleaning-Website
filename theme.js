@@ -17,6 +17,7 @@
     initReveal();
     initCarousels();
     initStepper();
+    initTeamGallery();
     initChat();
     initPageTransitions();
     initCallTracking();
@@ -117,6 +118,36 @@
       });
     }, { threshold: 0, rootMargin: '0px 0px -60px 0px' });
     items.forEach((el) => io.observe(el));
+  }
+
+  /* ---------- Team photos: dots + slow crossfade when a member has several photos ---------- */
+  function initTeamGallery() {
+    document.querySelectorAll('[data-member-gallery]').forEach((box) => {
+      const imgs = [...box.querySelectorAll('img')];
+      if (imgs.length < 2) return;
+      const dots = document.createElement('div');
+      dots.className = 'sx-member-thumbs';
+      let cur = 0;
+      let timer = null;
+      const show = (i) => {
+        cur = (i + imgs.length) % imgs.length;
+        imgs.forEach((img, j) => img.classList.toggle('is-active', j === cur));
+        [...dots.children].forEach((d, j) => d.setAttribute('aria-current', j === cur ? 'true' : 'false'));
+      };
+      imgs.forEach((img, i) => {
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.setAttribute('aria-label', `Show photo ${i + 1}`);
+        b.addEventListener('click', () => { show(i); stop(); });
+        dots.appendChild(b);
+      });
+      box.appendChild(dots);
+      const start = () => { if (!reduceMotion && !timer) timer = setInterval(() => show(cur + 1), 3200); };
+      const stop = () => { clearInterval(timer); timer = null; };
+      box.addEventListener('mouseenter', () => { show(cur + 1); start(); });
+      box.addEventListener('mouseleave', stop);
+      show(0);
+    });
   }
 
   /* ---------- Reviews carousel: arrows + gentle autoplay ---------- */
