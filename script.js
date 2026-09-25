@@ -646,6 +646,11 @@ function renderStep(step) {
 
   const prevStep = wizardState.currentStep;
   wizardState.currentStep = step;
+  // Quote page: slimmer header from the service step on, so each step fits on screen
+  if (wizardState.pageMode) {
+    document.body.classList.toggle('qp-compact', step >= 4);
+    for (let i = 1; i <= 7; i++) document.body.classList.toggle(`qp-at-${i}`, i === step);
+  }
   setTimeout(updateSavingsChip, 0);
   if (step !== prevStep || step === 1) sxTrack('quote_step', { step_number: step, form_mode: wizardState.pageMode ? 'page' : 'modal' });
 
@@ -906,6 +911,10 @@ function buildConfirmationSummary() {
     row('pin', 'Address', esc(address)) +
     row('user', 'Contact', [firstName + ' ' + lastName, phone, email].filter(v => v.trim()).map(esc).join(' · '));
 
+  // Phones: keep the summary folded so "what happens next" fits on screen
+  const card = summaryEl.closest('details');
+  if (card) card.open = !window.matchMedia('(max-width: 800px)').matches;
+
   // Personal touch in the heading, and a pre-filled email subject
   const title = document.getElementById('qp-done-title');
   if (title) title.innerHTML = firstName ? `You&rsquo;re all set, ${esc(firstName)}!` : 'You&rsquo;re All Set!';
@@ -1045,6 +1054,7 @@ function triggerServiceSelect(card) {
     }
 
     showAddOns(card.dataset.service);
+    document.getElementById('wizard-step-4')?.classList.add('is-picked');
     const panel = document.getElementById('addons-panel');
     if (panel && !panel.hidden) {
       panel.classList.remove('qp-panel-in');
@@ -1053,8 +1063,8 @@ function triggerServiceSelect(card) {
     }
     delete grid.dataset.busy;
 
-    // Bring the add-ons into view once everything has settled
-    setTimeout(() => sxScrollTo(panel && !panel.hidden ? panel : document.getElementById('qp-nav'), -110), 650);
+    // Everything now fits on one screen, so just make sure we're at the top
+    setTimeout(() => sxScrollTo(document.body, 0), 150);
   }, reduce ? 0 : 340);
 }
 
@@ -1087,6 +1097,7 @@ function resetServiceGrid() {
     c.classList.add('svc-return');
   });
   grid.classList.remove('service-selected');
+  document.getElementById('wizard-step-4')?.classList.remove('is-picked');
 
   // Hide add-ons panel and clear state
   const addonsPanel = document.getElementById('addons-panel');
@@ -1110,59 +1121,61 @@ function showAddOns(serviceId) {
   }
 
   gridEl.innerHTML = '';
-  const checkSvg = `<svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>`;
+  const checkSvg = `<svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>`;
+  const plusSvg = `<svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="3" stroke-linecap="round" fill="none"/></svg>`;
   const cards = [];
 
   const tiers = SHARK_PRICING.bundleTiers;
   const maxPct = tiers[tiers.length - 1].percent;
 
-  // Live savings meter — fills up as services are added to the visit
+  // Savings ladder — one rung per service count, lights up as services are added
   const meter = document.createElement('div');
-  meter.className = 'qp-bundle-meter';
+  meter.className = 'qp-ladder';
+  const rungs = [{ services: 1, percent: 0 }, ...tiers];
   meter.innerHTML = `
-    <div class="qp-bundle-meter-top">
-      <span class="qp-bundle-meter-label"></span>
-      <span class="qp-bundle-meter-pct"><b>0%</b> off</span>
+    <div class="qp-ladder-rungs">
+      ${rungs.map(t => `<div class="qp-ladder-rung" data-n="${t.services}"><b>${t.percent ? t.percent + '%' : '—'}</b><small>${t.services} service${t.services > 1 ? 's' : ''}</small></div>`).join('')}
     </div>
-    <div class="qp-bundle-meter-track">
-      <span class="qp-bundle-meter-fill"></span>
-      ${tiers.map(t => `<i style="left:${(t.services - 1) / (tiers[tiers.length - 1].services - 1) * 100}%"><em>${t.percent}%</em></i>`).join('')}
-    </div>`;
+    <p class="qp-ladder-msg" aria-live="polite"></p>`;
   gridEl.appendChild(meter);
+
+  const list = document.createElement('div');
+  list.className = 'qp-addon-list';
+  gridEl.appendChild(list);
 
   // One tap adds every suggested service to the same visit
   const bundle = document.createElement('button');
   bundle.type = 'button';
-  bundle.className = 'qp-addon-bundle';
+  bundle.className = 'qp-addon-bundle qp-combo';
   bundle.innerHTML = `
-    <span class="qp-addon-bundle-text">
-      <strong>Bundle everything &amp; save ${bundlePercent(1 + relatedIds.length)}%</strong>
-      <span>${relatedIds.map(id => SVC_INFO[id].name).join(' + ')}</span>
-    </span>
-    <span class="qp-addon-bundle-btn">Add all</span>`;
-  gridEl.appendChild(bundle);
+    <span class="qp-combo-thumbs" aria-hidden="true">${[serviceId, ...relatedIds].filter(id => SVC_INFO[id]).map(id => `<i style="background-image:url('${SVC_INFO[id].img}')"></i>`).join('')}</span>
+    <span class="qp-combo-text"><strong>The full clean</strong><small>All ${1 + relatedIds.length} services &middot; save ${bundlePercent(1 + relatedIds.length)}% on the whole visit</small></span>
+    <span class="qp-combo-btn">Add all</span>`;
 
   const syncBundle = () => {
     const all = relatedIds.every(id => wizardState.addOns.includes(id));
     bundle.classList.toggle('selected', all);
-    bundle.querySelector('.qp-addon-bundle-btn').textContent = all ? 'Added ✓' : 'Add all';
+    bundle.querySelector('.qp-combo-btn').textContent = all ? 'Added ✓' : 'Add all';
 
     const count = 1 + wizardState.addOns.length;
     const pct = bundlePercent(count);
     const next = tiers.find(t => t.services > count);
-    const lastNeeded = tiers[tiers.length - 1].services;
-    meter.querySelector('.qp-bundle-meter-pct b').textContent = pct + '%';
-    meter.querySelector('.qp-bundle-meter-label').textContent = next
-      ? `Add ${next.services - count} more service${next.services - count > 1 ? 's' : ''} to save ${next.percent}% on your whole visit`
-      : `Bundle unlocked — you're saving ${pct}% on your whole visit`;
-    meter.querySelector('.qp-bundle-meter-fill').style.width = Math.min(1, (count - 1) / (lastNeeded - 1)) * 100 + '%';
+    meter.querySelectorAll('.qp-ladder-rung').forEach(r => {
+      const n = Number(r.dataset.n);
+      r.classList.toggle('is-reached', n <= count);
+      r.classList.toggle('is-current', n === Math.min(count, rungs[rungs.length - 1].services));
+    });
+    meter.querySelector('.qp-ladder-msg').innerHTML = next
+      ? (pct ? `You're saving <b>${pct}%</b> on the whole visit. ` : '') + `Add ${next.services - count} more to save <b>${next.percent}%</b>.`
+      : `Best deal unlocked: <b>${pct}% off</b> your whole visit.`;
     meter.classList.toggle('is-max', pct === maxPct);
     cards.forEach(([cid, c]) => {
       const on = wizardState.addOns.includes(cid);
       const gain = bundlePercent(count + 1);
       c.querySelector('[data-addon-hint]').textContent = on
-        ? `Added · ${pct}% off your visit`
-        : (gain > pct ? `Add & save ${gain}% on your visit` : `Add to the same visit`);
+        ? 'Added to your visit'
+        : (gain > pct ? `Add it & save ${gain}% on everything` : 'Add to the same visit');
+      c.querySelector('.qp-addon-toggle').innerHTML = on ? `${checkSvg}<span>Added</span>` : `${plusSvg}<span>Add</span>`;
     });
     updateSavingsChip();
     meter.classList.toggle('is-bump', true);
@@ -1175,35 +1188,33 @@ function showAddOns(serviceId) {
     if (!on && idx !== -1) wizardState.addOns.splice(idx, 1);
     card.classList.toggle('selected', on);
     card.setAttribute('aria-pressed', String(on));
+    if (on) { card.classList.remove('is-pop'); void card.offsetWidth; card.classList.add('is-pop'); }
   };
 
   relatedIds.forEach((id, i) => {
     const info = SVC_INFO[id];
-    const featured = i === 0;
     const isActive = wizardState.addOns.includes(id);
     const card = document.createElement('div');
-    card.className = 'qp-addon-card' + (featured ? ' qp-addon-card--featured' : '') + (isActive ? ' selected' : '');
+    card.className = 'qp-addon-card qp-addon-row' + (isActive ? ' selected' : '');
     card.dataset.addon = id;
     card.tabIndex = 0;
     card.setAttribute('role', 'button');
     card.setAttribute('aria-pressed', String(isActive));
     card.innerHTML = `
-      <div class="qp-addon-thumb" style="background-image:url('${info.img}')">
-        <span class="qp-addon-tag">${featured ? 'Most Popular' : (ADDON_TAGS[id] || 'Add-on')}</span>
-        <span class="qp-addon-check">${checkSvg}</span>
-      </div>
-      <div class="qp-addon-content">
-        <span class="qp-addon-name">${info.name}</span>
-        ${info.desc ? `<span class="qp-addon-desc">${info.desc}</span>` : ''}
+      <span class="qp-addon-thumb" style="background-image:url('${info.img}')"></span>
+      <span class="qp-addon-content">
+        <span class="qp-addon-name">${info.name}${i === 0 ? ' <em>Popular</em>' : ''}</span>
         <span class="qp-addon-hint" data-addon-hint></span>
-      </div>`;
+      </span>
+      <span class="qp-addon-toggle"></span>`;
 
     const toggle = () => { setAddon(id, card, !wizardState.addOns.includes(id)); syncBundle(); };
     card.addEventListener('click', toggle);
     card.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); } });
     cards.push([id, card]);
-    gridEl.appendChild(card);
+    list.appendChild(card);
   });
+  if (relatedIds.length > 1) list.appendChild(bundle);
 
   bundle.addEventListener('click', () => {
     const all = relatedIds.every(id => wizardState.addOns.includes(id));

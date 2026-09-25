@@ -37,7 +37,13 @@
         const p = reduceMotion ? 1 : clamp((vh * 0.8 - r.top) / (vh * 0.55));
         root.style.setProperty('--p', p.toFixed(4));
         root.classList.toggle('is-done', p >= 0.99);
-        steps.forEach((st, i) => st.classList.toggle('is-lit', p > 0 && p >= i / steps.length));
+        let now = -1;
+        steps.forEach((st, i) => {
+          const lit = p > 0 && p >= i / steps.length;
+          st.classList.toggle('is-lit', lit);
+          if (lit) now = i;
+        });
+        steps.forEach((st, i) => st.classList.toggle('is-now', i === now && p < 0.99));
       });
     });
   }
