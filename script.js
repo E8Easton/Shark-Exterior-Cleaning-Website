@@ -1133,8 +1133,9 @@ function showAddOns(serviceId) {
   meter.className = 'qp-ladder';
   const rungs = [{ services: 1, percent: 0 }, ...tiers];
   meter.innerHTML = `
+    <div class="qp-ladder-head"><span class="qp-ladder-now"></span><span class="qp-ladder-count"></span></div>
     <div class="qp-ladder-rungs">
-      ${rungs.map(t => `<div class="qp-ladder-rung" data-n="${t.services}"><b>${t.percent ? t.percent + '%' : '—'}</b><small>${t.services} service${t.services > 1 ? 's' : ''}</small></div>`).join('')}
+      ${rungs.map(t => `<div class="qp-ladder-rung" data-n="${t.services}"><span class="qp-ladder-here">You&rsquo;re here</span><b>${t.percent ? t.percent + '% off' : 'No discount'}</b><small>${t.services} service${t.services > 1 ? 's' : ''}</small></div>`).join('')}
     </div>
     <p class="qp-ladder-msg" aria-live="polite"></p>`;
   gridEl.appendChild(meter);
@@ -1165,9 +1166,13 @@ function showAddOns(serviceId) {
       r.classList.toggle('is-reached', n <= count);
       r.classList.toggle('is-current', n === Math.min(count, rungs[rungs.length - 1].services));
     });
+    meter.querySelector('.qp-ladder-now').innerHTML = pct
+      ? `You&rsquo;re saving <b>${pct}% off</b> your whole visit`
+      : `No bundle discount yet`;
+    meter.querySelector('.qp-ladder-count').textContent = `${count} service${count > 1 ? 's' : ''} picked`;
     meter.querySelector('.qp-ladder-msg').innerHTML = next
-      ? (pct ? `You're saving <b>${pct}%</b> on the whole visit. ` : '') + `Add ${next.services - count} more to save <b>${next.percent}%</b>.`
-      : `Best deal unlocked: <b>${pct}% off</b> your whole visit.`;
+      ? `Add ${next.services - count === 1 ? 'one more service' : `${next.services - count} more services`} to jump to <b>${next.percent}% off</b>.`
+      : `That&rsquo;s our best deal &mdash; nice!`;
     meter.classList.toggle('is-max', pct === maxPct);
     cards.forEach(([cid, c]) => {
       const on = wizardState.addOns.includes(cid);

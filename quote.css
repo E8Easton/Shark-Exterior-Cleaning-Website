@@ -46,14 +46,6 @@ body.qp .qp-form-group input, body.qp .qp-form-group textarea { padding-top: 12p
 body.qp .qp-sms-consents { gap: 8px; padding: 12px 14px; }
 body.qp .qp-consent-text { font-size: .84rem; line-height: 1.4; }
 body.qp .qp-consent-fine-print { font-size: .7rem; line-height: 1.45; margin-top: 2px; }
-@media (min-width: 900px) {
-  /* Fields on the left, SMS consent on the right */
-  body.qp #wizard-step-2 .qp-form { max-width: 940px; display: grid; grid-template-columns: 1fr 1fr; column-gap: 24px; align-items: start; }
-  body.qp #wizard-step-2 .qp-form > :not(.qp-sms-consents) { grid-column: 1; }
-  body.qp #wizard-step-2 .qp-sms-consents { grid-column: 2; grid-row: 1 / span 4; margin: 0; }
-  body.qp #wizard-step-6 .qp-form { max-width: 720px; }
-}
-
 /* ---------- Step 4: pick a service (grid sized to the screen) ---------- */
 body.qp #svc-img-grid { width: 100%; grid-template-columns: repeat(12, 1fr); gap: 12px; }
 body.qp #svc-img-grid .qp-img-svc-card { grid-column: span 3; height: clamp(120px, calc((100dvh - 330px) / 2), 210px); border-radius: 14px; }
@@ -290,4 +282,82 @@ body.qp .qp-done--v2 .qp-done-home { align-self: center; }
 }
 @media (prefers-reduced-motion: reduce) {
   body.qp .qp-done-callout-ico, body.qp .qp-done-timeline li.is-now .qp-done-dot, body.qp .qp-addon-row.is-pop { animation: none; }
+}
+
+/* ==========================================================
+   Round 3: more breathing room, clearer "you're here" savings,
+   and a simple "what's next" on the confirmation.
+   ========================================================== */
+body.qp .qp-main { padding-top: clamp(26px, 4.5vh, 48px); }
+body.qp .qp-subtitle { margin-bottom: clamp(20px, 3.4vh, 32px); }
+body.qp .qp-form { gap: 18px; padding: 30px 32px; }
+body.qp .qp-form-group input, body.qp .qp-form-group textarea { padding-top: 14px; padding-bottom: 14px; }
+body.qp .qp-sms-consents { gap: 10px; padding: 14px 16px; }
+body.qp .qp-consent-text { font-size: .88rem; }
+body.qp .qp-consent-fine-print { font-size: .74rem; }
+body.qp #svc-img-grid { gap: 16px; }
+body.qp #svc-img-grid .qp-img-svc-card { height: clamp(140px, calc((100dvh - 300px) / 2), 230px); }
+body.qp #wizard-step-4.is-picked { column-gap: 32px; }
+body.qp #wizard-step-4.is-picked .qp-addons-panel { padding: 22px 24px; }
+body.qp .qp-addons-sub { margin-bottom: 16px; }
+body.qp .qp-addon-list { gap: 10px; }
+body.qp .qp-addon-row { padding: 10px 12px 10px 10px; gap: 14px; }
+body.qp .qp-addon-row .qp-addon-thumb { width: 64px; height: 52px; }
+body.qp .qp-combo { padding: 12px 12px 12px 14px; margin-top: 4px; }
+body.qp .qp-plan-grid { gap: 22px; }
+body.qp .qp-plan-card { padding: 30px 24px 24px; }
+
+/* savings: say plainly where they are */
+body.qp .qp-ladder { padding: 16px 16px 14px; margin-bottom: 16px; }
+body.qp .qp-ladder-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin-bottom: 22px; }
+body.qp .qp-ladder-now { font-size: 1.05rem; font-weight: 600; color: #fff; }
+body.qp .qp-ladder-now b { color: #FFB066; font-size: 1.25rem; font-weight: 800; }
+body.qp .qp-ladder-count { color: rgba(255, 255, 255, .65); font-size: .8rem; font-weight: 600; white-space: nowrap; }
+body.qp .qp-ladder-rungs { gap: 8px; }
+body.qp .qp-ladder-rung { padding: 10px 4px 8px; }
+body.qp .qp-ladder-rung b { font-size: .95rem; }
+body.qp .qp-ladder-here { position: absolute; left: 50%; bottom: calc(100% + 6px); transform: translateX(-50%); padding: 2px 8px; border-radius: 999px; background: #fff; color: var(--sx-orange-600); font-size: .62rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; white-space: nowrap; opacity: 0; transition: opacity .3s; }
+body.qp .qp-ladder-here::after { content: ''; position: absolute; left: 50%; top: 100%; margin-left: -4px; border: 4px solid transparent; border-top-color: #fff; }
+body.qp .qp-ladder-rung.is-current .qp-ladder-here { opacity: 1; }
+body.qp .qp-ladder-msg { margin-top: 12px; font-size: .9rem; }
+
+/* confirmation: what's next (no step counter) */
+body.qp .qp-done-next2 { padding: 18px 20px; border-radius: 16px; background: #fff; border: 1px solid var(--sx-line); box-shadow: 0 16px 36px -28px rgba(4, 20, 60, .45); }
+body.qp .qp-done-next2 h3 { margin: 0 0 12px; color: var(--sx-navy); font-size: .82rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
+body.qp .qp-done-next2 ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
+body.qp .qp-done-next2 li { display: flex; gap: 14px; align-items: flex-start; }
+body.qp .qp-done-next-ico { flex: none; display: grid; place-items: center; width: 38px; height: 38px; border-radius: 12px; background: var(--sx-blue-100); color: var(--sx-blue); }
+body.qp .qp-done-next-ico svg { width: 20px; height: 20px; }
+body.qp .qp-done-next2 b { display: block; color: var(--sx-navy); font-size: .98rem; font-weight: 700; }
+body.qp .qp-done-next2 small { color: var(--sx-text); font-size: .85rem; }
+body.qp .qp-done-grid { gap: 22px; margin-top: 22px; }
+body.qp .qp-done-col { gap: 18px; }
+
+@media (max-width: 700px) {
+  body.qp .qp-main { padding-top: 22px; }
+  body.qp .qp-form { padding: 20px 16px; gap: 14px; }
+  body.qp .qp-form-group input, body.qp .qp-form-group textarea { padding-top: 12px; padding-bottom: 12px; }
+  body.qp .qp-consent-text { font-size: .8rem; }
+  body.qp .qp-consent-fine-print { font-size: .68rem; }
+  body.qp #svc-img-grid { gap: 10px; }
+  body.qp #svc-img-grid .qp-img-svc-card, body.qp #svc-img-grid .qp-img-svc-card--large, body.qp #svc-img-grid .qp-img-svc-card[data-service="soft-washing"] { height: clamp(96px, calc((100dvh - 320px) / 4), 130px); }
+  body.qp #wizard-step-4.is-picked .qp-addons-panel { padding: 16px 14px; }
+  body.qp .qp-ladder { padding: 12px 10px 10px; }
+  body.qp .qp-ladder-head { flex-direction: column; align-items: flex-start; gap: 2px; margin-bottom: 28px; }
+  body.qp .qp-ladder-rung { text-align: center; }
+  body.qp .qp-ladder-now { font-size: .92rem; }
+  body.qp .qp-ladder-now b { font-size: 1.05rem; }
+  body.qp .qp-ladder-rung b { font-size: .78rem; }
+  body.qp .qp-ladder-here { font-size: .55rem; padding: 2px 6px; }
+  body.qp .qp-ladder-msg { font-size: .8rem; }
+  body.qp .qp-addon-list { gap: 8px; }
+  body.qp .qp-addon-row { padding: 8px 10px 8px 8px; }
+  body.qp .qp-addon-row .qp-addon-thumb { width: 50px; height: 46px; }
+  body.qp .qp-plan-card:not(.qp-plan-card--custom) { padding: 14px 16px; }
+  body.qp .qp-plan-grid { gap: 12px; }
+  body.qp .qp-done-grid { gap: 14px; margin-top: 14px; }
+  body.qp .qp-done-col { gap: 14px; }
+  body.qp .qp-done-next2 { padding: 14px 16px; }
+  body.qp .qp-done-next2 b { font-size: .9rem; }
+  body.qp .qp-done-next2 small { font-size: .78rem; }
 }
