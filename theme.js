@@ -212,6 +212,16 @@
           const pct = Math.round(62 + Math.min(1, Math.max(0, (p - 0.25) * 4)) * 14 + Math.min(1, Math.max(0, (p - 0.5) * 4)) * 12 + Math.min(1, Math.max(0, (p - 0.75) * 4)) * 12);
           if (s.pct && s.pct.textContent !== pct + '%') s.pct.textContent = pct + '%';
           s.pin.classList.toggle('is-done', p >= 0.97);
+        } else if (s.type === 'hq') {
+          const n = 4;
+          const f = Math.min(n - 0.001, p * n);
+          const cur = Math.floor(f);
+          const lp = f - cur;
+          s.pin.dataset.cur = cur;
+          s.pin.style.setProperty('--lp', lp.toFixed(3));
+          s.pin.style.setProperty('--wash', (cur === 1 ? Math.min(100, lp * 118) : cur > 1 ? 100 : 0).toFixed(1) + '%');
+          s.caps.forEach((c, i) => c.classList.toggle('is-cur', i === cur));
+          s.pin.querySelectorAll('.sx-hq-tags li').forEach((t, i) => { t.classList.toggle('is-on', i < cur || p > 0.98); t.classList.toggle('is-cur', i === cur && p <= 0.98); });
         } else if (s.type === 'city') {
           const n = s.bldgs.length;
           const f = p * n;
