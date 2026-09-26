@@ -884,26 +884,30 @@ function buildConfirmationSummary() {
   planLabels.custom = oneTime ? 'One-time cleaning' : 'Custom / one-time quote';
   const bundlePct = bundlePercent(services.length);
 
+  const L = p => `<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
   const ico = {
-    pin: '<path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/>',
-    home: '<path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>',
-    spark: '<path d="M12 2l2.4 7.2H22l-6 4.6 2.3 7.2L12 16.6 5.7 21l2.3-7.2-6-4.6h7.6z"/>',
-    tag: '<path d="M21.41 11.58l-9-9C12.05 2.22 11.55 2 11 2H4c-1.1 0-2 .9-2 2v7c0 .55.22 1.05.59 1.42l9 9c.36.36.86.58 1.41.58s1.05-.22 1.41-.59l7-7c.37-.36.59-.86.59-1.41s-.23-1.06-.59-1.42zM5.5 7C4.67 7 4 6.33 4 5.5S4.67 4 5.5 4 7 4.67 7 5.5 6.33 7 5.5 7z"/>',
-    cal: '<path d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V6a2 2 0 00-2-2zm0 16H5V10h14v10z"/>',
-    user: '<path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>',
+    home: L('<path d="M3 11 12 4l9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-5h4v5"/>'),
+    spark: L('<path d="m12 3 1.9 5.6 5.6 1.9-5.6 1.9L12 18l-1.9-5.6-5.6-1.9 5.6-1.9z"/>'),
+    tag: L('<path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"/><circle cx="7.5" cy="7.5" r="1.5"/>'),
+    cal: L('<rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/>'),
+    map: L('<path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/>'),
+    user: L('<circle cx="12" cy="8" r="4"/><path d="M4 21c.6-4 3.9-6.5 8-6.5s7.4 2.5 8 6.5"/>'),
   };
-  const row = (icon, label, value) => value ? `
-    <div class="qp-done-row"><span class="qp-done-ico"><svg viewBox="0 0 24 24" aria-hidden="true">${ico[icon]}</svg></span>
+  // Nebraska outline with a dot where the customer is
+  const kearney = locationCard && locationCard.dataset.location === 'kearney';
+  ico.state = `<svg class="qp-ne" viewBox="0.3 6.3 23.4 11" aria-hidden="true"><path d="M1 7h17.5c.9.5 1.8 1.4 2.5 2.8.7 1.5 1.3 3.1 1.7 4.5l.5 2.2H7.5v-3.7H1z" fill="currentColor" fill-opacity=".35" stroke="currentColor" stroke-width=".9" stroke-linejoin="round"/><circle cx="${kearney ? 13.6 : 20}" cy="${kearney ? 14.2 : 13.8}" r="1.9" fill="#F86A05" stroke="#fff" stroke-width=".8"/></svg>`;
+  const row = (icon, label, value, extra = '') => value ? `
+    <div class="qp-done-row${extra}"><span class="qp-done-ico">${ico[icon]}</span>
       <div><small>${label}</small><div>${value}</div></div></div>` : '';
   const address = [street, [city, zip].filter(Boolean).join(' ')].filter(Boolean).join(', ');
 
   summaryEl.innerHTML =
-    row('pin', 'Location', esc(location)) +
+    row('state', 'Location', esc(location) + `<span class="qp-done-state">${kearney ? 'Kearney' : 'Lincoln'} &middot; Nebraska</span>`, ' qp-done-row--state') +
     row('home', 'Property', esc(capitalize(property))) +
     row('spark', 'Services', services.map(n => `<span class="qp-done-chip">${esc(n)}</span>`).join('')) +
     row('tag', 'Bundle savings', bundlePct ? `<b class="qp-done-save">${bundlePct}% off</b> your whole visit (${services.length} services)` : '') +
     row('cal', 'Plan', plan ? esc(planLabels[plan] || capitalize(plan)) : '') +
-    row('pin', 'Address', esc(address)) +
+    row('map', 'Address', esc(address)) +
     row('user', 'Contact', [firstName + ' ' + lastName, phone, email].filter(v => v.trim()).map(esc).join(' · '));
 
   // Personal touch in the heading, and a pre-filled email subject

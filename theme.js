@@ -20,6 +20,8 @@
     initBlogFilter();
     initJourney();
     initWind();
+    initLive();
+    initPins();
     initChat();
     initPageTransitions();
     initHashLanding();
@@ -124,11 +126,118 @@
           el.classList.add('is-in');
           io.unobserve(el);
           // After the entrance finishes, drop the stagger delay so hovers feel instant
-          setTimeout(() => el.classList.add('sx-settled'), 1100 + (parseInt(el.style.getPropertyValue('--d'), 10) || 0));
+          const d = parseInt(el.style.getPropertyValue('--d'), 10) || 0;
+          const slow = el.classList.contains('sx-ptile--icon');
+          setTimeout(() => el.classList.add('sx-settled'), slow ? 1900 + d * 1.6 : 1100 + d);
         }
       });
     }, { threshold: 0, rootMargin: '0px 0px -60px 0px' });
     items.forEach((el) => io.observe(el));
+  }
+
+  /* ---------- Pinned scroll scenes: section holds still while its steps play out ---------- */
+  function initPins() {
+    const pins = document.querySelectorAll('[data-pin]');
+    if (!pins.length) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      pins.forEach((pin) => {
+        pin.classList.add('is-all', 'is-done');
+        pin.querySelectorAll('[data-step]').forEach((el) => el.classList.add('is-on', 'is-clean'));
+      });
+      return;
+    }
+    const scenes = Array.from(pins).map((pin) => ({
+      pin,
+      type: pin.dataset.pin,
+      cards: pin.querySelectorAll('.sx-pin-card, [data-step]:not(.sx-pin-track li)'),
+      leaves: pin.querySelectorAll('.sx-trough-leaves i'),
+      pct: pin.querySelector('.sx-solar-pct'),
+      bldgs: pin.querySelectorAll('.sx-bldg'),
+      caps: pin.querySelectorAll('.sx-city-cap'),
+      dots: pin.querySelectorAll('.sx-pin-track li'),
+      track: pin.querySelector('.sx-pin-track'),
+      scene: pin.querySelector('.sx-sweep-scene'),
+      last: -1,
+    }));
+    let ticking = false;
+    function update() {
+      ticking = false;
+      const vh = window.innerHeight;
+      scenes.forEach((s) => {
+        const r = s.pin.getBoundingClientRect();
+        if (r.bottom < -vh || r.top > vh * 2) return;
+        const span = Math.max(1, r.height - vh);
+        const p = Math.min(1, Math.max(0, -r.top / span));
+        s.pin.style.setProperty('--p', p.toFixed(4));
+        if (s.type === 'steps') {
+          const n = s.cards.length;
+          const cur = p < 0.04 ? -1 : Math.min(n - 1, Math.floor((p - 0.04) / 0.19));
+          const all = p >= 0.82;
+          if (cur === s.last && all === s.pin.classList.contains('is-all')) return;
+          s.last = cur;
+          s.pin.classList.toggle('is-all', all);
+          s.pin.classList.toggle('has-on', cur >= 0);
+          s.cards.forEach((c, i) => { c.classList.toggle('is-on', i <= cur); c.classList.toggle('is-cur', i === cur && !all); });
+          s.dots.forEach((d, i) => { d.classList.toggle('is-on', i <= cur); d.classList.toggle('is-cur', i === cur && !all); });
+          if (s.track) s.track.style.setProperty('--fill', cur < 0 ? 0 : all ? 1 : cur / (n - 1));
+        } else if (s.type === 'flow') {
+          const pinned = window.matchMedia('(min-width: 1001px)').matches;
+          const reach = pinned ? p * 1.18 : 1;
+          s.cards.forEach((c, i) => c.classList.toggle('is-on', !pinned || reach >= 0.1 + i * 0.24));
+          s.leaves.forEach((l) => l.classList.toggle('is-gone', reach >= (parseFloat(l.style.getPropertyValue('--x')) || 0) / 100));
+          s.pin.classList.toggle('is-done', !pinned || reach >= 0.98);
+        } else if (s.type === 'solar') {
+          const n = s.cards.length;
+          const cur = Math.min(n - 1, Math.floor(p * n));
+          if (s.pin.dataset.cur !== String(cur)) {
+            s.pin.dataset.cur = cur;
+            s.cards.forEach((c, i) => { c.classList.toggle('is-on', i < cur); c.classList.toggle('is-cur', i === cur); });
+          }
+          const pct = Math.round(62 + Math.min(1, Math.max(0, (p - 0.25) * 4)) * 14 + Math.min(1, Math.max(0, (p - 0.5) * 4)) * 12 + Math.min(1, Math.max(0, (p - 0.75) * 4)) * 12);
+          if (s.pct && s.pct.textContent !== pct + '%') s.pct.textContent = pct + '%';
+          s.pin.classList.toggle('is-done', p >= 0.97);
+        } else if (s.type === 'city') {
+          const n = s.bldgs.length;
+          const f = p * n;
+          const cur = Math.min(n - 1, Math.floor(f));
+          s.bldgs.forEach((b, i) => {
+            const local = Math.min(1, Math.max(0, f - i));
+            b.classList.toggle('is-on', i <= cur);
+            b.classList.toggle('is-cur', i === cur && p < 0.98);
+            b.classList.toggle('is-clean', i < cur || p >= 0.98);
+            b.style.setProperty('--wash', (i === cur ? Math.min(100, local * 125) : 0).toFixed(1) + '%');
+          });
+          s.caps.forEach((c, i) => c.classList.toggle('is-cur', i === cur));
+        } else if (s.type === 'sweep') {
+          const w = s.scene.getBoundingClientRect();
+          const wx = w.left + (p * 1.16 - 0.08) * w.width;
+          s.cards.forEach((c) => {
+            const b = c.getBoundingClientRect();
+            c.classList.toggle('is-clean', wx >= b.left + b.width * 0.55);
+          });
+          s.pin.classList.toggle('is-done', p >= 0.97);
+        }
+      });
+    }
+    function onScroll() { if (!ticking) { ticking = true; requestAnimationFrame(update); } }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    update();
+  }
+
+  /* ---------- Sections that animate once they are actually on screen ---------- */
+  function initLive() {
+    const els = document.querySelectorAll('.sx-book--meter, [data-live]');
+    if (!els.length) return;
+    if (!('IntersectionObserver' in window)) { els.forEach((el) => el.classList.add('is-live')); return; }
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (!e.isIntersecting) return;
+        e.target.classList.add('is-live');
+        io.unobserve(e.target);
+      });
+    }, { threshold: 0.35 });
+    els.forEach((el) => io.observe(el));
   }
 
   /* ---------- Process timeline: line fills and steps light up as you scroll ---------- */
