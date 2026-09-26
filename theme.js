@@ -8,6 +8,8 @@
   // Tells the inline safety net in <head> that the theme script loaded.
   window.__sxReady = true;
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // Scroll-linked scenes only move while the visitor scrolls, so they stay on for everyone
+  const scrollStatic = false;
 
   document.addEventListener('DOMContentLoaded', () => {
     initHeader();
@@ -133,19 +135,29 @@
       });
     }, { threshold: 0, rootMargin: '0px 0px -60px 0px' });
     items.forEach((el) => io.observe(el));
+    // Safety net: anything already scrolled past (e.g. a fast fling) is shown too
+    let sweep = false;
+    window.addEventListener('scroll', () => {
+      if (sweep) return;
+      sweep = true;
+      setTimeout(() => {
+        sweep = false;
+        items.forEach((el) => {
+          if (!el.classList.contains('is-in') && el.getBoundingClientRect().top < window.innerHeight) {
+            el.classList.add('is-in');
+            io.unobserve(el);
+            setTimeout(() => el.classList.add('sx-settled'), 1400);
+          }
+        });
+      }, 250);
+    }, { passive: true });
   }
 
   /* ---------- Pinned scroll scenes: section holds still while its steps play out ---------- */
   function initPins() {
     const pins = document.querySelectorAll('[data-pin]');
     if (!pins.length) return;
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      pins.forEach((pin) => {
-        pin.classList.add('is-all', 'is-done');
-        pin.querySelectorAll('[data-step]').forEach((el) => el.classList.add('is-on', 'is-clean'));
-      });
-      return;
-    }
+    // Scroll-driven: the scene only moves when the visitor scrolls, so it runs for everyone
     const scenes = Array.from(pins).map((pin) => ({
       pin,
       type: pin.dataset.pin,
@@ -299,12 +311,12 @@
         if (vertical()) {
           // Phones: the water's edge sits 60% down the screen
           tip = vh * 0.6;
-          const amount = reduceMotion ? 1 : Math.min(1, Math.max(0, (tip - lr.top) / lr.height));
+          const amount = scrollStatic ? 1 : Math.min(1, Math.max(0, (tip - lr.top) / lr.height));
           fill.style.transform = `scaleY(${amount})`;
-          tip = reduceMotion ? Infinity : tip;
+          tip = scrollStatic ? Infinity : tip;
         } else {
           // Wide screens: runs left to right while the timeline crosses the screen
-          const p = reduceMotion ? 1 : Math.min(1, Math.max(0, (vh * 0.85 - r.top) / (vh * 0.5)));
+          const p = scrollStatic ? 1 : Math.min(1, Math.max(0, (vh * 0.85 - r.top) / (vh * 0.5)));
           fill.style.transform = `scaleX(${p})`;
           tip = p > 0 ? lr.left + lr.width * p : -Infinity;
         }
@@ -352,16 +364,16 @@
         ticking = false;
         const r = root.getBoundingClientRect();
         const tip = window.innerHeight * 0.6;
-        const y = reduceMotion ? 100 : Math.min(100, Math.max(0, ((tip - r.top) / r.height) * 100));
+        const y = scrollStatic ? 100 : Math.min(100, Math.max(0, ((tip - r.top) / r.height) * 100));
         if (draw) draw.style.strokeDashoffset = String(1 - (y >= 100 ? 1 : lengthAtY(y)));
         if (rail) {
           const rr = rail.parentElement.getBoundingClientRect();
-          const f = reduceMotion ? 1 : Math.min(1, Math.max(0, (tip - rr.top) / rr.height));
+          const f = scrollStatic ? 1 : Math.min(1, Math.max(0, (tip - rr.top) / rr.height));
           rail.style.transform = `scaleY(${f})`;
         }
         nodes.forEach((n, i) => {
           const nr = n.getBoundingClientRect();
-          steps[i].classList.toggle('is-lit', reduceMotion || nr.top + nr.height / 2 <= tip);
+          steps[i].classList.toggle('is-lit', scrollStatic || nr.top + nr.height / 2 <= tip);
         });
       };
       const onScroll = () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } };
