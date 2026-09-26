@@ -253,7 +253,7 @@
 .sx-slab-wrap.is-done .sx-slab-done { opacity: 1; transform: none; }
 .sx-slab-label { position: absolute; z-index: 3; top: 40px; padding: 6px 12px; border-radius: 6px; background: rgba(4, 20, 60, .78); color: #fff; font-size: .75rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; transition: opacity .3s; }
 .sx-slab-label--before { right: 18px; }
-.sx-slab-wrap.is-done .sx-slab-label--before, .sx-slab-wrap[style*="--p: 0.9"] .sx-slab-label--before { opacity: 0; }
+.sx-slab-wrap.is-done .sx-slab-label--before { opacity: 0; }
 
 .sx-slab-steps { list-style: none; display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin: 18px 0 0; padding: 0; }
 .sx-slab-step { position: relative; padding: 18px 18px 20px; border-radius: 14px; background: #fff; border: 2px solid #E1E8F2; transition: border-color .4s, box-shadow .4s, background-color .4s; }
@@ -603,3 +603,20 @@
   .sx-xill *, .sx-xbulb, .sx-xbulb * , .sx-incl-list--ill li .sx-xill * { animation: none !important; }
   .sx-xill .sx-xdot { opacity: 1; }
 }
+
+/* ---------- Drag-to-clean driveway ---------- */
+[data-slab-drag] .sx-slab { cursor: grab; touch-action: pan-y; user-select: none; -webkit-user-select: none; outline: none; }
+[data-slab-drag].is-dragging .sx-slab { cursor: grabbing; }
+[data-slab-drag] .sx-slab:focus-visible { box-shadow: 0 0 0 4px var(--sx-blue), 0 30px 60px -36px rgba(4, 20, 60, .7); }
+[data-slab-drag] .sx-slab-cleaner { opacity: 1; }
+[data-slab-drag] .sx-slab-disc::before { content: ''; position: absolute; inset: -14px; border-radius: 50%; border: 3px solid rgba(248, 106, 5, .9); box-shadow: 0 0 24px 6px rgba(248, 106, 5, .55); animation: sx-slab-pulse 1.8s ease-in-out infinite; }
+[data-slab-drag].is-dragging .sx-slab-disc::before { animation: none; opacity: .5; }
+@keyframes sx-slab-pulse { 0%, 100% { transform: scale(.94); opacity: .95; } 50% { transform: scale(1.08); opacity: .45; } }
+.sx-slab-label--after { left: 18px; right: auto; background: #1E9E55; opacity: 0; }
+[data-slab-drag] .sx-slab-label--after { opacity: calc(min(1, var(--p) * 4 - .4)); }
+.sx-slab-hint { position: absolute; z-index: 4; left: calc(var(--p) * 100%); bottom: 34px; transform: translateX(-50%); display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: 999px; background: var(--sx-orange); color: #fff; font-size: .8rem; font-weight: 800; letter-spacing: .04em; white-space: nowrap; box-shadow: 0 10px 22px -8px rgba(248, 106, 5, .9); pointer-events: none; transition: opacity .4s; }
+.sx-slab-hint svg { width: 16px; height: 16px; }
+[data-slab-drag].is-touched .sx-slab-hint { opacity: 0; }
+[data-slab-drag] .sx-slab-done { top: auto; bottom: 36px; }
+@media (prefers-reduced-motion: reduce) { [data-slab-drag] .sx-slab-disc::before { animation: none; } }
+@media (max-width: 520px) { .sx-slab-hint { bottom: 22px; font-size: .7rem; padding: 5px 10px; } .sx-slab-label--after { top: 26px; left: 10px; font-size: .7rem; } }

@@ -26,26 +26,52 @@
     initLights();
   });
 
-  /* ---------- Power washing: the surface cleaner crosses the driveway ---------- */
+  /* ---------- Power washing: drag the surface cleaner across the driveway (before / after) ---------- */
   function initSlab() {
     document.querySelectorAll('[data-slab]').forEach((root) => {
       const slab = root.querySelector('.sx-slab');
       const steps = [...root.querySelectorAll('.sx-slab-step')];
-      onScrollFrame(() => {
-        const r = slab.getBoundingClientRect();
-        const vh = window.innerHeight;
-        // Starts as the driveway comes up the screen, finishes as it passes 25% from the top
-        const p = reduceMotion ? 1 : clamp((vh * 0.8 - r.top) / (vh * 0.55));
+      const calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      let p = 0.5, dragging = false, touched = false, raf = 0, t0 = 0, visible = false;
+      const set = (v) => {
+        p = clamp(v);
         root.style.setProperty('--p', p.toFixed(4));
-        root.classList.toggle('is-done', p >= 0.99);
+        root.classList.toggle('is-done', p >= 0.985);
+        slab.setAttribute('aria-valuenow', Math.round(p * 100));
         let now = -1;
-        steps.forEach((st, i) => {
-          const lit = p > 0 && p >= i / steps.length;
-          st.classList.toggle('is-lit', lit);
-          if (lit) now = i;
-        });
-        steps.forEach((st, i) => st.classList.toggle('is-now', i === now && p < 0.99));
+        steps.forEach((st, i) => { const lit = p > 0.02 && p >= i / steps.length; st.classList.toggle('is-lit', lit); if (lit) now = i; });
+        steps.forEach((st, i) => st.classList.toggle('is-now', i === now && p < 0.985));
+      };
+      // Gentle demo sweep until the visitor grabs the cleaner
+      const demo = (ts) => {
+        if (touched || !visible) { raf = 0; return; }
+        if (!t0) t0 = ts;
+        const k = ((ts - t0) / 7000) % 1;
+        set(0.08 + 0.84 * (0.5 - 0.5 * Math.cos(k * Math.PI * 2)));
+        raf = requestAnimationFrame(demo);
+      };
+      const startDemo = () => { if (!raf && !touched && !calm) raf = requestAnimationFrame(demo); };
+      const at = (e) => { const r = slab.getBoundingClientRect(); return (e.clientX - r.left) / r.width; };
+      const grab = (e) => {
+        touched = true; dragging = true; root.classList.add('is-touched', 'is-dragging');
+        slab.setPointerCapture && slab.setPointerCapture(e.pointerId);
+        set(at(e)); e.preventDefault();
+      };
+      slab.addEventListener('pointerdown', grab);
+      slab.addEventListener('pointermove', (e) => { if (dragging) set(at(e)); });
+      const drop = () => { dragging = false; root.classList.remove('is-dragging'); };
+      slab.addEventListener('pointerup', drop);
+      slab.addEventListener('pointercancel', drop);
+      slab.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+          touched = true; root.classList.add('is-touched');
+          set(p + (e.key === 'ArrowRight' ? 0.05 : -0.05)); e.preventDefault();
+        }
       });
+      set(calm ? 0.5 : 0.08);
+      if ('IntersectionObserver' in window) {
+        new IntersectionObserver((en) => { visible = en[0].isIntersecting; if (visible) startDemo(); }, { threshold: 0.2 }).observe(slab);
+      } else { visible = true; startDemo(); }
     });
   }
 

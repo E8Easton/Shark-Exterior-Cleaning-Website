@@ -3830,3 +3830,98 @@ body.qp .qp-done-summary { font-size: 1.08rem; }
 @media (max-width: 700px) {
   .sx-aboutpg #story, .sx-svc .sx-values-band, .sx-svc #reviews:not(.sx-reviews--light), .sx-svc .sx-xmas-section { --arc: 28px; border-radius: 28px; margin-inline: 8px; }
 }
+
+/* Soft wash winding steps: every card reads left-aligned, like the right-hand ones */
+.sx-wind-card { text-align: left; }
+/* Gutter calendar: month names instead of single letters */
+.sx-bmonths { gap: 5px; margin-top: 34px; }
+.sx-bmonths span { position: relative; height: 50px; font-size: .82rem; letter-spacing: .01em; }
+.sx-bmonths span em { position: absolute; left: 50%; bottom: calc(100% + 4px); transform: translateX(-50%); font-style: normal; font-size: .68rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; white-space: nowrap; }
+.sx-bmonths .is-spring em { color: #5BE0A8; } .sx-bmonths .is-fall em { color: #FFB27A; }
+@media (max-width: 900px) {
+  .sx-bmonths { grid-template-columns: repeat(6, 1fr); row-gap: 28px; }
+  .sx-bmonths span { height: 44px; font-size: .9rem; }
+}
+
+/* ===== Solar: realistic sun ===== */
+.sx-solar-sun { width: 150px; height: 150px; top: 9%; right: 7%; border-radius: 0; background: none; filter: none; }
+.sx-solar-sun i { position: absolute; left: 50%; top: 50%; border-radius: 50%; transform: translate(-50%, -50%); }
+.sx-sun-core { width: 58px; height: 58px; background: radial-gradient(circle at 45% 42%, #FFFFFF 0%, #FFF8D6 28%, #FFE27A 55%, #FFC21A 78%, #FFA800 100%); box-shadow: 0 0 20px 6px rgba(255, 226, 122, .9), 0 0 60px 24px rgba(255, 194, 26, .45), 0 0 120px 60px rgba(255, 170, 0, .18); }
+.sx-sun-rays { width: 190px; height: 190px; background: repeating-conic-gradient(from 0deg, rgba(255, 230, 150, .28) 0deg 5deg, transparent 5deg 18deg); -webkit-mask: radial-gradient(circle, #000 18%, transparent 68%); mask: radial-gradient(circle, #000 18%, transparent 68%); animation: sx-sun-spin 40s linear infinite; }
+.sx-sun-flare { width: 16px; height: 16px; left: -40% !important; top: 140% !important; background: radial-gradient(circle, rgba(255, 220, 140, .5), transparent 70%); box-shadow: 60px 50px 0 -2px rgba(120, 190, 255, .18), 120px 100px 0 4px rgba(255, 200, 120, .12); }
+@keyframes sx-sun-spin { to { transform: translate(-50%, -50%) rotate(360deg); } }
+.sx-pin--solar .sx-solar-sun { opacity: calc(.75 + var(--s3) * .25); transform: scale(calc(.92 + var(--s3) * .14)); }
+@media (prefers-reduced-motion: reduce) { .sx-sun-rays { animation: none; } }
+@media (max-width: 900px) { .sx-solar-sun { width: 90px; height: 90px; } .sx-sun-core { width: 38px; height: 38px; } .sx-sun-rays { width: 120px; height: 120px; } }
+
+/* ===== Solar: real debris that the brush knocks off and the rinse washes away ===== */
+.sx-solar-debris { position: absolute; inset: 10px; pointer-events: none; overflow: hidden; z-index: 1; }
+.sx-solar-debris > * { position: absolute; left: var(--x); top: var(--y); }
+.sx-solar-debris .d-leaf { width: 46px; height: 28px; filter: drop-shadow(0 3px 3px rgba(0, 0, 0, .45)); transform: translateX(calc(var(--s1) * var(--dx, 140px))) translateY(calc(var(--s1) * 60px)) rotate(calc(var(--r) + var(--s1) * 160deg)); opacity: calc(1 - var(--s1) * 1.4); }
+.sx-solar-debris .d-twig { width: 76px; height: 18px; filter: drop-shadow(0 3px 3px rgba(0, 0, 0, .45)); transform: translateX(calc(var(--s1) * var(--dx))) translateY(calc(var(--s1) * 40px)) rotate(calc(var(--r) + var(--s1) * 90deg)); opacity: calc(1 - var(--s1) * 1.5); }
+.sx-solar-debris .d-drop { width: 26px; height: 26px; filter: drop-shadow(0 2px 2px rgba(0, 0, 0, .35)); opacity: calc(1 - var(--s1) * .55 - var(--s2) * .7); transform: scale(calc(1 - var(--s2) * .5)) translateY(calc(var(--s2) * 30px)); }
+.sx-solar-debris .d-pollen { width: 34px; height: 22px; border-radius: 50%; background: radial-gradient(rgba(230, 200, 90, .9) 1.2px, transparent 1.8px) 0 0 / 5px 5px; opacity: calc(1 - var(--s1) * .6 - var(--s2) * .6); }
+/* power meter: hover or tap to see the gain */
+.sx-solar-meter { cursor: help; transition: transform .35s var(--sx-ease), box-shadow .35s, border-color .35s; }
+.sx-solar-meter:hover, .sx-solar-meter:focus-visible { transform: translateY(-4px) scale(1.04); border-color: rgba(91, 224, 168, .7); box-shadow: 0 0 0 4px rgba(91, 224, 168, .18), 0 24px 44px -18px rgba(0, 0, 0, .8); outline: none; }
+.sx-solar-meter:hover em, .sx-solar-meter:focus-visible em { box-shadow: 0 0 12px rgba(91, 224, 168, .9); }
+.sx-solar-tip { position: absolute; right: 0; bottom: calc(100% + 12px); width: 250px; padding: 14px 16px; border-radius: 14px; background: #fff; color: var(--sx-text); font-size: .8rem; line-height: 1.45; box-shadow: 0 24px 44px -18px rgba(0, 0, 0, .7); opacity: 0; transform: translateY(8px); pointer-events: none; transition: opacity .3s, transform .35s var(--sx-ease); text-align: left; }
+.sx-solar-tip::after { content: ''; position: absolute; right: 28px; top: 100%; border: 8px solid transparent; border-top-color: #fff; }
+.sx-solar-tip b { display: block; color: var(--sx-navy); font-size: .92rem; margin-bottom: 6px; }
+.sx-solar-tip span { display: block; }
+.sx-solar-tip s { color: #C0392B; font-weight: 700; } .sx-solar-tip strong { color: #16965f; font-size: 1rem; }
+.sx-solar-tip small { display: block; margin-top: 6px; color: var(--sx-slate-dark); }
+.sx-solar-meter:hover .sx-solar-tip, .sx-solar-meter:focus-visible .sx-solar-tip { opacity: 1; transform: none; }
+
+/* Commercial interior: each floor's window gets squeegeed while the building is open */
+.sx-hq-floor .w { position: absolute; left: 6%; right: 6%; top: 10%; height: 52%; border-radius: 2px; background: linear-gradient(160deg, #DDF1FF, #9FD0FF 45%, #6FB5FF 70%, #CDEBFF); box-shadow: inset 0 0 0 2px #C9A060; overflow: hidden; z-index: 0; }
+.sx-hq-floor .w i { position: absolute; inset: 0; background: radial-gradient(rgba(90, 76, 50, .5) 1px, transparent 1.6px) 0 0 / 6px 6px, linear-gradient(180deg, rgba(120, 110, 90, .75), rgba(95, 88, 72, .8)); transition: clip-path .7s var(--sx-ease); clip-path: inset(0 0 0 0); }
+.sx-hq-floor.is-wiping .w i { clip-path: inset(0 0 0 55%); }
+.sx-hq-floor.is-clean .w i { clip-path: inset(0 0 0 100%); }
+.sx-hq-floor .w b { position: absolute; top: -10%; bottom: -10%; width: 6px; left: -8px; border-radius: 3px; background: var(--sx-orange); box-shadow: 0 0 10px rgba(248, 106, 5, .8); opacity: 0; transition: left .7s var(--sx-ease), opacity .3s; }
+.sx-hq-floor.is-wiping .w b { left: 55%; opacity: 1; }
+.sx-hq-floor.is-clean .w b { left: 102%; opacity: 0; }
+.sx-hq-floor.is-clean .w::after { content: ''; position: absolute; inset: 0; background: linear-gradient(115deg, transparent 35%, rgba(255, 255, 255, .8) 50%, transparent 65%); background-size: 260% 100%; animation: sx-glint 1.2s var(--sx-ease) forwards; }
+.sx-hq-floor .d, .sx-hq-floor .p { position: relative; z-index: 1; }
+.sx-hq-floor .l { z-index: 1; }
+
+/* Signed-off badge sits fully beside the building (never over it) */
+.sx-hq-stamp { left: calc(100% + 22px); right: auto; top: 26%; transform-origin: 0 50%; transform: translateX(-20px) scale(.4); }
+.sx-hq-stamp::before { content: ''; position: absolute; right: 100%; top: 50%; width: 22px; height: 3px; background: rgba(255, 255, 255, .85); }
+.sx-pin--city[data-cur="3"] .sx-hq-stamp, .sx-pin--city.sx-pin-off .sx-hq-stamp { transform: none; }
+.sx-hq-side--r { z-index: 0; }
+.sx-hq { z-index: 1; }
+.sx-hq-stamp { z-index: 5; }
+@media (max-width: 900px) {
+  .sx-hq-stamp { left: 50%; top: -58px; transform-origin: 50% 100%; transform: translate(-50%, 10px) scale(.4); display: flex; align-items: center; gap: 8px; padding: 8px 14px; }
+  .sx-hq-stamp::before { right: auto; left: 50%; top: 100%; width: 3px; height: 14px; }
+  .sx-hq-stamp small { display: none; }
+  .sx-pin--city[data-cur="3"] .sx-hq-stamp, .sx-pin--city.sx-pin-off .sx-hq-stamp { transform: translateX(-50%); }
+  .sx-hq-roof i { opacity: 0; }
+}
+.sx-hq-stamp { width: max-content; min-width: 150px; white-space: nowrap; padding: 14px 18px 12px; }
+.sx-hq-stamp b { font-size: 1.05rem; }
+.sx-solar-debris .d-leaf { width: 70px; height: 42px; }
+.sx-solar-debris .d-twig { width: 110px; height: 24px; }
+.sx-solar-debris .d-drop { width: 38px; height: 38px; }
+.sx-solar-debris .d-pollen { width: 56px; height: 34px; }
+@media (max-width: 900px) { .sx-solar-debris .d-leaf { width: 44px; height: 26px; } .sx-solar-debris .d-twig { width: 70px; height: 16px; } .sx-solar-debris .d-drop { width: 24px; height: 24px; } }
+@media (max-width: 900px) {
+  .sx-hq-stamp { left: calc(100% + 8px); top: 22%; min-width: 0; width: 76px; white-space: normal; flex-direction: column; gap: 2px; padding: 8px 6px; border-radius: 14px; text-align: center; transform-origin: 0 50%; transform: translateX(-10px) scale(.4); }
+  .sx-hq-stamp b { font-size: .72rem; line-height: 1.15; }
+  .sx-hq-stamp svg { width: 20px; height: 20px; }
+  .sx-hq-stamp::before { right: 100%; left: auto; top: 50%; width: 8px; height: 3px; }
+  .sx-pin--city[data-cur="3"] .sx-hq-stamp, .sx-pin--city.sx-pin-off .sx-hq-stamp { transform: none; }
+}
+
+/* Lincoln: nearby towns */
+.sx-towns { margin-top: 18px; padding: 20px 22px; border-radius: 18px; background: #fff; border: 1px solid #DCE7F5; box-shadow: 0 20px 40px -32px rgba(4, 20, 60, .5); }
+.sx-towns h3 { display: flex; align-items: center; gap: 8px; margin: 0 0 6px; color: var(--sx-navy); font-size: 1.1rem; font-weight: 700; }
+.sx-towns h3 svg { width: 20px; height: 20px; color: var(--sx-orange); }
+.sx-towns p { margin: 0 0 12px; color: var(--sx-text); font-size: .95rem; }
+.sx-towns ul { list-style: none; margin: 0 0 12px; padding: 0; display: flex; flex-wrap: wrap; gap: 7px; }
+.sx-towns li { padding: 6px 12px; border-radius: 999px; background: #F1F6FD; border: 1px solid #DCE7F5; color: var(--sx-navy); font-size: .86rem; font-weight: 600; }
+.sx-towns-note { margin: 0 !important; font-size: .88rem !important; }
+.sx-towns-note a { color: var(--sx-blue); font-weight: 700; }
+.sx-article-areas a.is-muted { display: inline-flex; align-items: center; padding: 9px 15px; border-radius: 999px; border: 1px dashed #D8E2EF; color: var(--sx-slate-dark); font-weight: 500; font-size: .95rem; text-decoration: none; transition: border-color .2s, color .2s; }
+.sx-article-areas a.is-muted:hover { border-color: var(--sx-blue); color: var(--sx-blue); }

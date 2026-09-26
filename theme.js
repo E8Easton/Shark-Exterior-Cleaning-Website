@@ -187,7 +187,7 @@
           s.pin.classList.add('sx-pin-off', 'is-all', 'is-done', 'has-on');
           s.pin.dataset.cur = String(s.cards.length - 1);
           s.pin.style.setProperty('--p', '1');
-          s.pin.querySelectorAll('[data-step], .sx-bldg').forEach((el) => el.classList.add('is-on', 'is-clean'));
+          s.pin.querySelectorAll('[data-step], .sx-bldg, .sx-hq-floor').forEach((el) => el.classList.add('is-on', 'is-clean'));
           s.pin.querySelectorAll('.sx-pin-card, .sx-pin-track li, .sx-bldg, .sx-city-cap, .sx-solar-step').forEach((el) => el.classList.remove('is-cur'));
           s.pin.querySelectorAll('.sx-trough-leaves i').forEach((el) => el.classList.add('is-gone'));
           if (s.track) s.track.style.setProperty('--fill', 1);
@@ -222,7 +222,7 @@
             s.cards.forEach((c, i) => { c.classList.toggle('is-on', i < cur); c.classList.toggle('is-cur', i === cur); });
           }
           const pct = Math.round(62 + Math.min(1, Math.max(0, (p - 0.25) * 4)) * 14 + Math.min(1, Math.max(0, (p - 0.5) * 4)) * 12 + Math.min(1, Math.max(0, (p - 0.75) * 4)) * 12);
-          if (s.pct && s.pct.textContent !== pct + '%') s.pct.textContent = pct + '%';
+          if (s.pct && s.pct.textContent !== pct + '%') { s.pct.textContent = pct + '%'; const p2 = s.pin.querySelector('.sx-solar-pct2'); if (p2) p2.textContent = pct + '%'; }
           s.pin.classList.toggle('is-done', p >= 0.97);
         } else if (s.type === 'hq') {
           const n = 4;
@@ -233,6 +233,11 @@
           s.pin.style.setProperty('--lp', lp.toFixed(3));
           s.pin.style.setProperty('--wash', (cur === 1 ? Math.min(100, lp * 118) : cur > 1 ? 100 : 0).toFixed(1) + '%');
           s.caps.forEach((c, i) => c.classList.toggle('is-cur', i === cur));
+          s.pin.querySelectorAll('.sx-hq-floor').forEach((fl, i, all) => {
+            const on = cur > 2 || (cur === 2 && lp >= (i + 0.6) / all.length);
+            fl.classList.toggle('is-clean', on);
+            fl.classList.toggle('is-wiping', cur === 2 && !on && lp >= i / all.length);
+          });
           s.pin.querySelectorAll('.sx-hq-tags li').forEach((t, i) => { t.classList.toggle('is-on', i < cur || p > 0.98); t.classList.toggle('is-cur', i === cur && p <= 0.98); });
         } else if (s.type === 'city') {
           const n = s.bldgs.length;
