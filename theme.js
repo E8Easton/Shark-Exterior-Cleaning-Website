@@ -127,7 +127,7 @@
           io.unobserve(el);
           // After the entrance finishes, drop the stagger delay so hovers feel instant
           const d = parseInt(el.style.getPropertyValue('--d'), 10) || 0;
-          const slow = el.classList.contains('sx-ptile--icon');
+          const slow = el.classList.contains('sx-ptile--icon') || el.classList.contains('sx-wstep');
           setTimeout(() => el.classList.add('sx-settled'), slow ? 1900 + d * 1.6 : 1100 + d);
         }
       });
@@ -243,19 +243,51 @@
   /* ---------- Process timeline: line fills and steps light up as you scroll ---------- */
   function initJourney() {
     document.querySelectorAll('[data-journey]').forEach((root) => {
+      const line = root.querySelector('.sx-journey-line');
       const fill = root.querySelector('[data-journey-fill]');
       const steps = [...root.querySelectorAll('.sx-journey-step')];
+      const nodes = steps.map((st) => st.querySelector('.sx-journey-node'));
       const vertical = () => window.matchMedia('(max-width: 900px)').matches;
+      // Bubbles that float up out of each number once the water reaches it
+      nodes.forEach((n) => {
+        const fizz = document.createElement('span');
+        fizz.className = 'sx-journey-fizz';
+        fizz.setAttribute('aria-hidden', 'true');
+        for (let i = 0; i < 9; i++) {
+          const b = document.createElement('i');
+          b.style.setProperty('--x', `${Math.round(Math.random() * 70 - 35)}px`);
+          b.style.setProperty('--s', `${(8 + Math.random() * 10).toFixed(1)}px`);
+          b.style.setProperty('--t', `${(1.6 + Math.random() * 1.4).toFixed(2)}s`);
+          b.style.setProperty('--dl', `${(i * 0.24).toFixed(2)}s`);
+          fizz.appendChild(b);
+        }
+        n.appendChild(fizz);
+      });
       let ticking = false;
       const update = () => {
         ticking = false;
         const r = root.getBoundingClientRect();
+        const lr = line.getBoundingClientRect();
         const vh = window.innerHeight;
-        // 0 when the timeline enters the lower third, 1 when its end reaches the middle
-        const p = Math.min(1, Math.max(0, (vh * 0.75 - r.top) / (r.height + vh * 0.25)));
-        const amount = reduceMotion ? 1 : p;
-        fill.style.transform = vertical() ? `scaleY(${amount})` : `scaleX(${amount})`;
-        steps.forEach((st, i) => st.classList.toggle('is-lit', amount >= (i / Math.max(1, steps.length - 1)) - 0.02));
+        let tip;
+        if (vertical()) {
+          // Phones: the water's edge sits 60% down the screen
+          tip = vh * 0.6;
+          const amount = reduceMotion ? 1 : Math.min(1, Math.max(0, (tip - lr.top) / lr.height));
+          fill.style.transform = `scaleY(${amount})`;
+          tip = reduceMotion ? Infinity : tip;
+        } else {
+          // Wide screens: runs left to right while the timeline crosses the screen
+          const p = reduceMotion ? 1 : Math.min(1, Math.max(0, (vh * 0.85 - r.top) / (vh * 0.5)));
+          fill.style.transform = `scaleX(${p})`;
+          tip = p > 0 ? lr.left + lr.width * p : -Infinity;
+        }
+        // A number lights up only once the filled line has actually reached it
+        nodes.forEach((n, i) => {
+          const nr = n.getBoundingClientRect();
+          const centre = vertical() ? nr.top + nr.height / 2 : nr.left + nr.width / 2;
+          steps[i].classList.toggle('is-lit', centre <= tip + 1);
+        });
       };
       const onScroll = () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } };
       window.addEventListener('scroll', onScroll, { passive: true });
@@ -264,19 +296,47 @@
     });
   }
 
-  /* ---------- Winding process path: draws itself as you scroll ---------- */
+  /* ---------- Winding process path: draws itself as you scroll ----------
+     The line's tip follows a fixed spot on screen (60% down), and a step
+     lights up the moment its node reaches that spot, so the line and the
+     steps stay in sync on every screen size. */
   function initWind() {
     document.querySelectorAll('[data-wind]').forEach((root) => {
       const draw = root.querySelector('[data-wind-draw]');
+      const track = root.querySelector('.sx-wind-track');
+      const rail = root.querySelector('[data-wind-rail]');
       const steps = [...root.querySelectorAll('.sx-wind-step')];
+      const nodes = steps.map((st) => st.querySelector('.sx-wind-node'));
+      // Sample the path once: how far along it (0-1) each height (0-100) is reached
+      const samples = [];
+      if (track && track.getTotalLength) {
+        const len = track.getTotalLength();
+        for (let i = 0; i <= 240; i++) {
+          const pt = track.getPointAtLength((len * i) / 240);
+          samples.push([pt.y, i / 240]);
+        }
+      }
+      const lengthAtY = (y) => {
+        if (!samples.length) return y / 100;
+        for (let i = 0; i < samples.length; i++) if (samples[i][0] >= y) return samples[i][1];
+        return 1;
+      };
       let ticking = false;
       const update = () => {
         ticking = false;
         const r = root.getBoundingClientRect();
-        const vh = window.innerHeight;
-        const p = reduceMotion ? 1 : Math.min(1, Math.max(0, (vh * 0.7 - r.top) / r.height));
-        if (draw) draw.style.strokeDashoffset = String(1 - p);
-        steps.forEach((st, i) => st.classList.toggle('is-lit', p >= (i + 0.5) / steps.length - 0.06));
+        const tip = window.innerHeight * 0.6;
+        const y = reduceMotion ? 100 : Math.min(100, Math.max(0, ((tip - r.top) / r.height) * 100));
+        if (draw) draw.style.strokeDashoffset = String(1 - (y >= 100 ? 1 : lengthAtY(y)));
+        if (rail) {
+          const rr = rail.parentElement.getBoundingClientRect();
+          const f = reduceMotion ? 1 : Math.min(1, Math.max(0, (tip - rr.top) / rr.height));
+          rail.style.transform = `scaleY(${f})`;
+        }
+        nodes.forEach((n, i) => {
+          const nr = n.getBoundingClientRect();
+          steps[i].classList.toggle('is-lit', reduceMotion || nr.top + nr.height / 2 <= tip);
+        });
       };
       const onScroll = () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } };
       window.addEventListener('scroll', onScroll, { passive: true });
