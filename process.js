@@ -65,7 +65,7 @@
           // Phones: the gutter is pinned, the water keeps pace with the steps scrolling under it
           const lr = list.getBoundingClientRect();
           p = clamp((vh * 0.62 - lr.top) / lr.height);
-        } else if (pin && window.matchMedia('(min-width: 1001px)').matches) {
+        } else if (pin && !pin.classList.contains('sx-pin-off') && window.matchMedia('(min-width: 1001px)').matches) {
           // Desktop: the section holds on screen, so the water follows the scroll through it
           const pr = pin.getBoundingClientRect();
           p = clamp((-pr.top / Math.max(1, pr.height - vh)) * 1.15);

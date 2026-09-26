@@ -243,7 +243,7 @@
   background: radial-gradient(circle at 50% 50%, #1C2B4A 0 18%, #0A2152 19% 62%, #243A66 63% 70%, #0A2152 71%);
   box-shadow: 0 0 0 5px rgba(255, 255, 255, .35), 0 0 0 16px rgba(255, 255, 255, .12), 0 18px 30px rgba(0, 0, 0, .45);
 }
-.sx-slab-disc::after { content: 'SHARK'; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); color: var(--sx-orange); font-size: .62rem; font-weight: 900; letter-spacing: .14em; }
+.sx-slab-disc::after { content: ''; position: absolute; left: 50%; top: 50%; width: 44%; height: 38%; transform: translate(-50%, -52%); background: url('images/brand/fin-orange.svg') center / contain no-repeat; filter: drop-shadow(0 0 6px rgba(248, 106, 5, .6)); z-index: 2; }
 .sx-slab-bar { position: absolute; inset: 18px; border-radius: 50%; animation: sx-spin .45s linear infinite;
   background: linear-gradient(90deg, transparent 0 46%, rgba(255, 255, 255, .5) 46% 54%, transparent 54%); }
 .sx-slab-handle { position: absolute; left: -5px; bottom: 30px; width: 10px; height: 190px; border-radius: 5px; background: linear-gradient(90deg, #56687E, #C9D3DF, #56687E); transform: rotate(-24deg); transform-origin: bottom; }
@@ -280,7 +280,7 @@
 @media (max-width: 520px) {
   .sx-slab { height: 170px; }
   .sx-slab-disc { left: -38px; top: -38px; width: 76px; height: 76px; }
-  .sx-slab-disc::after { font-size: .5rem; }
+
   .sx-slab-handle { height: 110px; bottom: 18px; width: 8px; }
   .sx-slab-done, .sx-slab-label { top: 26px; right: 10px; font-size: .7rem; }
   .sx-slab-steps { grid-template-columns: 1fr; gap: 10px; }
