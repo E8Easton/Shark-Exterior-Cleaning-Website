@@ -56,6 +56,7 @@
       const steps = [...root.querySelectorAll('.sx-trough-step')];
       const leaves = [...root.querySelectorAll('.sx-gut-leaf')].map((el) => [el, parseFloat(el.style.getPropertyValue('--x')) / 100]);
       const pinned = () => window.matchMedia('(max-width: 900px)').matches;
+      const pin = root.closest('[data-pin]');
       onScrollFrame(() => {
         const vh = window.innerHeight;
         let p;
@@ -64,6 +65,10 @@
           // Phones: the gutter is pinned, the water keeps pace with the steps scrolling under it
           const lr = list.getBoundingClientRect();
           p = clamp((vh * 0.62 - lr.top) / lr.height);
+        } else if (pin && window.matchMedia('(min-width: 1001px)').matches) {
+          // Desktop: the section holds on screen, so the water follows the scroll through it
+          const pr = pin.getBoundingClientRect();
+          p = clamp((-pr.top / Math.max(1, pr.height - vh)) * 1.15);
         } else {
           const r = run.getBoundingClientRect();
           // Starts as the gutter rises into view, finishes as it nears the top

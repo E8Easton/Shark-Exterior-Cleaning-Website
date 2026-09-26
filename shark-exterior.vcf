@@ -3,8 +3,9 @@ VERSION:3.0
 N:;Shark Exterior;;;
 FN:Shark Exterior
 ORG:Shark Exterior Cleaning
-TEL;TYPE=CELL,VOICE:+1-402-309-0128
-EMAIL;TYPE=INTERNET:dirtysharkexterior@gmail.com
+TEL;TYPE=WORK,VOICE,CELL:+14023090128
+EMAIL;TYPE=WORK,INTERNET:dirtysharkexterior@gmail.com
 URL:https://sharkexteriorcleaning.com
-NOTE:Window cleaning\, gutters\, soft washing and power washing in Lincoln & Kearney NE.
+ADR;TYPE=WORK:;;;Lincoln;NE;;USA
+NOTE:Window cleaning, soft washing, power washing, gutters and holiday lighting in Lincoln & Kearney, NE.
 END:VCARD

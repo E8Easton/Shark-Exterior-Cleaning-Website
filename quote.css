@@ -361,3 +361,32 @@ body.qp .qp-done-col { gap: 18px; }
   body.qp .qp-done-next2 b { font-size: .9rem; }
   body.qp .qp-done-next2 small { font-size: .78rem; }
 }
+
+/* ==========================================================
+   Requested polish (Sep 26): Back / Next sit right under each
+   step, full-size header with centered progress, bigger phone
+   and Exit, roomier cards, larger selection + request summary.
+   ========================================================== */
+body.qp .qp-main { flex: 0 0 auto; padding-bottom: 0; }
+body.qp .qp-nav, body.qp .qp-nav[style] { position: static !important; margin: 26px auto 0; padding: 0 20px calc(40px + env(safe-area-inset-bottom, 0px)); background: none; max-width: 1000px; }
+@media (min-width: 900px) {
+  body.qp.qp-compact .qp-brand { padding-top: calc(16px + env(safe-area-inset-top, 0px)); padding-bottom: 16px; }
+  body.qp.qp-compact .qp-brand-logo img { height: 44px; }
+  body.qp.qp-compact .qp-brand-phone, body.qp .qp-brand-phone { padding: 12px 22px; font-size: 1.08rem; }
+  body.qp.qp-compact .qp-progress-bar .step-dot, body.qp .qp-progress-bar .step-dot { height: 7px; }
+  body.qp.qp-compact .qp-progress-bar, body.qp .qp-progress-bar { padding: 0; }
+  body.qp.qp-compact .qp-close-float, body.qp .qp-close-float { top: calc(18px + env(safe-area-inset-top, 0px)); width: auto; height: 48px; }
+}
+@media (max-width: 899px) {
+  body.qp.qp-compact .qp-close-float, body.qp .qp-close-float { width: 46px; height: 46px; }
+}
+body.qp .qp-sel-card { height: auto; min-height: 300px; padding: 28px 20px 96px; }
+@media (max-width: 700px) { body.qp .qp-sel-card { height: auto; min-height: 262px; padding: 22px 10px 84px; } }
+body.qp .qp-plan-svc-summary { margin: 4px auto 26px; padding: 12px 24px 12px 12px; font-size: 1.1rem; font-weight: 600; }
+@media (max-width: 700px) { body.qp .qp-plan-svc-summary { font-size: .95rem; padding: 10px 16px 10px 10px; } }
+body.qp .qp-done-save-contact { padding: 12px 20px; font-size: .95rem; background: var(--sx-orange); box-shadow: 0 12px 24px -12px rgba(248, 106, 5, .8); }
+body.qp .qp-done-save-contact svg { width: 18px; height: 18px; }
+body.qp .qp-done--v2 .qp-done-row { padding: 12px 0; font-size: 1.02rem; align-items: center; }
+body.qp .qp-done--v2 .qp-done-row small { font-size: .74rem; }
+body.qp .qp-done--v2 .qp-done-row > div > div { font-size: 1.06rem; font-weight: 600; }
+body.qp .qp-done--v2 .qp-done-ico svg:not(.qp-ne) { fill: none; }
