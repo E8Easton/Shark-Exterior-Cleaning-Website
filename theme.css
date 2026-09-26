@@ -3330,14 +3330,7 @@ body.qp .qp-done-row > div { flex: 1; min-width: 0; }
 .sx-pin--sweep .sx-center { margin-top: clamp(16px, 3vh, 36px); }
 @media (max-height: 760px) { .sx-sweep-tiles .sx-ptile-desc { display: none; } }
 
-@media (prefers-reduced-motion: reduce) {
-  .sx-js .sx-pin--steps, .sx-js .sx-pin--sweep { height: auto; }
-  .sx-js .sx-pin-sticky { position: relative; height: auto; }
-  .sx-js .sx-pin--steps .sx-pin-card { opacity: 1 !important; transform: none !important; position: relative !important; }
-  .sx-js .sx-pin--steps .sx-pin-cards { height: auto !important; display: grid !important; }
-  .sx-js .sx-sweep-tiles .sx-ptile--icon:not(.is-clean) { filter: none; }
-  .sx-sweep-grime, .sx-sweep-wand { display: none; }
-}
+@media (prefers-reduced-motion: reduce) { .sx-sweep-wand span { animation: none; } }
 .sx-pin-cards { position: relative; }
 .sx-pin-hint { display: none; }
 .sx-js .sx-pin-hint { display: flex; position: absolute; left: 0; right: 0; margin-top: 70px; justify-content: center; align-items: center; gap: 8px; color: rgba(255, 255, 255, .75); font-weight: 600; font-size: .95rem; transition: opacity .4s; pointer-events: none; }

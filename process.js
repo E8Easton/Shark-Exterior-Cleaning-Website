@@ -5,7 +5,8 @@
    ========================================================== */
 
 (function () {
-  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // Every scene here is driven by the scroll position, so it plays for everyone
+  const reduceMotion = false;
   const clamp = (v) => Math.min(1, Math.max(0, v));
 
   // Calls fn(progress) on scroll/resize, throttled to one run per frame
