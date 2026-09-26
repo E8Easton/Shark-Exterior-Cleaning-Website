@@ -157,6 +157,7 @@
       dots: pin.querySelectorAll('.sx-pin-track li'),
       track: pin.querySelector('.sx-pin-track'),
       scene: pin.querySelector('.sx-sweep-scene'),
+      sticky: pin.querySelector('.sx-pin-sticky'),
       last: -1,
     }));
     let ticking = false;
@@ -167,6 +168,21 @@
         const r = s.pin.getBoundingClientRect();
         if (r.bottom < -vh || r.top > vh * 2) return;
         const span = Math.max(1, r.height - vh);
+        // Safety net: if the browser won't hold the section on screen, unpin it
+        // and show every step so the page never scrolls through empty space.
+        if (!s.off && s.sticky && r.top < -vh * 0.5 && r.bottom > vh * 1.2 && s.sticky.getBoundingClientRect().top < -60) {
+          s.off = true;
+          s.pin.classList.add('sx-pin-off', 'is-all', 'is-done', 'has-on');
+          s.pin.dataset.cur = String(s.cards.length - 1);
+          s.pin.style.setProperty('--p', '1');
+          s.pin.querySelectorAll('[data-step], .sx-bldg').forEach((el) => el.classList.add('is-on', 'is-clean'));
+          s.pin.querySelectorAll('.sx-pin-card, .sx-pin-track li, .sx-bldg, .sx-city-cap, .sx-solar-step').forEach((el) => el.classList.remove('is-cur'));
+          s.pin.querySelectorAll('.sx-trough-leaves i').forEach((el) => el.classList.add('is-gone'));
+          if (s.track) s.track.style.setProperty('--fill', 1);
+          if (s.pct) s.pct.textContent = '100%';
+          window.dispatchEvent(new Event('resize'));
+        }
+        if (s.off) return;
         const p = Math.min(1, Math.max(0, -r.top / span));
         s.pin.style.setProperty('--p', p.toFixed(4));
         if (s.type === 'steps') {

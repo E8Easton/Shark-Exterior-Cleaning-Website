@@ -3610,3 +3610,76 @@ body.qp .qp-done-summary { font-size: 1.08rem; }
 .sx-js .sx-svc .sx-wsteps .sx-wstep.sx-r.is-in .sx-wstep-num { opacity: 1; transform: none; }
 .sx-js .sx-svc .sx-wsteps .sx-wstep.sx-r .sx-wstep-body > :not(.sx-wstep-rule) { opacity: 0; transform: translateY(14px); transition: opacity .5s, transform .6s var(--sx-ease); transition-delay: calc(var(--d, 0ms) + 750ms); }
 .sx-js .sx-svc .sx-wsteps .sx-wstep.sx-r.is-in .sx-wstep-body > :not(.sx-wstep-rule) { opacity: 1; transform: none; }
+
+/* ===== Pinned scenes: work in every browser, never leave blank space =====
+   overflow:clip isn't understood by older Safari, which then falls back to
+   overflow:hidden and breaks sticky. Use visible (the sticky frame clips). */
+.sx-section.sx-pin, .sx-section.sx-pin.sx-trough-section { overflow: visible !important; }
+/* If a browser can't hold the section on screen, show it as a normal section */
+.sx-js .sx-pin.sx-pin-off { height: auto !important; }
+.sx-js .sx-pin.sx-pin-off .sx-pin-sticky { position: relative !important; height: auto !important; min-height: 0; padding: 110px 0 80px; }
+.sx-js .sx-pin--steps.sx-pin-off .sx-pin-cards { position: static; height: auto !important; display: grid !important; }
+.sx-js .sx-pin--steps.sx-pin-off .sx-pin-card { position: relative !important; inset: auto !important; opacity: 1 !important; transform: none !important; }
+.sx-js .sx-pin.sx-pin-off .sx-pin-hint { display: none; }
+@media (max-width: 760px) { .sx-js .sx-pin--steps.sx-pin-off .sx-pin-cards { grid-template-columns: 1fr; } }
+.sx-js .sx-pin--city.sx-pin-off .sx-city-cap { position: relative; opacity: 1; transform: none; margin-bottom: 10px; }
+.sx-js .sx-pin--city.sx-pin-off .sx-city-caps { min-height: 0; }
+.sx-js .sx-pin--solar.sx-pin-off .sx-solar-step p { max-height: 120px; opacity: 1; margin-top: 6px; }
+.sx-js .sx-pin--solar.sx-pin-off .sx-solar-step { display: flex !important; }
+
+/* Power washing driveway section: faint house drawn behind the driveway */
+.sx-slab-section > .sx-wrap { position: relative; z-index: 1; }
+.sx-slab-bg { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+.sx-slab-bg svg { position: absolute; left: 50%; bottom: -2%; width: min(1500px, 140%); transform: translateX(-50%); color: var(--sx-blue); opacity: .12; }
+
+/* Reviews next to a navy pricing band get the light treatment so the two never blend */
+.sx-svc #reviews.sx-reviews--light { background: radial-gradient(800px 360px at 90% 0%, rgba(4, 99, 238, .10), transparent 60%), linear-gradient(180deg, #EEF4FC, #F7FAFE); border-top: 1px solid #E1E8F2; border-bottom: 1px solid #E1E8F2; }
+.sx-svc #reviews.sx-reviews--light .sx-eyebrow { color: var(--sx-blue); }
+.sx-svc #reviews.sx-reviews--light .sx-title { color: var(--sx-navy); }
+.sx-svc #reviews.sx-reviews--light .sx-rating { color: var(--sx-text); }
+.sx-svc #reviews.sx-reviews--light .sx-rating b, .sx-svc #reviews.sx-reviews--light .sx-rating strong { color: var(--sx-navy); }
+.sx-svc #reviews.sx-reviews--light .sx-btn--navy { background: var(--sx-navy); color: #fff; }
+.sx-svc #reviews.sx-reviews--light .sx-review { border: 1px solid #E1E8F2; box-shadow: 0 20px 40px -30px rgba(4, 20, 60, .45); }
+
+/* Service sidebar: real photo thumbnails instead of drawn icons */
+.sx-svc .sx-side-thumb { width: 40px; height: 40px; border-radius: 11px; object-fit: cover; flex: none; box-shadow: 0 0 0 2px #fff, 0 6px 14px -8px rgba(4, 20, 60, .6); filter: saturate(.9); transition: transform .35s var(--sx-ease), box-shadow .3s, filter .3s; }
+.sx-svc .sx-side nav a:hover .sx-side-thumb { transform: scale(1.06); filter: none; }
+.sx-svc .sx-side nav a.is-active .sx-side-thumb { filter: none; box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--sx-blue), 0 8px 18px -8px rgba(4, 99, 238, .8); }
+
+/* Quote box: a soft light sweeps across the whole card every few seconds */
+.sx-svc .sx-side-cta::after { content: ''; position: absolute; inset: -20% -60%; z-index: -1; pointer-events: none; background: linear-gradient(105deg, transparent 38%, rgba(255, 255, 255, .28) 48%, rgba(255, 255, 255, .06) 54%, transparent 62%); transform: translateX(-60%); animation: sx-cta-sweep 4.2s var(--sx-ease) infinite; }
+@keyframes sx-cta-sweep { 0%, 35% { transform: translateX(-60%); } 75%, 100% { transform: translateX(60%); } }
+.sx-svc .sx-side-cta { animation: sx-cta-glow 4.2s ease-in-out infinite; }
+@keyframes sx-cta-glow { 0%, 100% { box-shadow: 0 24px 44px -26px rgba(4, 99, 238, .9); } 55% { box-shadow: 0 24px 50px -20px rgba(4, 99, 238, 1), 0 0 0 4px rgba(91, 155, 255, .25); } }
+@media (prefers-reduced-motion: reduce) { .sx-svc .sx-side-cta, .sx-svc .sx-side-cta::after { animation: none; } }
+
+/* Service write-up: a branded card so it reads as a feature, not a wall of text */
+.sx-svc #about-service .sx-article { position: relative; padding: 44px 44px 40px; border-radius: 26px; background: linear-gradient(180deg, #EEF5FF 0%, #FFFFFF 42%); border: 1px solid #DCE7F5; box-shadow: 0 30px 60px -44px rgba(4, 20, 60, .5); overflow: hidden; }
+.sx-svc #about-service .sx-article::before { content: ''; position: absolute; left: 0; top: 0; right: 0; height: 5px; background: linear-gradient(90deg, var(--sx-blue), var(--sx-orange)); }
+.sx-svc #about-service .sx-article > h2 { font-size: clamp(1.6rem, 2.6vw, 2.15rem); line-height: 1.15; margin-bottom: 18px; }
+.sx-svc #about-service .sx-article > h2 + p { padding: 4px 0 4px 18px; border-left: 4px solid var(--sx-blue); color: var(--sx-navy); font-size: 1.14rem; font-weight: 500; line-height: 1.65; }
+.sx-svc #about-service .sx-article p strong { color: var(--sx-blue); }
+.sx-svc #about-service .sx-article > h3 { display: flex; align-items: center; gap: 10px; margin-top: 30px; }
+.sx-svc #about-service .sx-article > h3::before { content: ''; width: 26px; height: 4px; border-radius: 4px; background: var(--sx-orange); flex: none; }
+@media (max-width: 640px) { .sx-svc #about-service .sx-article { padding: 30px 20px 26px; border-radius: 20px; } }
+
+/* ===== About page: branded bands instead of one long white page ===== */
+.sx-about #story { background: radial-gradient(900px 500px at 100% 0%, rgba(4, 99, 238, .45), transparent 60%), radial-gradient(700px 400px at 0% 100%, rgba(248, 106, 5, .16), transparent 60%), var(--sx-navy); }
+.sx-about #story .sx-title { color: #fff; }
+.sx-about #story .sx-story-copy p { color: rgba(255, 255, 255, .82); }
+.sx-about #story .sx-story-img { box-shadow: 0 0 0 6px rgba(255, 255, 255, .08), 0 40px 70px -30px rgba(0, 0, 0, .8); }
+.sx-story-chips { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px; }
+.sx-story-chips span { padding: 10px 16px; border-radius: 14px; background: rgba(255, 255, 255, .08); border: 1px solid rgba(255, 255, 255, .16); color: rgba(255, 255, 255, .85); font-size: .92rem; }
+.sx-story-chips b { color: #FFB27A; font-size: 1.15rem; margin-right: 4px; }
+.sx-about #team { background: #fff; }
+.sx-about #experience { background: linear-gradient(180deg, #FFF5EC 0%, #FFFFFF 100%); border-top: 1px solid #FBE3CF; border-bottom: 1px solid #F1F4F9; padding-block: 90px; }
+.sx-about #experience .sx-article { position: relative; max-width: 980px; margin: 0 auto; padding: 44px 44px 36px; border-radius: 26px; background: #fff; border: 1px solid #F3DDCA; box-shadow: 0 30px 60px -44px rgba(248, 106, 5, .55); overflow: hidden; }
+.sx-about #experience .sx-article::before { content: ''; position: absolute; inset: 0 0 auto 0; height: 5px; background: linear-gradient(90deg, var(--sx-orange), var(--sx-blue)); }
+.sx-about #experience h2 { font-size: clamp(1.7rem, 2.8vw, 2.3rem); }
+.sx-about #experience ul { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 22px 0 18px; }
+.sx-about #experience ul li { padding: 16px 16px 16px 50px; border-radius: 14px; background: #FFF7F1; border: 1px solid #F8E2D1; line-height: 1.5; }
+.sx-about #experience ul li::before { left: 16px; top: 17px; width: 22px; height: 22px; background: var(--sx-orange) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 12.5 4 4 8-9'/%3E%3C/svg%3E") center / 14px no-repeat; }
+.sx-about #experience ul li strong { display: block; color: var(--sx-navy); margin-bottom: 2px; }
+.sx-about #services { background: linear-gradient(180deg, #EEF4FC 0%, #F7FAFE 100%); border-bottom: 1px solid #E1E8F2; }
+.sx-about #blog { background: #fff; }
+@media (max-width: 700px) { .sx-about #experience ul { grid-template-columns: 1fr; } .sx-about #experience .sx-article { padding: 30px 20px 24px; } }
