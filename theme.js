@@ -23,6 +23,7 @@
     initJourney();
     initWind();
     initLive();
+    initMotifs();
     initPins();
     initChat();
     initPageTransitions();
@@ -266,6 +267,23 @@
     window.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('resize', onScroll);
     update();
+  }
+
+  /* ---------- Subtle brand motifs (fins, houses, drops) tucked into light sections ---------- */
+  function initMotifs() {
+    const light = document.querySelectorAll('main .sx-section--glow, .sx-svc #faq, .sx-svc #about-service, .sx-aboutpg #team, .sx-aboutpg #blog, .sx-aboutpg #values, .sx-areas, #faq, .sx-section--tight:not(.sx-legal-wrap):not(.sx-socials-band)');
+    const kinds = ['fin', 'house', 'drops'];
+    let k = 0;
+    light.forEach((sec) => {
+      if (sec.querySelector(':scope > .sx-motif') || sec.closest('.sx-final')) return;
+      const a = document.createElement('span');
+      const b = document.createElement('span');
+      a.className = 'sx-motif sx-motif--' + kinds[k % 3] + ' sx-motif--tl';
+      b.className = 'sx-motif sx-motif--' + kinds[(k + 1) % 3] + ' sx-motif--br';
+      a.setAttribute('aria-hidden', 'true'); b.setAttribute('aria-hidden', 'true');
+      sec.prepend(a); sec.prepend(b);
+      k++;
+    });
   }
 
   /* ---------- Sections that animate once they are actually on screen ---------- */

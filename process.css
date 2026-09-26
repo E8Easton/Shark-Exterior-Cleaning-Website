@@ -620,3 +620,8 @@
 [data-slab-drag] .sx-slab-done { top: auto; bottom: 36px; }
 @media (prefers-reduced-motion: reduce) { [data-slab-drag] .sx-slab-disc::before { animation: none; } }
 @media (max-width: 520px) { .sx-slab-hint { bottom: 22px; font-size: .7rem; padding: 5px 10px; } .sx-slab-label--after { top: 26px; left: 10px; font-size: .7rem; } }
+
+/* Surface cleaner: branded disc (white fin on Shark Blue), no stripe across the logo */
+.sx-slab-disc { background: radial-gradient(circle at 38% 32%, #3A86FF 0%, #0463EE 45%, #0352C7 70%, #033C94 100%); box-shadow: 0 0 0 5px #fff, 0 0 0 9px rgba(4, 99, 238, .35), 0 18px 30px rgba(0, 0, 0, .45); }
+.sx-slab-disc::after { width: 50%; height: 44%; background-image: url('images/brand/fin-white.svg'); filter: drop-shadow(0 2px 3px rgba(0, 0, 0, .35)); }
+.sx-slab-bar { inset: 6px; background: repeating-conic-gradient(from 0deg, rgba(255, 255, 255, .0) 0deg 14deg, rgba(255, 255, 255, .16) 14deg 18deg); -webkit-mask: radial-gradient(circle, transparent 62%, #000 63%); mask: radial-gradient(circle, transparent 62%, #000 63%); animation-duration: .9s; }
