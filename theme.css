@@ -1643,8 +1643,8 @@ body.qp .qp-plan-card--custom.selected .qp-plan-desc { color: rgba(255, 255, 255
   inset: 0;
   z-index: -1;
   background:
-    linear-gradient(90deg, rgba(4, 20, 60, .88) 0%, rgba(4, 20, 60, .6) 50%, rgba(4, 20, 60, .2) 100%),
-    linear-gradient(180deg, rgba(4, 20, 60, .5) 0%, rgba(4, 20, 60, 0) 35%, rgba(4, 20, 60, .35) 75%, var(--sx-bg-soft) 100%);
+    linear-gradient(90deg, rgba(4, 20, 60, .93) 0%, rgba(4, 20, 60, .76) 50%, rgba(4, 20, 60, .42) 100%),
+    linear-gradient(180deg, rgba(4, 20, 60, .55) 0%, rgba(4, 20, 60, .1) 35%, rgba(4, 20, 60, .4) 75%, var(--sx-bg-soft) 100%);
 }
 .blog-post-header--photo .container { width: 100%; }
 .blog-post-header--photo h1 { font-size: clamp(2rem, 4.4vw, 3.4rem); font-weight: 700; line-height: 1.12; max-width: 860px; text-wrap: balance; text-shadow: 0 2px 24px rgba(0, 0, 0, .3); }
