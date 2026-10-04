@@ -1,0 +1,179 @@
+/* ==========================================================
+   VIBRANT BLUE BRAND LAYER
+   Matches the blue social / print kit: Shark Blue gradient,
+   soft light streaks, white on blue. Loaded after theme.css,
+   process.css and quote.css. Remove this file to go back.
+   ========================================================== */
+:root {
+  /* the old orange accent now resolves to the brand blues */
+  --sx-orange: #0463EE;
+  --sx-orange-600: #0352C7;
+  --sx-orange-300: #5BB4FF;
+  --sx-ice: #BFE4FF;
+  --sx-vblue: linear-gradient(160deg, #1272FF 0%, #0463EE 50%, #0356D6 100%);
+  --sx-deep: linear-gradient(180deg, #0356D6 0%, #0347B4 100%);
+  --sx-streaks: linear-gradient(118deg, transparent 18%, rgba(255, 255, 255, .13) 27%, transparent 36%, transparent 48%, rgba(255, 255, 255, .08) 54%, transparent 60%, transparent 70%, rgba(255, 255, 255, .05) 74%, transparent 78%);
+}
+
+/* ---------- Buttons: blue on white, white pill on blue ---------- */
+.sx-btn { --glow: rgba(4, 99, 238, .45); }
+.sx-nav-quote { box-shadow: 0 6px 16px -6px rgba(4, 99, 238, .7); }
+.sx-nav-quote:hover { box-shadow: 0 10px 24px -6px rgba(4, 99, 238, .8); }
+.sx-band .sx-btn:not(.sx-btn--ghost),
+.sx-final .sx-btn:not(.sx-btn--ghost),
+.sx-blue .sx-btn:not(.sx-btn--ghost),
+#reviews .sx-btn:not(.sx-btn--ghost),
+#story .sx-btn:not(.sx-btn--ghost) { --bg: #fff; --bg-h: #EAF3FF; --glow: rgba(2, 40, 120, .35); color: var(--sx-blue); }
+.sx-band .sx-btn:not(.sx-btn--ghost):hover,
+.sx-final .sx-btn:not(.sx-btn--ghost):hover,
+#reviews .sx-btn:not(.sx-btn--ghost):hover,
+#story .sx-btn:not(.sx-btn--ghost):hover { color: var(--sx-blue-600); }
+.sx-btn--navy { --bg: var(--sx-blue); --bg-h: var(--sx-blue-600); --glow: rgba(4, 99, 238, .45); }
+
+/* hero highlight: ice blue reads cleanly over photos */
+.sx-hero h1 span { color: #7CC4FF; }
+
+/* ---------- Big dark bands -> vibrant blue with light streaks ---------- */
+.sx-band,
+.sx-final,
+#story.sx-section,
+.sx-svc #reviews,
+.sx-legal-hero { background: var(--sx-streaks), var(--sx-vblue) !important; }
+.sx-band::after { background: linear-gradient(160deg, rgba(18, 114, 255, .78), rgba(3, 86, 214, .86)); }
+.sx-final-bg { opacity: .35; mix-blend-mode: luminosity; }
+.sx-final::after { background: var(--sx-streaks), linear-gradient(180deg, rgba(18, 114, 255, .72) 0%, rgba(4, 99, 238, .82) 55%, #0356D6 100%); }
+
+/* footer: a deeper shade of the same blue so the page still "lands" */
+.sx-footer { background: var(--sx-deep); color: rgba(255, 255, 255, .82); }
+.sx-footer-col a { color: rgba(255, 255, 255, .82); }
+.sx-footer-social a { background: rgba(255, 255, 255, .14); }
+.sx-footer-social a:hover { background: #fff; }
+.sx-footer-social a:hover svg { fill: var(--sx-blue); }
+
+/* mobile menu + chat header + sidebar quote boxes */
+.sx-drawer-panel,
+.sx-chat-head,
+.sx-side-cta,
+.blog-post-sidebar .blog-sidebar-cta { background: var(--sx-streaks), var(--sx-vblue); }
+.sx-side-cta .sx-btn,
+.blog-post-sidebar .blog-sidebar-cta a.btn-primary { background: #fff !important; color: var(--sx-blue) !important; }
+
+/* warm decorative glows -> cool blue glows */
+.sx-glow--right { background: radial-gradient(circle, rgba(4, 99, 238, .22) 0%, rgba(91, 180, 255, .12) 40%, transparent 70%); }
+.sx-plan--pop { box-shadow: 0 0 0 2px var(--sx-blue), 0 20px 46px -18px rgba(4, 99, 238, .4); }
+.sx-plan--pop:hover { box-shadow: 0 0 0 3px var(--sx-blue), 0 34px 60px -22px rgba(4, 99, 238, .55); }
+.sx-dot.is-active i { box-shadow: 0 0 0 6px rgba(4, 99, 238, .25); }
+.sx-dots-fill { background: linear-gradient(90deg, #0463EE, #0FA3E0, #5BB4FF); }
+.sx-pin-track li.is-cur b { box-shadow: 0 0 0 6px rgba(4, 99, 238, .25), 0 0 26px rgba(4, 99, 238, .5); }
+.sx-step[data-step="2"], .sx-dot[data-go="2"] { --c: #0FA3E0; --c2: #5BB4FF; }
+.sx-step[data-step="3"], .sx-dot[data-go="3"] { --c: #0352C7; --c2: #0FA3E0; }
+.sx-values-band .sx-value--navy { --c: #0FA3E0; --c2: #0463EE; }
+.sx-ptiles > .sx-ptile--icon:nth-child(3) { --c: #0FA3E0; --c2: #5BB4FF; }
+.sx-ptiles > .sx-ptile--icon:nth-child(4) { --c: #0352C7; --c2: #0FA3E0; }
+.sx-story-chips b,
+.sx-city-num,
+.sx-areas-card b { color: var(--sx-ice); }
+.sx-xp-card { border-color: #D6E6FB; }
+.sx-xp-card:hover { box-shadow: 0 34px 60px -34px rgba(4, 99, 238, .6); }
+.sx-incl-list li:hover { box-shadow: 0 18px 34px -22px rgba(4, 99, 238, .5); }
+
+/* quote form */
+body.qp .qp-brand { background: var(--sx-streaks), var(--sx-vblue); }
+body.qp .qp-ladder-rung.is-current { box-shadow: 0 10px 20px -10px rgba(4, 99, 238, .8); }
+body.qp .qp-plan-card--featured { box-shadow: 0 0 0 3px rgba(4, 99, 238, .14), 0 22px 46px -24px rgba(4, 99, 238, .4); }
+body.qp .qp-addon-bundle { border-color: rgba(4, 99, 238, .45); }
+.qp-done-glow--b { background: radial-gradient(circle, rgba(91, 180, 255, .45), transparent 65%); }
+.qp-done-ring { border-color: rgba(191, 228, 255, .7); }
+
+/* ---------- Homepage 4-step process ---------- */
+.sx-process { background: var(--sx-streaks), var(--sx-vblue); }
+.sx-process::after { background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 160' preserveAspectRatio='none'%3E%3Cpath d='M0 90c160-50 320-50 480 0s320 50 480 0 320-50 480 0v70H0z' fill='%23fff' fill-opacity='.08'/%3E%3Cpath d='M0 120c180-40 360-40 540 0s360 40 540 0 270-30 360-10v50H0z' fill='%23fff' fill-opacity='.06'/%3E%3C/svg%3E") bottom / 100% 100% no-repeat; }
+.sx-process .sx-step { background: linear-gradient(145deg, rgba(3, 60, 170, .55), rgba(3, 50, 150, .45)); border-color: rgba(255, 255, 255, .28); }
+.sx-process .sx-eyebrow, .sx-process .sx-sub { color: var(--sx-ice); }
+.sx-step[data-step="0"], .sx-dot[data-go="0"] { --c: #fff; --c2: #BFE4FF; }
+.sx-process .sx-step-num { color: var(--sx-blue); }
+
+/* ---------- Pinned "how it works" steps on service pages ---------- */
+.sx-pin--steps { background: var(--sx-vblue); }
+.sx-pin--steps .sx-pin-sticky::before { background: var(--sx-streaks), linear-gradient(180deg, rgba(18, 114, 255, .86), rgba(3, 86, 214, .93)); }
+.sx-pin--steps .sx-sub { color: rgba(255, 255, 255, .88); }
+.sx-pin-track-fill { background: linear-gradient(90deg, #fff, var(--sx-ice)); box-shadow: 0 0 16px rgba(255, 255, 255, .5); }
+
+/* leftovers: white CTA in the process band, cool rim on the final arch */
+.sx-process .sx-btn:not(.sx-btn--ghost) { --bg: #fff; --bg-h: #EAF3FF; --glow: rgba(2, 40, 120, .35); color: var(--sx-blue); }
+.sx-final::before { box-shadow: inset 0 3px 0 rgba(191, 228, 255, .9), inset 0 26px 40px -24px rgba(255, 255, 255, .35), inset 0 60px 80px -50px rgba(2, 60, 170, .4); }
+
+/* ---------- Pricing / values bands on service pages ---------- */
+.sx-values-band { background: var(--sx-streaks), var(--sx-vblue); }
+.sx-values-band .sx-sub { color: rgba(255, 255, 255, .88); }
+.sx-values-band .sx-value,
+.sx-bstep-card { background: linear-gradient(180deg, rgba(3, 60, 170, .5), rgba(3, 50, 150, .38)); border-color: rgba(255, 255, 255, .26); }
+.sx-bstep-num { background: #0352C7; box-shadow: 0 0 0 8px rgba(3, 82, 199, .9), 0 0 30px -4px var(--c); }
+.sx-bstep--orange, .sx-brow--orange { --c: #BFE4FF; }
+.sx-values-band .sx-value--orange { --c: #BFE4FF; --c2: #fff; }
+.sx-values-band .sx-btn:not(.sx-btn--ghost) { --bg: #fff; --bg-h: #EAF3FF; --glow: rgba(2, 40, 120, .35); color: var(--sx-blue); }
+
+/* ---------- About: Shark Experience goes cool instead of peach ---------- */
+.sx-aboutpg #experience { background: linear-gradient(180deg, #EAF3FF 0%, #FFFFFF 100%); border-top-color: #D6E6FB; }
+.sx-aboutpg #experience .sx-article { border-color: #D6E6FB; box-shadow: 0 30px 60px -44px rgba(4, 99, 238, .55); }
+.sx-aboutpg #experience .sx-article::before { background: linear-gradient(90deg, #0FA3E0, var(--sx-blue)); }
+.sx-xp-card--save .sx-xp-vis { background: radial-gradient(260px 160px at 70% 10%, rgba(255, 255, 255, .25), transparent 60%), var(--sx-vblue); }
+
+/* ---------- Review avatars: brand blues instead of orange ---------- */
+.sx-avatar[style*="F86A05"], .sx-avatar[style*="f86a05"] { background: #0FA3E0 !important; }
+.sx-avatar[style*="E0560A"], .sx-avatar[style*="e0560a"] { background: #0352C7 !important; }
+
+/* ---------- Blog headers ---------- */
+.page-header { background: var(--sx-streaks), var(--sx-vblue) !important; }
+.blog-post-header--photo::after {
+  background:
+    linear-gradient(90deg, rgba(3, 72, 196, .9) 0%, rgba(4, 99, 238, .62) 50%, rgba(18, 114, 255, .2) 100%),
+    linear-gradient(180deg, rgba(3, 72, 196, .45) 0%, rgba(3, 72, 196, 0) 35%, rgba(3, 72, 196, .3) 75%, var(--sx-bg-soft) 100%);
+}
+
+/* ---------- Commercial city scene: daytime brand-blue sky ---------- */
+.sx-svc #process.sx-pin--city { background: linear-gradient(180deg, #0A5BE0 0%, #1272FF 55%, #4E9CFF 100%); }
+
+/* ---------- Page background glows: blue only ---------- */
+.blog-post-layout {
+  background:
+    radial-gradient(700px 520px at 0% 12%, rgba(4, 99, 238, .10), transparent 70%),
+    radial-gradient(620px 520px at 100% 55%, rgba(15, 163, 224, .09), transparent 70%),
+    radial-gradient(760px 560px at 20% 100%, rgba(4, 99, 238, .10), transparent 70%),
+    var(--sx-bg-soft);
+}
+body.qp {
+  background:
+    radial-gradient(640px 420px at 0% 18%, rgba(4, 99, 238, .10), transparent 70%),
+    radial-gradient(560px 380px at 100% 70%, rgba(15, 163, 224, .08), transparent 70%),
+    var(--sx-bg-soft);
+}
+
+/* ==========================================================
+   PER-SECTION CHOICES
+   .sx-keep-navy   -> section keeps the original dark navy look
+   .sx-keep-orange -> section keeps the original orange accents
+   ========================================================== */
+.sx-band.sx-keep-navy,
+.sx-final.sx-keep-navy,
+.sx-svc #reviews.sx-keep-navy { background: var(--sx-navy) !important; }
+.sx-svc #reviews.sx-keep-navy { background: radial-gradient(900px 420px at 85% -10%, rgba(4, 99, 238, .45), transparent 60%), radial-gradient(700px 380px at 0% 110%, rgba(4, 99, 238, .14), transparent 60%), var(--sx-navy) !important; }
+.sx-band.sx-keep-navy::after { background: rgba(4, 20, 60, .7); }
+.sx-final.sx-keep-navy .sx-final-bg { opacity: .55; mix-blend-mode: normal; }
+.sx-final.sx-keep-navy::after { background: linear-gradient(180deg, rgba(4, 20, 60, .55) 0%, rgba(4, 20, 60, .72) 55%, var(--sx-navy) 100%); }
+.sx-final.sx-keep-navy::before { box-shadow: inset 0 3px 0 rgba(91, 180, 255, .85), inset 0 26px 40px -24px rgba(4, 99, 238, .45), inset 0 60px 80px -50px rgba(4, 99, 238, .5); }
+.sx-svc #process.sx-pin--city.sx-keep-navy { background: linear-gradient(180deg, #06183F 0%, #0B2F74 55%, #1B4FA8 100%); }
+/* on navy, buttons are the solid brand blue */
+.sx-keep-navy .sx-btn:not(.sx-btn--ghost):not(.sx-btn--glass) { --bg: var(--sx-blue); --bg-h: var(--sx-blue-600); --glow: rgba(4, 99, 238, .45); color: #fff; }
+.sx-keep-navy .sx-btn:not(.sx-btn--ghost):hover { color: #fff; }
+.sx-keep-navy .sx-btn.sx-btn--glass { --bg: rgba(255, 255, 255, .12); --bg-h: rgba(255, 255, 255, .22); --glow: rgba(0, 0, 0, .3); color: #fff; }
+/* footer matches a navy closing section */
+body:has(.sx-final.sx-keep-navy) .sx-footer { background: var(--sx-navy); color: rgba(255, 255, 255, .72); }
+body:has(.sx-final.sx-keep-navy) .sx-footer-col a { color: rgba(255, 255, 255, .72); }
+body:has(.sx-final.sx-keep-navy) .sx-footer-social a { background: rgba(255, 255, 255, .08); }
+body:has(.sx-final.sx-keep-navy) .sx-footer-social a:hover { background: var(--sx-blue); }
+body:has(.sx-final.sx-keep-navy) .sx-footer-social a:hover svg { fill: #fff; }
+
+.sx-keep-orange { --sx-orange: #F86A05; --sx-orange-600: #DC5A00; --sx-orange-300: #FF9A4D; }
+.sx-keep-orange .sx-btn { --glow: rgba(248, 106, 5, .45); }
+.sx-keep-orange.sx-hero h1 span { color: #F86A05; }
