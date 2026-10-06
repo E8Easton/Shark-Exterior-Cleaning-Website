@@ -615,8 +615,15 @@
     document.addEventListener('click', (e) => {
       const a = e.target.closest && e.target.closest('a[href^="tel:"]');
       if (!a || typeof window.sxTrack !== 'function') return;
-      const where = a.closest('.sx-nav, .sx-drawer, .sx-hero, .sx-final, .sx-footer, .qp-brand, .sx-side-cta, .sx-chat')?.className.split(' ')[0] || 'page';
+      const where = a.closest('.sx-mbar, .sx-nav, .sx-drawer, .sx-hero, .sx-final, .sx-footer, .qp-brand, .sx-side-cta, .sx-chat')?.className.split(' ')[0] || 'page';
       window.sxTrack('click_to_call', { link_location: where, page: location.pathname });
+    }, true);
+    // Which "Get a Free Quote" buttons people actually tap
+    document.addEventListener('click', (e) => {
+      const a = e.target.closest && e.target.closest('a[href^="quote.html"], a[href^="/quote"]');
+      if (!a || typeof window.sxTrack !== 'function') return;
+      const where = a.closest('.sx-mbar, .sx-nav, .sx-drawer, .sx-hero, .sx-final, .sx-footer, .sx-side-cta')?.className.split(' ')[0] || 'page';
+      window.sxTrack('quote_click', { link_location: where, page: location.pathname });
     }, true);
   }
 
