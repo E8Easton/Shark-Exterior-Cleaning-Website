@@ -4000,3 +4000,18 @@ body.qp .qp-done-summary { font-size: 1.08rem; }
   body:has(.sx-mbar) { padding-bottom: calc(86px + env(safe-area-inset-bottom, 0px)); }
   .sx-mbar ~ .sx-chat { bottom: calc(92px + env(safe-area-inset-bottom, 0px)); }
 }
+
+/* contact bubble: close button in the header, roomier message box that grows as you type */
+.sx-chat-panel { width: min(380px, calc(100vw - 32px)); display: flex; flex-direction: column; max-height: calc(100vh - 140px); max-height: calc(100svh - 140px); }
+.sx-chat-form, .sx-chat-done { overflow-y: auto; overscroll-behavior: contain; }
+.sx-chat-head { position: relative; padding-right: 58px; flex-shrink: 0; }
+.sx-chat-x { position: absolute; top: 50%; right: 12px; width: 36px; height: 36px; margin-top: -18px; display: grid; place-items: center; border: 0; border-radius: 50%; background: rgba(255, 255, 255, .12); color: #fff; cursor: pointer; transition: background-color .2s, transform .3s var(--sx-ease); }
+.sx-chat-x svg { width: 18px; height: 18px; }
+.sx-chat-x:hover { background: rgba(255, 255, 255, .24); transform: rotate(90deg); }
+.sx-chat-x:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+.sx-chat-form textarea { min-height: 110px; font-size: 1rem; line-height: 1.5; resize: none; overflow-y: hidden; }
+.sx-chat-form textarea::placeholder { color: #8A97AB; }
+@media (max-width: 760px) {
+  .sx-chat-form input, .sx-chat-form textarea { font-size: 16px; } /* stops iPhone from zooming in on tap */
+  .sx-mbar ~ .sx-chat .sx-chat-panel { max-height: calc(100svh - 190px - env(safe-area-inset-bottom, 0px)); }
+}

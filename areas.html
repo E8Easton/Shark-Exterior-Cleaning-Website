@@ -252,6 +252,7 @@
           <strong>Shark Exterior</strong>
           <span>We usually reply within a few hours</span>
         </div>
+        <button type="button" class="sx-chat-x" id="sx-chat-x" aria-label="Close message box"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" fill="none"/></svg></button>
       </div>
       <form class="sx-chat-form" id="sx-chat-form" novalidate>
         <label for="sx-chat-name">Name</label>
@@ -259,7 +260,7 @@
         <label for="sx-chat-phone">Phone or email</label>
         <input id="sx-chat-phone" name="contact" type="text" autocomplete="tel" required>
         <label for="sx-chat-msg">How can we help?</label>
-        <textarea id="sx-chat-msg" name="message" rows="3" required></textarea>
+        <textarea id="sx-chat-msg" name="message" rows="4" required placeholder="Tell us about your home or the job — windows, gutters, siding, anything."></textarea>
         <p class="sx-chat-error" id="sx-chat-error" role="alert"></p>
         <button type="submit" class="sx-btn sx-btn--block">Send Message</button>
       </form>

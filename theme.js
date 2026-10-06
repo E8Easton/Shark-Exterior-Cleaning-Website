@@ -642,6 +642,19 @@
       if (open) setTimeout(() => form && !form.hidden && form.querySelector('input')?.focus(), 250);
     };
     btn.addEventListener('click', () => setOpen(!chat.classList.contains('open')));
+    document.getElementById('sx-chat-x')?.addEventListener('click', () => { setOpen(false); btn.focus(); });
+
+    // Message box grows with what's typed, so the whole message stays readable
+    const msg = form && form.message;
+    const fit = () => {
+      if (!msg) return;
+      msg.style.height = 'auto';
+      const max = Math.max(140, Math.min(320, window.innerHeight * 0.38));
+      msg.style.height = Math.min(msg.scrollHeight + 2, max) + 'px';
+      msg.style.overflowY = msg.scrollHeight + 2 > max ? 'auto' : 'hidden';
+    };
+    msg?.addEventListener('input', fit);
+    window.addEventListener('resize', fit);
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && chat.classList.contains('open')) { setOpen(false); btn.focus(); } });
 
     if (!form) return;
