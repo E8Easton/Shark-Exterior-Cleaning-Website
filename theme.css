@@ -255,6 +255,9 @@ body.sx-lock { overflow: hidden; }
 .sx-nav-call { background: var(--sx-blue); margin-right: 6px; box-shadow: 0 6px 16px -6px rgba(4, 99, 238, .7); }
 .sx-nav-call svg { width: 15px; height: 15px; fill: currentColor; }
 .sx-nav-call:hover { background: var(--sx-blue-600); transform: translateY(-2px); box-shadow: 0 10px 24px -6px rgba(4, 99, 238, .8); color: #fff; }
+/* phone sits next to the quote button as the quieter of the two: outlined, number shown */
+.sx-nav-links .sx-nav-call { margin: 0 0 0 10px; background: rgba(255, 255, 255, .08); box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, .42); font-variant-numeric: tabular-nums; }
+.sx-nav-links .sx-nav-call:hover { background: rgba(255, 255, 255, .18); box-shadow: inset 0 0 0 1.5px #fff; }
 .sx-nav-quote { background: var(--sx-orange); margin-left: 6px; box-shadow: 0 6px 16px -6px rgb(var(--sx-orange-rgb) / .7); }
 .sx-nav-quote:hover { background: var(--sx-orange-600); transform: translateY(-2px); box-shadow: 0 10px 24px -6px rgb(var(--sx-orange-rgb) / .8); color: #fff; }
 
