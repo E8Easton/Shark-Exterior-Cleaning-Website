@@ -9,6 +9,7 @@
   --sx-orange: #0463EE;
   --sx-orange-600: #0352C7;
   --sx-orange-300: #5BB4FF;
+  --sx-orange-rgb: 4 99 238;
   --sx-ice: #BFE4FF;
   --sx-vblue: linear-gradient(160deg, #1272FF 0%, #0463EE 50%, #0356D6 100%);
   --sx-deep: linear-gradient(180deg, #0356D6 0%, #0347B4 100%);
@@ -174,6 +175,6 @@ body:has(.sx-final.sx-keep-navy) .sx-footer-social a { background: rgba(255, 255
 body:has(.sx-final.sx-keep-navy) .sx-footer-social a:hover { background: var(--sx-blue); }
 body:has(.sx-final.sx-keep-navy) .sx-footer-social a:hover svg { fill: #fff; }
 
-.sx-keep-orange { --sx-orange: #F86A05; --sx-orange-600: #DC5A00; --sx-orange-300: #FF9A4D; }
+.sx-keep-orange { --sx-orange: #F86A05; --sx-orange-600: #DC5A00; --sx-orange-300: #FF9A4D; --sx-orange-rgb: 248 106 5; }
 .sx-keep-orange .sx-btn { --glow: rgba(248, 106, 5, .45); }
 .sx-keep-orange.sx-hero h1 span { color: #F86A05; }
