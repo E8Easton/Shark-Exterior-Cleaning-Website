@@ -29,7 +29,6 @@
     initPageTransitions();
     initHashLanding();
     initCallTracking();
-    initHouse();
     document.querySelectorAll('[data-year]').forEach((el) => { el.textContent = new Date().getFullYear(); });
   });
 
@@ -626,36 +625,6 @@
       const where = a.closest('.sx-mbar, .sx-nav, .sx-drawer, .sx-hero, .sx-final, .sx-footer, .sx-side-cta')?.className.split(' ')[0] || 'page';
       window.sxTrack('quote_click', { link_location: where, page: location.pathname });
     }, true);
-  }
-
-  /* ---------- Services: interactive house ---------- */
-  function initHouse() {
-    const stage = document.querySelector('.hx-stage');
-    if (!stage) return;
-    const order = [...stage.querySelectorAll('.hx-chip')].map((c) => c.dataset.svc);
-    let cur = null, timer = null;
-    const show = (key) => {
-      cur = key;
-      stage.querySelectorAll('.hx-chip').forEach((c) => c.setAttribute('aria-selected', String(c.dataset.svc === key)));
-      stage.querySelectorAll('.hx-card, .hx-hot').forEach((el) => el.classList.toggle('is-on', el.dataset.svc === key));
-      stage.querySelectorAll('.hx-part').forEach((g) => g.classList.toggle('is-on', g.dataset.part === key));
-    };
-    const stop = () => { clearInterval(timer); timer = null; stage.classList.add('is-touched'); };
-    stage.addEventListener('click', (e) => {
-      const b = e.target.closest('.hx-hot, .hx-chip');
-      if (!b) return;
-      stop(); show(b.dataset.svc);
-      if (b.classList.contains('hx-chip')) b.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: 'smooth' });
-      if (typeof window.sxTrack === 'function') window.sxTrack('select_content', { content_type: 'service_house', item_id: b.dataset.svc });
-    });
-    show(order[0]);
-    if (reduceMotion || !('IntersectionObserver' in window)) return;
-    // walk through the house on its own until someone taps
-    new IntersectionObserver((entries, io) => {
-      if (!entries[0].isIntersecting || stage.classList.contains('is-touched')) return;
-      io.disconnect();
-      timer = setInterval(() => show(order[(order.indexOf(cur) + 1) % (order.length - 1)]), 4200);
-    }, { threshold: 0.4 }).observe(stage);
   }
 
   /* ---------- Floating contact form ---------- */
