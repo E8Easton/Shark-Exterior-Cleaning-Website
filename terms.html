@@ -1,21 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- Google Tag Manager -->
-  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-  })(window,document,'script','dataLayer','GTM-5JZLQ9XJ');</script>
-  <!-- End Google Tag Manager -->
-  <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-KT6TQTF33Q"></script>
+  <!-- Analytics: Google Tag Manager + Google Analytics load ONLY after the visitor clicks Accept on the cookie banner (consent.js) -->
   <script>
     window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-
-    gtag('config', 'G-KT6TQTF33Q');
+    window.sxLoadTracking = function () {
+      if (window.__sxTrackingOn) return;
+      window.__sxTrackingOn = true;
+      window.gtag = function () { dataLayer.push(arguments); };
+      gtag('js', new Date());
+      gtag('config', 'G-KT6TQTF33Q');
+      dataLayer.push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
+      ['https://www.googletagmanager.com/gtag/js?id=G-KT6TQTF33Q', 'https://www.googletagmanager.com/gtm.js?id=GTM-5JZLQ9XJ'].forEach(function (src) {
+        var s = document.createElement('script'); s.async = true; s.src = src; document.head.appendChild(s);
+      });
+    };
+    try { if (localStorage.getItem('sx_consent') === 'granted') window.sxLoadTracking(); } catch (e) {}
   </script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -66,10 +66,6 @@
   <link rel="stylesheet" href="brand-blue.css">
 </head>
 <body>
-  <!-- Google Tag Manager (noscript) -->
-  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5JZLQ9XJ"
-  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-  <!-- End Google Tag Manager (noscript) -->
   <!-- ========================================
        HEADER
        ======================================== -->
@@ -340,5 +336,6 @@
 
   <script src="script.js" defer></script>
   <script src="theme.js" defer></script>
+  <script src="consent.js" defer></script>
 </body>
 </html>

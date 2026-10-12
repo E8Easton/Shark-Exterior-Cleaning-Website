@@ -1,21 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- Google Tag Manager -->
-  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-  })(window,document,'script','dataLayer','GTM-5JZLQ9XJ');</script>
-  <!-- End Google Tag Manager -->
-  <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-KT6TQTF33Q"></script>
+  <!-- Analytics: Google Tag Manager + Google Analytics load ONLY after the visitor clicks Accept on the cookie banner (consent.js) -->
   <script>
     window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-
-    gtag('config', 'G-KT6TQTF33Q');
+    window.sxLoadTracking = function () {
+      if (window.__sxTrackingOn) return;
+      window.__sxTrackingOn = true;
+      window.gtag = function () { dataLayer.push(arguments); };
+      gtag('js', new Date());
+      gtag('config', 'G-KT6TQTF33Q');
+      dataLayer.push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
+      ['https://www.googletagmanager.com/gtag/js?id=G-KT6TQTF33Q', 'https://www.googletagmanager.com/gtm.js?id=GTM-5JZLQ9XJ'].forEach(function (src) {
+        var s = document.createElement('script'); s.async = true; s.src = src; document.head.appendChild(s);
+      });
+    };
+    try { if (localStorage.getItem('sx_consent') === 'granted') window.sxLoadTracking(); } catch (e) {}
   </script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -64,12 +64,9 @@
   <meta name="twitter:image" content="https://sharkexteriorcleaning.com/images/og-image.png">
   <!-- /SEO:SHARK -->
   <link rel="stylesheet" href="brand-blue.css">
+<style>.sx-cookie-inline{background:none;border:0;padding:0;font:inherit;color:var(--sx-blue);font-weight:600;text-decoration:underline;cursor:pointer}</style>
 </head>
 <body>
-  <!-- Google Tag Manager (noscript) -->
-  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5JZLQ9XJ"
-  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-  <!-- End Google Tag Manager (noscript) -->
   <!-- ========================================
        HEADER
        ======================================== -->
@@ -145,7 +142,7 @@
       <span class="sx-eyebrow">Shark Exterior</span>
       <h1>Privacy Policy</h1>
       <p>How we collect, use and protect your information — including text messages.</p>
-      <span class="sx-legal-updated">Last updated September 23, 2026</span>
+      <span class="sx-legal-updated">Last updated October 12, 2026</span>
     </div>
   </section>
   <section class="sx-section sx-section--tight sx-legal-wrap">
@@ -167,7 +164,9 @@
           <li><strong>Information you give us:</strong> your name, email, phone number, property address, property type, the services and plan you're interested in, and any notes you add.</li>
           <li><strong>Messages you send us:</strong> anything you write through our contact form, by text or by email.</li>
           <li><strong>Basic technical information:</strong> like most websites, the services that host and power our site (such as fonts and maps) may receive your browser type and IP address when pages load.</li>
-          <li><strong>Analytics:</strong> we use Google Analytics, which uses cookies to understand how visitors find and use our site — for example, which pages are viewed, whether a quote request was sent, or whether a call button was tapped. If you arrive from an ad or link with campaign information, your browser remembers that source so we can see which ads bring in requests.</li>
+          <li id="cookies"><strong>Analytics cookies (only if you say yes):</strong> with your permission, we use Google Analytics and Google Tag Manager, which use cookies to understand how visitors find and use our site — for example, which pages are viewed, whether a quote request was sent, or whether a call button was tapped. <strong>These tools do not load at all until you click "Accept" on our cookie banner.</strong> If you click "Decline" or ignore the banner, no analytics or tracking runs. You can change your choice anytime with the "Cookie Settings" link at the bottom of every page.</li>
+          <li><strong>Campaign source:</strong> if you arrive from an ad or link with campaign information, your browser remembers that source on your own device, and it is included only if you send us a quote request, so we can see which ads bring in requests.</li>
+          <li><strong>Maps:</strong> Google Maps on our location pages loads only when you tap "Show map", or automatically if you accepted cookies.</li>
         </ul>
 
         <h2 id="use">2. How we use it</h2>
@@ -187,13 +186,13 @@
         <h2 id="share">4. Who we share it with</h2>
         <ul>
           <li><strong>Service providers</strong> that help us run the business — for example, tools that deliver our form submissions and emails, scheduling and payment processing. They may use your information only to provide those services to us.</li>
-          <li><strong>Google</strong>, which provides our website analytics. Learn how Google uses this data at <a href="https://policies.google.com/technologies/partner-sites" target="_blank" rel="noopener">policies.google.com/technologies/partner-sites</a>.</li>
+          <li><strong>Google</strong>, which provides our website analytics if you accept cookies. Learn how Google uses this data at <a href="https://policies.google.com/technologies/partner-sites" target="_blank" rel="noopener">policies.google.com/technologies/partner-sites</a>.</li>
           <li><strong>When required by law</strong> or to protect our rights, customers or team.</li>
         </ul>
 
         <h2 id="choices">5. Your choices</h2>
         <ul>
-          <li>Opt out of Google Analytics with Google's <a href="https://tools.google.com/dlpage/gaoptout" target="_blank" rel="noopener">browser add-on</a>, or block cookies in your browser settings.</li>
+          <li>Accept or decline analytics cookies with our cookie banner, and change your mind anytime with the <button type="button" class="sx-cookie-inline" onclick="window.sxCookieSettings &amp;&amp; window.sxCookieSettings()">Cookie Settings</button> link at the bottom of every page. You can also block cookies in your browser settings or use Google's <a href="https://tools.google.com/dlpage/gaoptout" target="_blank" rel="noopener">opt-out add-on</a>.</li>
           <li>Opt out of texts by replying STOP, and out of marketing emails with the unsubscribe link or by contacting us.</li>
           <li>Ask us to see, correct or delete the personal information we hold about you by calling <a href="tel:4023090128">(402) 309-0128</a>.</li>
           <li>We keep your information only as long as needed for the purposes above and our records, and protect it with reasonable safeguards.</li>
@@ -308,5 +307,6 @@
 
   <script src="script.js" defer></script>
   <script src="theme.js" defer></script>
+  <script src="consent.js" defer></script>
 </body>
 </html>
