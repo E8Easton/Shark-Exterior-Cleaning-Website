@@ -51,6 +51,8 @@ function sxTrack(name, params) {
   try { if (typeof gtag === 'function') gtag('event', name, params || {}); } catch (e) { /* never break the page */ }
   // Same event as a plain dataLayer entry so Google Tag Manager triggers
   // (Custom Event: generate_lead, click_to_call, quote_step) can use it.
+  // Only once the visitor has accepted cookies; before that nothing is queued for later.
+  if (!window.__sxTrackingOn) return;
   try { (window.dataLayer = window.dataLayer || []).push(Object.assign({ event: 'sx_' + name }, params || {})); } catch (e) { /* ignore */ }
 }
 
