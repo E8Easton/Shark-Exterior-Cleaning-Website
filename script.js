@@ -39,7 +39,6 @@ const SHARK_PRICING = {
   plans: {
     monthly:   { name: 'Monthly',    visits: 12, offEach: 150 },
     quarterly: { name: 'Quarterly',  visits: 4,  offEach: 100 },
-    triannual: { name: 'Tri-Annual', visits: 3,  offEach: 75 },
     biannual:  { name: 'Bi-Annual',  visits: 2,  offEach: 50 },
   },
 };
@@ -607,9 +606,13 @@ function handleNext() {
   if (!validateStep(currentStep)) return;
 
   if (currentStep === totalSteps) {
-    buildConfirmationSummary();
-    submitQuoteNotification(); // send email + SMS to owner
-    renderStep(7); // confirmation
+    const finish = () => {
+      buildConfirmationSummary();
+      submitQuoteNotification(); // send email + SMS to owner
+      renderStep(7); // confirmation
+    };
+    // Last chance to bundle: a friendly pop-up before the quote goes out
+    if (!offerBundlePopup(finish, true)) finish();
   } else if (currentStep === 4 && offerBundlePopup(() => renderStep(5))) {
     // Bundle pop-up is open; it continues to the plan step when closed
   } else {
@@ -1243,8 +1246,9 @@ function showAddOns(serviceId) {
  * Returns true when the pop-up was opened (it calls onDone to continue).
  */
 let bundlePopupShown = false;
-function offerBundlePopup(onDone) {
-  if (bundlePopupShown) return false;
+let finalBundlePopupShown = false;
+function offerBundlePopup(onDone, final) {
+  if (final ? finalBundlePopupShown : bundlePopupShown) return false;
   const mainSvc = document.querySelector('.service-radio-card.selected')?.dataset.service;
   if (!mainSvc) return false;
   const tiers = SHARK_PRICING.bundleTiers;
@@ -1252,11 +1256,11 @@ function offerBundlePopup(onDone) {
   const next = tiers.find(t => t.services > count);
   const options = (SVC_ADDONS[mainSvc] || []).filter(id => SVC_INFO[id] && !wizardState.addOns.includes(id));
   if (!next || !options.length) return false;
-  bundlePopupShown = true;
+  if (final) finalBundlePopupShown = true; else bundlePopupShown = true;
 
   const picked = new Set();
   const pop = document.createElement('div');
-  pop.className = 'qp-bundle-pop';
+  pop.className = 'qp-bundle-pop' + (final ? ' qp-bundle-pop--final' : '');
   pop.setAttribute('role', 'dialog');
   pop.setAttribute('aria-modal', 'true');
   pop.setAttribute('aria-labelledby', 'qp-bundle-pop-title');
@@ -1265,7 +1269,7 @@ function offerBundlePopup(onDone) {
       <button type="button" class="qp-bundle-pop-x" aria-label="Close">&times;</button>
       <span class="qp-bundle-pop-badge">${next.percent}% off</span>
       <h3 id="qp-bundle-pop-title">Add ${next.services - count === 1 ? 'one more service' : `${next.services - count} more services`}, save ${next.percent}%</h3>
-      <p class="qp-bundle-pop-sub">We're already coming out &mdash; add to the same visit and save on the <b>whole visit</b>.</p>
+      <p class="qp-bundle-pop-sub">${final ? 'Before we send your quote &mdash; we&rsquo;re already coming out, so add a service to the same visit and save on the <b>whole visit</b>.' : 'We\'re already coming out &mdash; add to the same visit and save on the <b>whole visit</b>.'}</p>
       <div class="qp-bundle-pop-list">
         ${options.map(id => `
           <button type="button" class="qp-bundle-pop-opt" data-id="${id}" aria-pressed="false">
@@ -1276,8 +1280,8 @@ function offerBundlePopup(onDone) {
       </div>
       <p class="qp-bundle-pop-status" aria-live="polite"></p>
       <div class="qp-bundle-pop-actions">
-        <button type="button" class="qp-bundle-pop-skip">No thanks</button>
-        <button type="button" class="qp-bundle-pop-go" disabled>Add &amp; continue &rarr;</button>
+        <button type="button" class="qp-bundle-pop-skip">${final ? 'No thanks, just get my quote' : 'No thanks'}</button>
+        <button type="button" class="qp-bundle-pop-go" disabled>${final ? 'Add &amp; get my quote &rarr;' : 'Add &amp; continue &rarr;'}</button>
       </div>
     </div>`;
   document.body.appendChild(pop);
@@ -1311,12 +1315,12 @@ function offerBundlePopup(onDone) {
   pop.querySelector('.qp-bundle-pop-x').addEventListener('click', () => close(false));
   pop.addEventListener('click', (e) => { if (e.target === pop) close(false); });
   pop.querySelector('.qp-bundle-pop-skip').addEventListener('click', () => {
-    sxTrack('bundle_popup', { action: 'skip' });
+    sxTrack('bundle_popup', { action: 'skip', where: final ? 'submit' : 'services' });
     close(true);
   });
   go.addEventListener('click', () => {
     picked.forEach(id => { if (!wizardState.addOns.includes(id)) wizardState.addOns.push(id); });
-    sxTrack('bundle_popup', { action: 'add', added: picked.size });
+    sxTrack('bundle_popup', { action: 'add', added: picked.size, where: final ? 'submit' : 'services' });
     showAddOns(mainSvc); // keep the add-on panel in sync if they come back
     close(true);
   });
@@ -1406,17 +1410,18 @@ function preparePlanStep() {
   const customDesc = document.querySelector('#wizard-step-5 [data-custom-desc]');
   if (customDesc) {
     customDesc.textContent = property === 'commercial'
-      ? 'Need bi-annual visits, a one-time clean or a schedule built around your business? We\'ll put together a custom quote.'
-      : 'Want monthly service, a one-time clean or something built around your home? We\'ll put together a custom quote.';
+      ? 'Need a one-time clean or a schedule built around your business? We\'ll put together a custom quote.'
+      : 'Want a one-time clean or something built around your home? We\'ll put together a custom quote.';
   }
 
   if (!wizardState.preselectedPlan && !document.querySelector('#wizard-step-5 .plan-card.selected:not([hidden])')) {
     wizardState.preselectedPlan = 'quarterly';
   }
   if (wizardState.preselectedPlan) {
-    const wanted = wizardState.preselectedPlan.replace('-', '');
+    let wanted = wizardState.preselectedPlan.replace('-', '');
+    if (wanted === 'triannual') wanted = 'quarterly'; // retired plan: old links land on Quarterly
     const match = Array.from(cards).find(c => !c.hidden && c.dataset.plan === wanted)
-      || (wanted === 'onetime' || wanted === 'monthly' || wanted === 'biannual'
+      || (wanted === 'onetime'
         ? Array.from(cards).find(c => !c.hidden && c.dataset.plan === 'custom') : null);
     if (match) match.click();
     wizardState.preselectedPlan = null;
