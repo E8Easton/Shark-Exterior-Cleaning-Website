@@ -76,7 +76,6 @@
       <a href="index.html" class="sx-nav-logo" aria-label="Shark Exterior home">
         <img src="images/logo-lockup-white.png" alt="Shark Exterior" width="180" height="44">
       </a>
-      <a href="#reviews" class="sx-nav-rating" aria-label="Rated 5.0 out of 5 on Google"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><b>5.0</b><span>Google</span></a>
 
       <nav class="sx-nav-links" aria-label="Main">
         <div class="sx-nav-drop">
@@ -294,55 +293,30 @@
   <!-- ========================================
        4 STEP PROCESS
        ======================================== -->
-  <section class="sx-section sx-process" id="process">
+  <section class="sx-section ps-section sx-process ps-section--dark" id="process">
     <div class="sx-wrap">
       <div class="sx-head sx-head--light sx-r">
         <h2 class="sx-title">Our 4 Step Process</h2>
         <span class="sx-eyebrow sx-eyebrow--under">With Shark RainBlock Tech</span>
       </div>
-      <div class="sx-stepper sx-r" data-stepper>
-        <div class="sx-steps">
-          <div class="sx-step is-active" data-step="0" role="tabpanel" id="sx-step-0" aria-labelledby="sx-dot-0">
-            <img src="images/step1-scrub.jpg" alt="Step 1: Scrub" loading="eager" decoding="sync" width="1456" height="1088">
-            <div class="sx-step-body">
-              <span class="sx-step-num">01</span>
-              <h3>Scrub</h3>
-              <p>We scrub every pane, frame and sill with a pro-grade, eco-friendly solution that lifts dirt, pollen, bird droppings and hard-water film.</p>
-            </div>
-          </div>
-          <div class="sx-step" data-step="1" role="tabpanel" id="sx-step-1" aria-labelledby="sx-dot-1" hidden>
-            <img src="images/step2-squeegee.jpg" alt="Step 2: Squeegee" loading="eager" decoding="sync" width="1456" height="1088">
-            <div class="sx-step-body">
-              <span class="sx-step-num">02</span>
-              <h3>Squeegee</h3>
-              <p>Commercial squeegees pull every drop of solution off the glass in clean passes for a streak-free finish.</p>
-            </div>
-          </div>
-          <div class="sx-step" data-step="2" role="tabpanel" id="sx-step-2" aria-labelledby="sx-dot-2" hidden>
-            <img src="images/step3-detail.jpg" alt="Step 3: Detail" loading="eager" decoding="sync" width="1456" height="1088">
-            <div class="sx-step-body">
-              <span class="sx-step-num">03</span>
-              <h3>Detail</h3>
-              <p>We hand-detail edges, corners and sills with lint-free microfiber so there are no drips, lines or missed spots.</p>
-            </div>
-          </div>
-          <div class="sx-step" data-step="3" role="tabpanel" id="sx-step-3" aria-labelledby="sx-dot-3" hidden>
-            <img src="images/step4-rainblock.jpg" alt="Step 4: Shark RainBlock" loading="eager" decoding="sync" width="1456" height="1088">
-            <div class="sx-step-body">
-              <span class="sx-step-num">04</span>
-              <h3>Shark RainBlock</h3>
-              <p>Our hydrophobic RainBlock coating makes water bead and roll off, so your windows stay cleaner, longer — backed by our 7-day rain guarantee.</p>
-            </div>
-          </div>
-        </div>
-        <div class="sx-dots" role="tablist" aria-label="Process steps">
-          <span class="sx-dots-line" aria-hidden="true"><span class="sx-dots-fill" data-fill></span></span>
-          <button type="button" class="sx-dot is-active" role="tab" id="sx-dot-0" aria-controls="sx-step-0" aria-selected="true" data-go="0"><i></i><span>Scrub</span></button>
-          <button type="button" class="sx-dot" role="tab" id="sx-dot-1" aria-controls="sx-step-1" aria-selected="false" data-go="1"><i></i><span>Squeegee</span></button>
-          <button type="button" class="sx-dot" role="tab" id="sx-dot-2" aria-controls="sx-step-2" aria-selected="false" data-go="2"><i></i><span>Detail</span></button>
-          <button type="button" class="sx-dot" role="tab" id="sx-dot-3" aria-controls="sx-step-3" aria-selected="false" data-go="3"><i></i><span>Shark RainBlock</span></button>
-        </div>
-      </div>
+      <ol class="ps-grid">
+          <li class="ps-card sx-r" style="--d:0ms">
+            <figure class="ps-photo"><img src="images/steps/home-scrub.jpg" alt="Spraying and wiping a window clean" loading="lazy" width="1200" height="900"><span class="ps-num">01</span></figure>
+            <div class="ps-body"><h3>Scrub</h3><p>We scrub every pane, frame and sill with a pro-grade, eco-friendly solution that lifts dirt, pollen, bird droppings and hard-water film.</p></div>
+          </li>
+          <li class="ps-card sx-r" style="--d:90ms">
+            <figure class="ps-photo"><img src="images/steps/../step2-squeegee.jpg" alt="Squeegee pulling water off a window pane" loading="lazy" width="1200" height="900"><span class="ps-num">02</span></figure>
+            <div class="ps-body"><h3>Squeegee</h3><p>Commercial squeegees pull every drop of solution off the glass in clean passes for a streak-free finish.</p></div>
+          </li>
+          <li class="ps-card sx-r" style="--d:180ms">
+            <figure class="ps-photo"><img src="images/steps/../step3-detail.jpg" alt="Microfiber cloth wiping a window sill" loading="lazy" width="1200" height="900"><span class="ps-num">03</span></figure>
+            <div class="ps-body"><h3>Detail</h3><p>We hand-detail edges, corners and sills with lint-free microfiber so there are no drips, lines or missed spots.</p></div>
+          </li>
+          <li class="ps-card sx-r" style="--d:270ms">
+            <figure class="ps-photo"><img src="images/steps/../step4-rainblock.jpg" alt="Water beading on clean window glass" loading="lazy" width="1200" height="900"><span class="ps-num">04</span></figure>
+            <div class="ps-body"><h3>Shark RainBlock</h3><p>Our hydrophobic RainBlock coating makes water bead and roll off, so your windows stay cleaner, longer &mdash; backed by our 7-day rain guarantee.</p></div>
+          </li>
+      </ol>
       <div class="sx-center sx-r"><a class="sx-btn" href="quote.html">Get Your Quote <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></a></div>
     </div>
   </section>

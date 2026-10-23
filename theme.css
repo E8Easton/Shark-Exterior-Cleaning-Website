@@ -4024,3 +4024,88 @@ body.qp .qp-done-summary { font-size: 1.08rem; }
 .sx-local-card h3::before { content: ''; display: block; width: 36px; height: 4px; margin-bottom: 14px; border-radius: 4px; background: var(--sx-blue); }
 .sx-local-card p { margin: 0; color: var(--sx-text); font-size: 1rem; line-height: 1.65; }
 @media (max-width: 900px) { .sx-local { grid-template-columns: 1fr; gap: 14px; } }
+
+/* ==========================================================
+   PHOTO PROCESS — 4 compact photo cards (home + service pages)
+   ========================================================== */
+.ps-section > .sx-wrap { position: relative; z-index: 1; }
+.ps-grid { list-style: none; margin: 0 0 36px; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 22px; counter-reset: none; }
+.ps-card { display: flex; flex-direction: column; background: #fff; border: 1px solid var(--sx-line); border-radius: 18px; overflow: hidden; box-shadow: 0 18px 40px -30px rgba(4, 20, 60, .55); transition: transform .4s var(--sx-ease), box-shadow .4s var(--sx-ease); }
+.ps-card:hover { transform: translateY(-4px); box-shadow: 0 26px 50px -30px rgba(4, 20, 60, .6); }
+.ps-photo { position: relative; margin: 0; aspect-ratio: 4 / 3; overflow: hidden; background: var(--sx-bg-soft); }
+.ps-photo img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .8s var(--sx-ease); }
+.ps-card:hover .ps-photo img { transform: scale(1.05); }
+.ps-num { position: absolute; left: 14px; top: 14px; min-width: 44px; height: 44px; padding: 0 10px; border-radius: 12px; display: grid; place-items: center; background: var(--sx-orange); color: #fff; font-weight: 800; font-size: 1.05rem; letter-spacing: .02em; box-shadow: 0 8px 20px -8px rgba(0, 0, 0, .45); }
+.ps-body { padding: 18px 20px 22px; }
+.ps-body h3 { margin: 0 0 8px; color: var(--sx-navy); font-size: 1.15rem; font-weight: 700; line-height: 1.3; }
+.ps-body p { margin: 0; color: var(--sx-text); font-size: .95rem; line-height: 1.6; }
+.ps-section--dark .ps-card { border-color: rgba(255, 255, 255, .2); box-shadow: 0 24px 50px -30px rgba(0, 0, 0, .6); }
+.ps-section--dark .ps-num { background: #fff; color: var(--sx-blue); }
+@media (max-width: 1080px) { .ps-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 600px) {
+  .ps-grid { grid-template-columns: 1fr; gap: 12px; margin-bottom: 28px; }
+  .ps-card { flex-direction: row; align-items: stretch; border-radius: 14px; }
+  .ps-photo { flex: none; width: 112px; aspect-ratio: auto; }
+  .ps-num { left: 8px; top: 8px; min-width: 32px; height: 32px; font-size: .85rem; border-radius: 9px; }
+  .ps-body { padding: 12px 14px; }
+  .ps-body h3 { font-size: 1rem; margin-bottom: 4px; }
+  .ps-body p { font-size: .86rem; line-height: 1.5; }
+}
+
+/* ==========================================================
+   PRICING — "Book It When You Need It" photo + list
+   ========================================================== */
+.pz { background: var(--sx-bg-soft); }
+.pz-wrap { display: grid; grid-template-columns: 1fr 1.05fr; gap: 56px; align-items: center; }
+.pz-photo { position: relative; margin: 0; border-radius: 22px; overflow: hidden; aspect-ratio: 4 / 5; max-height: 640px; box-shadow: 0 34px 70px -40px rgba(4, 20, 60, .7); }
+.pz-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.pz-free { position: absolute; left: 20px; bottom: 20px; right: 20px; display: flex; align-items: center; gap: 14px; padding: 14px 18px; border-radius: 16px; background: rgba(255, 255, 255, .94); backdrop-filter: blur(8px); box-shadow: 0 18px 40px -20px rgba(4, 20, 60, .6); }
+.pz-free b { color: var(--sx-orange); font-size: 1.5rem; font-weight: 800; }
+.pz-free span { color: var(--sx-navy); font-size: .92rem; font-weight: 600; line-height: 1.35; }
+.pz-copy .sx-eyebrow { display: inline-block; margin-bottom: 8px; }
+.pz-sub { margin: 12px 0 24px; color: var(--sx-text); font-size: 1.05rem; line-height: 1.65; }
+.pz-list { list-style: none; margin: 0 0 22px; padding: 0; display: grid; gap: 12px; }
+.pz-list li { display: flex; align-items: center; gap: 16px; padding: 14px 16px; border-radius: 16px; background: #fff; border: 1px solid var(--sx-line); box-shadow: 0 12px 28px -24px rgba(4, 20, 60, .5); transition: border-color .3s, transform .4s var(--sx-ease); }
+.pz-list li:hover { border-color: var(--sx-orange); transform: translateX(4px); }
+.pz-list li > img { flex: none; width: 72px; height: 72px; border-radius: 12px; object-fit: cover; }
+.pz-list li > div { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+.pz-list strong { color: var(--sx-navy); font-size: 1.06rem; font-weight: 700; }
+.pz-list li > div > span { color: var(--sx-text); font-size: .93rem; line-height: 1.5; }
+.pz-tag { flex: none; align-self: center; padding: 6px 10px; border-radius: 999px; background: rgb(var(--sx-orange-rgb) / .1); color: var(--sx-orange); font-style: normal; font-size: .78rem; font-weight: 700; white-space: nowrap; }
+.pz-tiers { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+.pz-tiers span { padding: 4px 9px; border-radius: 8px; background: var(--sx-bg-soft); color: var(--sx-text); font-size: .8rem; }
+.pz-tiers b { color: var(--sx-orange); }
+.pz-note { margin: 0 0 22px; padding: 12px 16px; border-left: 3px solid var(--sx-orange); border-radius: 0 10px 10px 0; background: #fff; color: var(--sx-text); font-size: .95rem; line-height: 1.55; }
+.pz-note b { color: var(--sx-navy); }
+.pz-ctas { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 22px; }
+.pz-call { display: inline-flex; align-items: center; gap: 8px; color: var(--sx-navy); font-weight: 700; font-size: 1.05rem; text-decoration: none; }
+.pz-call svg { width: 20px; height: 20px; fill: var(--sx-orange); }
+.pz-call:hover { color: var(--sx-orange); }
+@media (max-width: 960px) {
+  .pz-wrap { grid-template-columns: 1fr; gap: 28px; }
+  .pz-photo { aspect-ratio: 16 / 10; max-height: none; }
+}
+@media (max-width: 600px) {
+  .pz-photo { aspect-ratio: 4 / 3; border-radius: 16px; }
+  .pz-free { left: 12px; right: 12px; bottom: 12px; padding: 10px 14px; }
+  .pz-free b { font-size: 1.2rem; }
+  .pz-free span { font-size: .82rem; }
+  .pz-list li { display: grid; grid-template-columns: 56px 1fr; align-items: start; gap: 6px 12px; padding: 12px; }
+  .pz-list li > img { width: 56px; height: 56px; grid-row: span 2; }
+  .pz-tag { grid-column: 2; justify-self: start; }
+}
+
+/* ==========================================================
+   WHAT TO EXPECT — compact 4-card row (power washing)
+   ========================================================== */
+.jx-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
+.jx-card { position: relative; padding: 22px 20px; border-radius: 16px; background: #fff; border: 1px solid var(--sx-line); border-top: 3px solid var(--sx-orange); box-shadow: 0 12px 30px -26px rgba(4, 20, 60, .5); }
+.jx-num { display: block; margin-bottom: 10px; color: var(--sx-orange); font-weight: 800; font-size: 1.4rem; }
+.jx-card h3 { margin: 0 0 6px; color: var(--sx-navy); font-size: 1.08rem; font-weight: 700; }
+.jx-card p { margin: 0; color: var(--sx-text); font-size: .93rem; line-height: 1.6; }
+@media (max-width: 1080px) { .jx-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 600px) { .jx-grid { grid-template-columns: 1fr; gap: 10px; } .jx-card { padding: 16px; } }
+
+/* Everything Included — real photos in place of drawn icons */
+.sx-incl-ico--photo { width: 64px; height: 64px; padding: 0; overflow: hidden; background: none; }
+.sx-incl-ico--photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
