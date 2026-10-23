@@ -456,3 +456,26 @@ body.qp .qp-sel-card[data-property="commercial"].selected .qp-card-check { backg
   .qp-bundle-pop--final .qp-bundle-pop-card::before, .qp-bundle-pop--final .qp-bundle-pop-badge { animation: none; }
   .qp-bundle-pop--final .qp-bundle-pop-opt { animation: none; opacity: 1; transform: none; }
 }
+
+/* ---------- Header call button: white pill so it stands out on the blue bar ---------- */
+body.qp .qp-brand .qp-brand-phone { background: #fff; color: var(--sx-blue); font-weight: 700; box-shadow: 0 8px 22px -10px rgba(2, 20, 60, .55), 0 0 0 2px rgba(255, 255, 255, .35); }
+body.qp .qp-brand .qp-brand-phone:hover { background: #EAF3FF; color: var(--sx-blue); }
+body.qp .qp-brand .qp-brand-phone svg { color: var(--sx-orange); }
+@media (max-width: 700px) {
+  body.qp .qp-brand .qp-brand-phone, body.qp.qp-compact .qp-brand .qp-brand-phone { gap: 6px; padding: 9px 16px; font-size: 0; white-space: nowrap; }
+  body.qp .qp-brand .qp-brand-phone::after { content: 'Call'; font-size: .92rem; font-weight: 800; }
+}
+
+/* ---------- Bundle ladder: room between the headline and the "You're here" tag ---------- */
+body.qp .qp-ladder-head { margin-bottom: 34px; }
+body.qp .qp-ladder-count { display: block; }
+@media (max-width: 700px) {
+  body.qp .qp-ladder { padding: 14px 12px 12px; }
+  body.qp .qp-ladder-head { gap: 4px; margin-bottom: 38px; }
+}
+
+/* ---------- Savings chip becomes an "add a service" button on the plan + address steps ---------- */
+body.qp .qp-savings-chip { font-family: inherit; cursor: default; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+body.qp .qp-savings-chip.is-action { cursor: pointer; border-color: var(--sx-orange); box-shadow: 0 6px 16px -10px rgb(var(--sx-orange-rgb) / .8); transition: transform .25s var(--sx-ease), background-color .25s; }
+body.qp .qp-savings-chip.is-action:hover { transform: translateY(-1px); background: #FFF1E6; }
+body.qp .qp-chip-add { padding: 3px 9px; border-radius: 999px; background: var(--sx-orange); color: #fff; font-size: .74rem; font-weight: 800; }
