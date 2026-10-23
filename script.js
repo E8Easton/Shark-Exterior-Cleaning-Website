@@ -416,6 +416,7 @@ const wizardState = {
   preselectedService: null,
   preselectedPlan: null,
   addOns: [],           // add-on service IDs selected in step 4
+  mainService: null,    // main service picked in step 4
 };
 
 // Services that memberships apply to (window-cleaning side)
@@ -428,9 +429,9 @@ const SVC_ADDONS = {
   'track-detailing':    ['exterior-windows', 'interior-windows', 'screen-cleaning'],
   'gutters':            ['exterior-windows', 'soft-washing', 'pressure-washing'],
   'screen-cleaning':    ['exterior-windows', 'interior-windows', 'track-detailing'],
-  'pressure-washing':   ['soft-washing', 'exterior-windows', 'gutters'],
+  'pressure-washing':   ['soft-washing', 'exterior-windows', 'gutters', 'screen-cleaning'],
   'solar-panel':        ['exterior-windows', 'gutters', 'soft-washing'],
-  'soft-washing':       ['exterior-windows', 'pressure-washing', 'gutters'],
+  'soft-washing':       ['exterior-windows', 'pressure-washing', 'gutters', 'screen-cleaning'],
   'christmas-lights':   ['exterior-windows', 'gutters'],
   'commercial-cleaning':['exterior-windows', 'pressure-washing', 'soft-washing'],
 };
@@ -454,7 +455,7 @@ const SVC_INFO = {
   'interior-windows':   { img: 'images/svc-interior.jpg',   name: 'Interior Window Cleaning',        desc: 'Crystal-clear inside views, safely done' },
   'track-detailing':    { img: 'images/svc-track.jpg',      name: 'Track Detailing',                 desc: 'Deep-cleaned tracks, sills & frames' },
   'gutters':            { img: 'images/svc-gutter.jpg',     name: 'Gutter Cleaning',                 desc: 'Free-flowing gutters, no clogs or damage' },
-  'screen-cleaning':    { img: 'images/svc-screen.jpg',     name: 'Screen Cleaning',                 desc: 'Dust & grime removed from every screen' },
+  'screen-cleaning':    { img: 'images/svc-screen-addon.jpg', name: 'Screen Cleaning',               desc: 'Screens washed & rinsed while we’re there' },
   'pressure-washing':   { img: 'images/svc-powerwash.jpg',  name: 'Pressure Washing',                desc: 'Driveways, patios & walkways like new' },
   'solar-panel':        { img: 'images/svc-solar.jpg',      name: 'Solar Panel Cleaning',            desc: 'Max energy output — panels cleaned right' },
   'soft-washing':       { img: 'images/svc-softwash.jpg',   name: 'Soft Washing',                   desc: 'Gentle low-pressure clean for siding & roofs' },
@@ -659,14 +660,15 @@ function renderStep(step) {
   setTimeout(updateSavingsChip, 0);
   if (step !== prevStep || step === 1) sxTrack('quote_step', { step_number: step, form_mode: wizardState.pageMode ? 'page' : 'modal' });
 
-  // When navigating back to step 4, reset service grid so user can re-pick
-  if (step === 4 && prevStep > 4) {
-    resetServiceGrid();
-  }
+  // Coming back to step 4 keeps the service and add-ons already picked;
+  // the "Change" pill on the card is there if they want a different one.
 
   // When entering step 4, auto-select if a service was passed via URL param
   if (step === 4 && wizardState.preselectedService) {
-    const preCard = document.querySelector(`#svc-img-grid [data-service="${wizardState.preselectedService}"]`);
+    // Add-on-only services (e.g. screens) start from window cleaning with the add-on already in
+    const addonOnly = { 'screen-cleaning': 'exterior-windows' }[wizardState.preselectedService];
+    if (addonOnly && !wizardState.addOns.includes(wizardState.preselectedService)) wizardState.addOns.push(wizardState.preselectedService);
+    const preCard = document.querySelector(`#svc-img-grid [data-service="${addonOnly || wizardState.preselectedService}"]`);
     if (preCard && !preCard.classList.contains('selected')) {
       // Small delay so the step is fully visible before the animation runs
       setTimeout(() => triggerServiceSelect(preCard), 120);
@@ -806,8 +808,12 @@ function validateStep(step) {
 
   if (step === 4) {
     if (!document.querySelector('.service-radio-card.selected')) {
-      showError('step4-error', 'Please select a service to continue.');
-      return false;
+      const picked = wizardState.mainService && document.querySelector(`#svc-img-grid [data-service="${wizardState.mainService}"]`);
+      if (!picked) {
+        showError('step4-error', 'Please pick a service to continue.');
+        return false;
+      }
+      picked.classList.add('selected'); // tapped Next while the pick was still animating in
     }
     return true;
   }
@@ -852,7 +858,7 @@ function showError(id, message) {
 }
 
 function clearErrors() {
-  document.querySelectorAll('.wizard-error').forEach(el => el.textContent = '');
+  document.querySelectorAll('.wizard-error, .qp-error').forEach(el => el.textContent = '');
 }
 
 function isValidEmail(email) {
@@ -1014,6 +1020,10 @@ function triggerServiceSelect(card) {
   const grid = document.getElementById('svc-img-grid');
   if (!grid || grid.dataset.busy) return;
   grid.dataset.busy = '1';
+  // Remember the pick right away so Next works even mid-animation,
+  // and clear any "pick a service" message left from earlier.
+  wizardState.mainService = card.dataset.service;
+  showError('step4-error', '');
 
   const allCards = Array.from(grid.querySelectorAll('.qp-img-svc-card'));
   const others = allCards.filter(c => c !== card);
@@ -1106,6 +1116,7 @@ function resetServiceGrid() {
     c.classList.add('svc-return');
   });
   grid.classList.remove('service-selected');
+  wizardState.mainService = null;
   document.getElementById('wizard-step-4')?.classList.remove('is-picked');
 
   // Hide add-ons panel and clear state
@@ -1247,16 +1258,20 @@ function showAddOns(serviceId) {
  */
 let bundlePopupShown = false;
 let finalBundlePopupShown = false;
-function offerBundlePopup(onDone, final) {
-  if (final ? finalBundlePopupShown : bundlePopupShown) return false;
+function offerBundlePopup(onDone, final, manual) {
+  if (!manual && (final ? finalBundlePopupShown : bundlePopupShown)) return false;
   const mainSvc = document.querySelector('.service-radio-card.selected')?.dataset.service;
   if (!mainSvc) return false;
   const tiers = SHARK_PRICING.bundleTiers;
   const count = 1 + wizardState.addOns.length;
   const next = tiers.find(t => t.services > count);
   const options = (SVC_ADDONS[mainSvc] || []).filter(id => SVC_INFO[id] && !wizardState.addOns.includes(id));
-  if (!next || !options.length) return false;
-  if (final) finalBundlePopupShown = true; else bundlePopupShown = true;
+  if (!options.length || (!next && !manual)) return false;
+  if (manual) final = false;
+  else if (final) finalBundlePopupShown = true; else bundlePopupShown = true;
+  const title = next
+    ? `Add ${next.services - count === 1 ? 'one more service' : `${next.services - count} more services`}, save ${next.percent}%`
+    : 'Add more to your visit';
 
   const picked = new Set();
   const pop = document.createElement('div');
@@ -1267,8 +1282,8 @@ function offerBundlePopup(onDone, final) {
   pop.innerHTML = `
     <div class="qp-bundle-pop-card">
       <button type="button" class="qp-bundle-pop-x" aria-label="Close">&times;</button>
-      <span class="qp-bundle-pop-badge">${next.percent}% off</span>
-      <h3 id="qp-bundle-pop-title">Add ${next.services - count === 1 ? 'one more service' : `${next.services - count} more services`}, save ${next.percent}%</h3>
+      <span class="qp-bundle-pop-badge">${next ? next.percent : bundlePercent(count)}% off</span>
+      <h3 id="qp-bundle-pop-title">${title}</h3>
       <p class="qp-bundle-pop-sub">${final ? 'Before we send your quote &mdash; we&rsquo;re already coming out, so add a service to the same visit and save on the <b>whole visit</b>.' : 'We\'re already coming out &mdash; add to the same visit and save on the <b>whole visit</b>.'}</p>
       <div class="qp-bundle-pop-list">
         ${options.map(id => `
@@ -1280,8 +1295,8 @@ function offerBundlePopup(onDone, final) {
       </div>
       <p class="qp-bundle-pop-status" aria-live="polite"></p>
       <div class="qp-bundle-pop-actions">
-        <button type="button" class="qp-bundle-pop-skip">${final ? 'No thanks, just get my quote' : 'No thanks'}</button>
-        <button type="button" class="qp-bundle-pop-go" disabled>${final ? 'Add &amp; get my quote &rarr;' : 'Add &amp; continue &rarr;'}</button>
+        <button type="button" class="qp-bundle-pop-skip">${final ? 'No thanks, just get my quote' : manual ? 'Maybe later' : 'No thanks'}</button>
+        <button type="button" class="qp-bundle-pop-go" disabled>${final ? 'Add &amp; get my quote &rarr;' : manual ? 'Add to my visit' : 'Add &amp; continue &rarr;'}</button>
       </div>
     </div>`;
   document.body.appendChild(pop);
@@ -1315,13 +1330,15 @@ function offerBundlePopup(onDone, final) {
   pop.querySelector('.qp-bundle-pop-x').addEventListener('click', () => close(false));
   pop.addEventListener('click', (e) => { if (e.target === pop) close(false); });
   pop.querySelector('.qp-bundle-pop-skip').addEventListener('click', () => {
-    sxTrack('bundle_popup', { action: 'skip', where: final ? 'submit' : 'services' });
-    close(true);
+    sxTrack('bundle_popup', { action: 'skip', where: manual ? 'chip' : final ? 'submit' : 'services' });
+    close(!manual);
   });
   go.addEventListener('click', () => {
     picked.forEach(id => { if (!wizardState.addOns.includes(id)) wizardState.addOns.push(id); });
-    sxTrack('bundle_popup', { action: 'add', added: picked.size, where: final ? 'submit' : 'services' });
+    sxTrack('bundle_popup', { action: 'add', added: picked.size, where: manual ? 'chip' : final ? 'submit' : 'services' });
     showAddOns(mainSvc); // keep the add-on panel in sync if they come back
+    if (wizardState.currentStep === 5) injectPlanServiceSummary();
+    updateSavingsChip();
     close(true);
   });
   setTimeout(() => pop.querySelector('.qp-bundle-pop-opt')?.focus(), 350);
@@ -1346,10 +1363,22 @@ function updateSavingsChip() {
   const next = SHARK_PRICING.bundleTiers.find(t => t.services > count);
   chip.hidden = false;
   chip.classList.toggle('is-saving', pct > 0);
-  chip.innerHTML = pct > 0
+  const canAdd = wizardState.currentStep > 4 && (SVC_ADDONS[wizardState.mainService] || []).some(id => SVC_INFO[id] && !wizardState.addOns.includes(id));
+  chip.classList.toggle('is-action', canAdd);
+  chip.disabled = !canAdd;
+  chip.innerHTML = (pct > 0
     ? `<b>${pct}% off</b> your whole visit`
-    : `Add ${next.services - count} more service → <b>${next.percent}% off</b>`;
+    : `Add ${next.services - count} more service → <b>${next.percent}% off</b>`)
+    + (canAdd ? '<span class="qp-chip-add">+ Add</span>' : '');
 }
+
+// Tapping the savings chip on the plan or address step opens the add-a-service
+// pop-up right there, so nobody has to go back to the services step.
+document.addEventListener('click', (e) => {
+  const chip = e.target.closest('#qp-savings-chip.is-action');
+  if (!chip) return;
+  offerBundlePopup(() => {}, false, true);
+});
 
 /**
  * Show the plans that fit the chosen property type and pre-select a plan
