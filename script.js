@@ -10,7 +10,7 @@ const LEAF_NOTIFY = {
   public_key:   'l9uOWTh2tT3gqUag8',
   service_id:   'service_umf782h',
   template_id:  'template_cry5s9x',
-  owner_email:  'dirtyleafcleaning@gmail.com',
+  owner_email:  'sharkexteriorcleaning@gmail.com',
 
   // SMS gateway — fill in your carrier:
   //    Verizon  → 4023090128@vtext.com
