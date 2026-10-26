@@ -3,21 +3,20 @@
    ========================================================== */
 
 /* ----------------------------------------------------------
-   NOTIFICATION CONFIG — Fill these in after EmailJS setup
-   (see setup instructions at the bottom of this file)
+   NOTIFICATION CONFIG — where a finished quote goes.
+   1. The staff CRM lead inbox (crm_lead_url) — every quote is saved there.
+   2. One alert email to the business inbox (owner_email) via EmailJS
+      (see setup instructions at the bottom of this file).
    ---------------------------------------------------------- */
-const LEAF_NOTIFY = {
+const SHARK_NOTIFY = {
   public_key:   'l9uOWTh2tT3gqUag8',
   service_id:   'service_umf782h',
   template_id:  'template_cry5s9x',
   owner_email:  'dirtysharkexterior@gmail.com',
 
-  // SMS gateway — fill in your carrier:
-  //    Verizon  → 4023090128@vtext.com
-  //    AT&T     → 4023090128@txt.att.net
-  //    T-Mobile → 4023090128@tmomail.net
-  //    Sprint   → 4023090128@messaging.sprintpcs.com
-  sms_gateway:  '4023090128@vtext.com',
+  // Shark Exterior CRM (Supabase) lead webhook. The CRM accepts it because the
+  // site's address is listed in the LEAD_ALLOWED_ORIGINS secret.
+  crm_lead_url: 'https://bpvvzipsnbrxyarnncnx.supabase.co/functions/v1/lead-intake',
 };
 
 /* ----------------------------------------------------------
@@ -60,7 +59,7 @@ const SX_ATTRIB_KEY = 'sx_attribution';
 (function captureAttribution() {
   try {
     const params = new URLSearchParams(location.search);
-    const keys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content', 'gclid', 'fbclid'];
+    const keys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content', 'gclid', 'fbclid', 'ref'];
     const found = {};
     keys.forEach(k => { const v = params.get(k); if (v) found[k] = v.slice(0, 150); });
     if (Object.keys(found).length) {
@@ -609,7 +608,7 @@ function handleNext() {
   if (currentStep === totalSteps) {
     const finish = () => {
       buildConfirmationSummary();
-      submitQuoteNotification(); // send email + SMS to owner
+      submitQuoteNotification(); // save to the CRM + email the business inbox
       renderStep(7); // confirmation
     };
     // Last chance to bundle: a friendly pop-up before the quote goes out
@@ -1572,6 +1571,7 @@ function promptAdminCode() {
 
 function activateTestMode() {
   if (document.getElementById('admin-test-banner')) return; // already active
+  window.__sxTestMode = true;
 
   // Show banner
   const banner = document.createElement('div');
@@ -1584,7 +1584,7 @@ function activateTestMode() {
   const fill = (id, val) => { const el = document.getElementById(id); if (el) el.value = val; };
   fill('contact-first', 'Test');
   fill('contact-last',  'User');
-  fill('contact-email', 'test@leafcleaning.com');
+  fill('contact-email', 'test@sharkexteriorcleaning.com');
   fill('contact-phone', '(402) 555-0000');
   fill('contact-heard', 'google');
   fill('contact-promo', 'TEST2025');
@@ -1666,7 +1666,7 @@ function loadEmailJS(callback) {
   const s = document.createElement('script');
   s.src = 'https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js';
   s.onload = () => {
-    emailjs.init(LEAF_NOTIFY.public_key);
+    emailjs.init(SHARK_NOTIFY.public_key);
     callback();
   };
   s.onerror = () => console.warn('[Shark] Failed to load EmailJS SDK');
@@ -1767,25 +1767,60 @@ function collectQuoteData() {
     // Full formatted message (use {{message}} in EmailJS template)
     message,
     // Meta
-    subject:          '🌿 New Quote Request',
+    subject:          '🦈 New Quote Request',
     submitted_at:     submittedAt,
-    to_email:         LEAF_NOTIFY.owner_email,
+    to_email:         SHARK_NOTIFY.owner_email,
     reply_to:         email,
   };
 }
 
+// Save the quote as a lead in the staff CRM inbox (Leads), so nothing gets lost.
+function sendQuoteToCrm(data) {
+  if (!SHARK_NOTIFY.crm_lead_url) return;
+  let attrib = {};
+  try { attrib = JSON.parse(localStorage.getItem(SX_ATTRIB_KEY) || '{}') || {}; } catch (e) { /* optional */ }
+  const checked = id => Boolean(document.getElementById(id)?.checked);
+  const lead = {
+    first_name:    data.first_name,
+    last_name:     document.getElementById('contact-last')?.value.trim() || '',
+    phone:         data.customer_phone,
+    email:         data.customer_email,
+    address:       data.street_address,
+    city:          document.getElementById('prop-city')?.value.trim() || data.location,
+    zip:           document.getElementById('prop-zip')?.value.trim() || '',
+    services:      data.services === 'Not specified' ? [] : data.services.split(', '),
+    message:       data.message,
+    source:        'website',
+    form_name:     window.__sxTestMode ? 'Website quote form (TEST — delete me)' : 'Website quote form',
+    sms_consent:   checked('consent-support') || checked('consent-sms-alerts'),
+    landing_page:  attrib.landing_page || location.pathname,
+    ref:           attrib.ref || '',
+  };
+  ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content', 'gclid', 'fbclid']
+    .forEach(k => { if (attrib[k]) lead[k] = attrib[k]; });
+  fetch(SHARK_NOTIFY.crm_lead_url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(lead),
+    keepalive: true,
+  })
+    .then(res => res.ok ? console.info('[Shark] Lead saved to CRM ✓') : res.text().then(t => console.warn('[Shark] CRM lead failed:', res.status, t)))
+    .catch(err => console.warn('[Shark] CRM lead failed:', err));
+}
+
 function submitQuoteNotification() {
-  // Skip if EmailJS hasn't been configured yet
-  if (!LEAF_NOTIFY.public_key || LEAF_NOTIFY.public_key === 'YOUR_EMAILJS_PUBLIC_KEY') {
-    console.info('[Shark] EmailJS not configured — skipping notification');
+  const data = collectQuoteData();
+  sendQuoteToCrm(data);
+
+  // Skip the email if EmailJS hasn't been configured yet
+  if (!SHARK_NOTIFY.public_key || SHARK_NOTIFY.public_key === 'YOUR_EMAILJS_PUBLIC_KEY') {
+    console.info('[Shark] EmailJS not configured — skipping email');
     return;
   }
 
-  const data = collectQuoteData();
-
   loadEmailJS(() => {
     // ── Owner email (single send — all data in {{message}}) ──
-    emailjs.send(LEAF_NOTIFY.service_id, LEAF_NOTIFY.template_id, data)
+    emailjs.send(SHARK_NOTIFY.service_id, SHARK_NOTIFY.template_id, data)
       .then(() => {
         console.info('[Shark] Owner email sent ✓');
         sxTrack('generate_lead', {
@@ -1817,7 +1852,7 @@ function submitQuoteNotification() {
    → Dashboard → Email Templates → Create New Template
    → Set "To Email": {{to_email}}
    → Set "Reply To": {{reply_to}}
-   → Set "Subject":  🌿 New Quote Request — {{customer_name}}
+   → Set "Subject":  🦈 New Quote Request — {{customer_name}}
    → Paste this into the Body (HTML or text):
 
    ─────────────────────────────────────────
@@ -1856,14 +1891,9 @@ function submitQuoteNotification() {
    → Dashboard → Account → API Keys → Public Key
    → Paste as: public_key: 'xxxxxxxxxxxxxxx'
 
-   STEP 5 — Set your email & SMS gateway
-   → Set owner_email to your Gmail address
-   → Find your phone carrier's SMS email gateway:
-       Verizon:  YOUR_NUMBER@vtext.com
-       AT&T:     YOUR_NUMBER@txt.att.net
-       T-Mobile: YOUR_NUMBER@tmomail.net
-       Sprint:   YOUR_NUMBER@messaging.sprintpcs.com
-   → Paste as: sms_gateway: '4023090128@vtext.com'
+   STEP 5 — Set your business inbox
+   → Set owner_email to the one inbox that gets quote alerts
+     (text alerts come from the CRM, not from this file)
 
    STEP 6 — Gmail auto-label (one-time, 2 minutes)
    → In Gmail → Settings (gear) → See all settings
