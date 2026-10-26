@@ -1,2 +1,0 @@
-# Always send visitors to the real domain
-https://sharkexteriorcleaning.netlify.app/*  https://sharkexteriorcleaning.com/:splat  301!
