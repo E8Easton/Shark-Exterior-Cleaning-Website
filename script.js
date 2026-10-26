@@ -611,9 +611,9 @@ function handleNext() {
       submitQuoteNotification(); // save to the CRM + email the business inbox
       renderStep(7); // confirmation
     };
-    // Last chance to bundle: a friendly pop-up before the quote goes out
-    if (!offerBundlePopup(finish, true)) finish();
-  } else if (currentStep === 4 && offerBundlePopup(() => renderStep(5))) {
+    // Last chance to bundle, but only if they haven't added anything yet (don't be pushy)
+    if (wizardState.addOns.length || !offerBundlePopup(finish, true)) finish();
+  } else if (currentStep === 4 && !wizardState.addOns.length && offerBundlePopup(() => renderStep(5))) {
     // Bundle pop-up is open; it continues to the plan step when closed
   } else {
     renderStep(currentStep + 1);
@@ -703,7 +703,8 @@ function renderStep(step) {
   // Update step label
   const label = document.getElementById('wizard-step-label');
   if (label) {
-    label.textContent = step <= 6 ? `Step ${step} of 6` : 'Quote Submitted';
+    const stepNames = ['Location', 'About you', 'Property', 'Service', 'Plan', 'Address'];
+    label.textContent = step <= 6 ? `Step ${step} of 6 · ${stepNames[step - 1]}` : 'Quote Submitted';
   }
 
   // Update step dots — works in both modal and full-page mode
@@ -962,6 +963,7 @@ function initPageWizard() {
         card.classList.add('selected');
         const rb = card.querySelector('input[type="radio"]');
         if (rb) rb.checked = true;
+        updatePickHint(card);
 
         // Apply location theme when location is chosen
         if (sel === '.location-card') {
@@ -999,11 +1001,39 @@ function initPageWizard() {
 
   // Start at step 1
   renderStep(1);
+  preloadServiceImages();
 
   // Pre-select the city when arriving from a Lincoln or Kearney page
   const preLocation = (params.get('location') || '').toLowerCase();
   const locCard = preLocation && document.querySelector(`.location-card[data-location="${preLocation}"]`);
   if (locCard) locCard.click();
+}
+
+
+/** "Tap one to select it" line under location / property: confirms the pick in words */
+function updatePickHint(card) {
+  const kind = card.classList.contains('location-card') ? 'location' : card.classList.contains('property-card') ? 'property' : null;
+  const hint = kind && document.querySelector(`[data-pick-hint="${kind}"]`);
+  if (!hint) return;
+  const name = card.querySelector('.qp-card-label')?.textContent.trim() || '';
+  hint.textContent = `${name} selected`;
+  hint.classList.add('is-picked');
+}
+
+/**
+ * Fetch every service and add-on photo in the background right after the page
+ * loads, so the service grid and "Make It a Complete Clean" list show instantly.
+ */
+function preloadServiceImages() {
+  const ids = new Set(Object.values(SVC_ADDONS).flat());
+  const urls = new Set([...ids].map(id => SVC_INFO[id]?.img).filter(Boolean));
+  document.querySelectorAll('#svc-img-grid .qp-img-svc-bg').forEach(el => {
+    const m = /url\(['"]?([^'")]+)/.exec(el.style.backgroundImage);
+    if (m) urls.add(m[1]);
+  });
+  const run = () => { preloadServiceImages.keep = [...urls].map(src => { const img = new Image(); img.decoding = 'async'; img.src = src; return img; }); };
+  if (document.readyState === 'complete') setTimeout(run, 150);
+  else window.addEventListener('load', () => setTimeout(run, 150), { once: true });
 }
 
 

@@ -76,6 +76,7 @@
 
   <!-- PROGRESS BAR -->
   <div class="qp-progress-bar">
+    <span class="qp-step-label" id="wizard-step-label">Step 1 of 6</span>
     <div class="wizard-step-dots">
       <span class="step-dot active" data-step="1"></span>
       <div class="step-connector"></div>
@@ -99,6 +100,7 @@
     <div class="qp-step" id="wizard-step-1">
       <h2 class="qp-title">Select Your Location</h2>
       <p class="qp-subtitle">We primarily serve Lincoln — Kearney available too.</p>
+      <p class="qp-pick-hint" data-pick-hint="location">Tap one to select it</p>
       <div class="qp-card-row">
 
         <label class="qp-sel-card location-card qp-loc-primary" data-location="lincoln">
@@ -192,6 +194,8 @@
     <!-- STEP 3 — Property Type -->
     <div class="qp-step" id="wizard-step-3" hidden>
       <h2 class="qp-title">Your Property</h2>
+      <p class="qp-subtitle">Is this for a home or a business?</p>
+      <p class="qp-pick-hint" data-pick-hint="property">Tap one to select it</p>
       <div class="qp-card-row">
 
         <label class="qp-sel-card property-card qp-prop-primary" data-property="residential">
