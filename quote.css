@@ -479,3 +479,108 @@ body.qp .qp-savings-chip { font-family: inherit; cursor: default; display: inlin
 body.qp .qp-savings-chip.is-action { cursor: pointer; border-color: var(--sx-orange); box-shadow: 0 6px 16px -10px rgb(var(--sx-orange-rgb) / .8); transition: transform .25s var(--sx-ease), background-color .25s; }
 body.qp .qp-savings-chip.is-action:hover { transform: translateY(-1px); background: #FFF1E6; }
 body.qp .qp-chip-add { padding: 3px 9px; border-radius: 999px; background: var(--sx-orange); color: #fff; font-size: .74rem; font-weight: 800; }
+
+/* ==========================================================
+   CLEAR CHOICES (Oct 26): nothing looks picked until it is.
+   Every option starts plain with an empty circle; the picked
+   one gets a thick blue ring and a filled check, the prompt
+   above says "Kearney selected", and the other option fades. Progress bar reads clearly on blue.
+   ========================================================== */
+/* Unpicked: plain white card, grey outline, empty check circle */
+body.qp .qp-sel-card,
+body.qp .qp-sel-card[data-location],
+body.qp .qp-sel-card[data-property],
+body.qp .qp-sel-card.qp-prop-primary {
+  transform: none;
+  border: 2px solid #D3DCE8;
+  background: #fff;
+  box-shadow: 0 14px 30px -24px rgba(4, 20, 60, .45);
+  transition: transform .25s var(--sx-ease), border-color .2s, box-shadow .25s, opacity .25s, filter .25s, background-color .2s;
+}
+body.qp .qp-sel-card[data-location="lincoln"]:not(.selected) .qp-card-icon { animation: none; }
+body.qp .qp-sel-card[data-location]:hover:not(.selected),
+body.qp .qp-sel-card[data-property]:hover:not(.selected),
+body.qp .qp-sel-card.qp-prop-primary:hover:not(.selected) {
+  transform: translateY(-4px);
+  border-color: #8FB6F2;
+  box-shadow: 0 18px 34px -22px rgba(4, 99, 238, .45);
+}
+body.qp .qp-sel-card .qp-card-check {
+  opacity: 1; transform: none;
+  top: 14px; right: 14px; width: 30px; height: 30px;
+  background: #fff; border: 2px solid #B9C6D8; border-radius: 999px;
+  transition: background-color .2s, border-color .2s, width .25s, padding .25s;
+}
+body.qp .qp-sel-card .qp-card-check svg { opacity: 0; width: 15px; height: 15px; }
+
+/* Picked: thick blue ring, light-blue fill, filled check */
+body.qp .qp-sel-card.selected,
+body.qp .qp-sel-card[data-location].selected,
+body.qp .qp-sel-card[data-property].selected {
+  transform: translateY(-4px) !important;
+  border: 3px solid var(--sx-blue) !important;
+  background: #EAF2FF !important;
+  box-shadow: 0 0 0 5px rgba(4, 99, 238, .2), 0 26px 50px -22px rgba(4, 99, 238, .6) !important;
+  opacity: 1; filter: none;
+}
+body.qp .qp-sel-card.selected .qp-card-check {
+  width: 34px; height: 34px;
+  background: var(--sx-blue) !important; border-color: var(--sx-blue) !important;
+  box-shadow: 0 0 0 4px rgba(4, 99, 238, .18), 0 8px 16px -8px rgba(4, 99, 238, .9);
+}
+body.qp .qp-sel-card.selected .qp-card-check svg { opacity: 1; width: 18px; height: 18px; stroke-width: 3; }
+body.qp .qp-sel-card.selected .qp-card-label { color: var(--sx-blue); }
+
+/* Once one is picked, the other steps back */
+body.qp .qp-card-row:has(.qp-sel-card.selected) .qp-sel-card:not(.selected) { opacity: .55; filter: grayscale(.6); }
+body.qp .qp-card-row:has(.qp-sel-card.selected) .qp-sel-card:not(.selected):hover { opacity: .85; filter: none; }
+
+/* "Tap one to select it" prompt, turns into "Kearney selected" */
+body.qp .qp-pick-hint {
+  display: flex; width: fit-content; align-items: center; gap: 8px;
+  margin: 2px auto 18px; padding: 8px 16px; border-radius: 999px;
+  background: #FFF4D6; color: #7A4B00; border: 1.5px solid #F5CD6B;
+  font-size: .9rem; font-weight: 700;
+}
+body.qp .qp-pick-hint::before {
+  content: ""; width: 9px; height: 9px; border-radius: 50%; background: #F0A500;
+  box-shadow: 0 0 0 0 rgba(240, 165, 0, .6); animation: qp-hint-pulse 1.6s ease-out infinite;
+}
+body.qp .qp-pick-hint.is-picked { background: #E6F7EE; color: #0E6B3A; border-color: #8FD6AE; }
+body.qp .qp-pick-hint.is-picked::before {
+  content: "✓"; width: auto; height: auto; background: none; box-shadow: none; animation: none; font-weight: 900;
+}
+@keyframes qp-hint-pulse { 70% { box-shadow: 0 0 0 8px rgba(240, 165, 0, 0); } 100% { box-shadow: 0 0 0 0 rgba(240, 165, 0, 0); } }
+@media (max-width: 700px) {
+  body.qp .qp-pick-hint { margin-bottom: 14px; font-size: .85rem; }
+  body.qp .qp-sel-card.selected .qp-card-check { width: 30px; height: 30px; }
+  body.qp .qp-sel-card .qp-card-check { top: 10px; right: 10px; width: 26px; height: 26px; }
+}
+@media (prefers-reduced-motion: reduce) { body.qp .qp-pick-hint::before { animation: none; } }
+
+/* Progress bar: white on blue, current step is bright and labelled */
+body.qp .qp-progress-bar { display: flex; flex-direction: column; align-items: center; gap: 7px; }
+body.qp .qp-progress-bar .wizard-step-dots { width: 100%; }
+body.qp .qp-step-label {
+  color: #fff; font-size: .74rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase;
+  text-shadow: 0 1px 2px rgba(2, 20, 60, .35); line-height: 1;
+}
+body.qp .qp-progress-bar .step-dot,
+body.qp.theme-lincoln .qp-progress-bar .step-dot,
+body.qp.theme-kearney .qp-progress-bar .step-dot { background: rgba(255, 255, 255, .28); box-shadow: none; }
+body.qp .qp-progress-bar .step-dot.done,
+body.qp.theme-lincoln .qp-progress-bar .step-dot.done,
+body.qp.theme-kearney .qp-progress-bar .step-dot.done { background: rgba(255, 255, 255, .9); }
+body.qp .qp-progress-bar .step-dot.active,
+body.qp.theme-lincoln .qp-progress-bar .step-dot.active,
+body.qp.theme-kearney .qp-progress-bar .step-dot.active {
+  background: #FFC93C; box-shadow: 0 0 0 2px rgba(255, 255, 255, .9), 0 0 14px rgba(255, 201, 60, .85);
+}
+body.qp .qp-progress-bar .step-dot { height: 8px !important; border-radius: 8px; }
+@media (min-width: 900px) {
+  body.qp .qp-progress-bar { top: calc(24px + env(safe-area-inset-top, 0px)); }
+}
+@media (max-width: 899px) {
+  body.qp .qp-progress-bar,
+  body.qp.qp-compact .qp-progress-bar { background: #0349B8; padding: 9px 18px 12px; border-bottom: 0; }
+}
