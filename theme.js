@@ -684,7 +684,7 @@
         }
       };
 
-      const cfg = window.LEAF_NOTIFY || (typeof LEAF_NOTIFY !== 'undefined' ? LEAF_NOTIFY : null);
+      const cfg = window.SHARK_NOTIFY || (typeof SHARK_NOTIFY !== 'undefined' ? SHARK_NOTIFY : null);
       if (!cfg || typeof loadEmailJS !== 'function') return finish(false);
 
       const isEmail = /@/.test(contact);

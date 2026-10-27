@@ -43,12 +43,12 @@
   --shark-orange-light: var(--sx-orange-300);
   --shark-navy: var(--sx-navy);
   --shark-navy-deep: #020C26;
-  --leaf-navy: var(--sx-navy);
-  --leaf-navy-deep: #020C26;
-  --leaf-green: var(--sx-blue);
-  --leaf-green-dark: var(--sx-blue-600);
-  --leaf-mint: var(--sx-blue-300);
-  --leaf-light: var(--sx-bg-soft);
+  --brand-navy: var(--sx-navy);
+  --brand-navy-deep: #020C26;
+  --brand-blue: var(--sx-blue);
+  --brand-blue-dark: var(--sx-blue-600);
+  --brand-blue-light: var(--sx-blue-300);
+  --brand-light: var(--sx-bg-soft);
   --text-dark: var(--sx-ink);
   --text-muted: var(--sx-text);
   --font-heading: var(--sx-font);

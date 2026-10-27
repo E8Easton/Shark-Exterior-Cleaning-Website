@@ -1,5 +1,5 @@
 /**
- * Leaf Cleaning — Performance Fix Script
+ * Shark Exterior — Performance Fix Script
  * Applies all HTML + CSS performance improvements
  */
 const fs   = require('fs');

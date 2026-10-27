@@ -741,7 +741,7 @@ function renderStep(step) {
     if (qpNav) qpNav.style.display = '';
     const isLastStep = step === wizardState.totalSteps;
     if (!isPageMode) {
-      const arrowSvg = '<svg viewBox="0 0 24 24" style="width:16px;height:16px;fill:none;stroke:var(--leaf-navy);stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><path d="M5 12h14m-7-7l7 7-7 7"/></svg>';
+      const arrowSvg = '<svg viewBox="0 0 24 24" style="width:16px;height:16px;fill:none;stroke:var(--brand-navy);stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><path d="M5 12h14m-7-7l7 7-7 7"/></svg>';
       if (nextBtn) nextBtn.innerHTML = (isLastStep ? 'Get My Quote ' : 'Next Step ') + arrowSvg;
     } else {
       if (nextBtn) nextBtn.textContent = isLastStep ? 'Get My Quote →' : 'Next →';
@@ -1566,7 +1566,7 @@ function initFaqPopIn() {
 
 
 /* ==========================================================
-   ADMIN TEST MODE — type "leafcleaning18" anywhere
+   ADMIN TEST MODE — type "sharkclean18" anywhere
    ========================================================== */
 
 function initAdminTestMode() {
@@ -1582,7 +1582,7 @@ function initAdminTestMode() {
     // Don't capture while typing in inputs
     if (['INPUT','TEXTAREA','SELECT'].includes(e.target.tagName)) return;
     keyBuffer += e.key.toLowerCase();
-    if (keyBuffer.includes('leafcleaning18')) {
+    if (keyBuffer.includes('sharkclean18')) {
       keyBuffer = '';
       activateTestMode();
     }
@@ -1592,7 +1592,7 @@ function initAdminTestMode() {
 
 function promptAdminCode() {
   const code = window.prompt('Enter admin code:');
-  if (code && code.toLowerCase() === 'leafcleaning18') {
+  if (code && code.toLowerCase() === 'sharkclean18') {
     activateTestMode();
   } else if (code !== null) {
     alert('Incorrect code.');

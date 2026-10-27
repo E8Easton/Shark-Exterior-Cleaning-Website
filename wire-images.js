@@ -50,7 +50,7 @@ patch('index.html', [
    'src="images/svc-hero-main.png" alt="Professional window cleaning service"'],
   // About / Why Us image — use exterior shot as the team-in-action image
   ['src="images/new-service-4.jpg" alt="Professional window cleaning team"',
-   'src="images/svc-exterior.png" alt="Leaf Cleaning team in action"'],
+   'src="images/svc-exterior.png" alt="Shark Exterior team in action"'],
   // Also swap the hero-bg.png fallback used in the christmas light card on homepage
   ['src="images/hero-bg.png" alt="Christmas Light Installation"',
    'src="images/svc-christmas.png" alt="Christmas Light Installation"'],
