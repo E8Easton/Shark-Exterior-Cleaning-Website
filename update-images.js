@@ -15,13 +15,13 @@ function patch(file, replacements) {
 }
 
 // ── index.html ────────────────────────────────────────────
-// Hero background → two LEAF workers on modern home at sunset
+// Hero background → two Shark Exterior techs on modern home at sunset
 // Why-us image   → water-fed pole on modern home (daytime)
 patch('index.html', [
   ['src="images/new-service-2.jpg" alt="Professional window cleaning service"',
    'src="images/svc-hero-main.jpg" alt="Professional window cleaning service"'],
   ['src="images/new-service-4.jpg" alt="Professional window cleaning team"',
-   'src="images/about-team.jpg" alt="Leaf Cleaning team in action"'],
+   'src="images/about-team.jpg" alt="Shark Exterior team in action"'],
 ]);
 
 // ── service-exterior.html ─────────────────────────────────
@@ -108,7 +108,7 @@ patch('service-commercial.html', [
 
 console.log('\nAll image references updated.');
 console.log('\nSave your images into the /images folder with these exact filenames:');
-console.log('  svc-hero-main.jpg  → Two LEAF workers on modern glass home at sunset (MAIN HERO)');
+console.log('  svc-hero-main.jpg  → Two Shark Exterior techs on modern glass home at sunset (MAIN HERO)');
 console.log('  about-team.jpg     → Man with water-fed pole, modern home daytime (ABOUT section)');
 console.log('  svc-exterior.jpg   → Water-fed pole, water pouring down exterior');
 console.log('  svc-interior.jpg   → Man cleaning interior windows on small ladder in living room');

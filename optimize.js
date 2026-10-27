@@ -1,5 +1,5 @@
 /**
- * Leaf Cleaning — Performance Optimizer
+ * Shark Exterior — Performance Optimizer
  * Compresses all heavy images to WebP + JPG fallback
  */
 const fs   = require('fs');
