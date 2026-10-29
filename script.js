@@ -42,6 +42,23 @@ const SHARK_PRICING = {
   },
 };
 
+// The numbers above are the fallback. The live ones come from the CRM's Admin Hub
+// (site-config.js), so a price change there reaches the quote form without editing this file.
+window.sxUseLivePricing = function (data) {
+  const f = data && data.facts;
+  if (!f) return;
+  Object.keys(SHARK_PRICING.plans).forEach(id => {
+    const p = f.plans && f.plans[id];
+    if (!p) return;
+    if (Number.isFinite(p.visits) && p.visits > 0) SHARK_PRICING.plans[id].visits = p.visits;
+    if (Number.isFinite(p.offEach) && p.offEach >= 0) SHARK_PRICING.plans[id].offEach = p.offEach;
+  });
+  const tiers = Array.isArray(f.bundleTiers) ? f.bundleTiers.filter(t => t && Number.isFinite(t.services) && Number.isFinite(t.percent)) : [];
+  if (tiers.length) SHARK_PRICING.bundleTiers = tiers.slice().sort((a, b) => a.services - b.services);
+  if (Number.isFinite(f.examplePrice) && f.examplePrice > 0) SHARK_PRICING.examplePrice = f.examplePrice;
+};
+window.sxUseLivePricing(window.SX_LIVE);
+
 /* ----------------------------------------------------------
    ANALYTICS HELPERS — Google Analytics 4 (tag is in each page <head>)
    ---------------------------------------------------------- */
