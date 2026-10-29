@@ -584,3 +584,5 @@ body.qp .qp-progress-bar .step-dot { height: 8px !important; border-radius: 8px;
   body.qp .qp-progress-bar,
   body.qp.qp-compact .qp-progress-bar { background: #0349B8; padding: 9px 18px 12px; border-bottom: 0; }
 }
+
+body.qp .qp-plan-billing-note { margin-top: 14px; text-align: center; font-size: .9rem; font-weight: 500; color: var(--sx-ink, #0B1A33); }

@@ -1748,7 +1748,7 @@ function collectQuoteData() {
   planMap.custom = 'Custom / One-Time Quote';
   planMap['one-time'] = 'One-Time Visit';
   let plan = planCard ? (planMap[planCard.dataset.plan] || planCard.dataset.plan) : 'Not specified';
-  if (planCard && SHARK_PRICING.plans[planCard.dataset.plan]) plan += ' — paid upfront';
+  if (planCard && SHARK_PRICING.plans[planCard.dataset.plan]) plan += ' — billed after each cleaning';
 
   const firstName  = document.getElementById('contact-first')?.value.trim()  || '';
   const lastName   = document.getElementById('contact-last')?.value.trim()   || '';

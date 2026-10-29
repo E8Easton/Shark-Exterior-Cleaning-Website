@@ -152,6 +152,15 @@
     });
   }
 
+  // Plain numbers anywhere on a page: <span data-sx-fact="bundle_4">20</span>
+  function applyFactSpans(f) {
+    var t = tokens(f);
+    document.querySelectorAll('[data-sx-fact]').forEach(function (el) {
+      var v = t[el.getAttribute('data-sx-fact')];
+      if (v != null && v.indexOf('[') !== 0 && el.textContent !== v) el.textContent = v;
+    });
+  }
+
   // ---- Terms & Privacy, written in the Admin Hub ---------------------------------------------
   function tokens(f) {
     var tier = function (n) {
@@ -237,6 +246,7 @@
     try { applyContact(f); } catch (e) { /* never break the page */ }
     try { applyPlans(f); } catch (e) { /* ignore */ }
     try { applyPay(data.pay); } catch (e) { /* ignore */ }
+    try { applyFactSpans(f); } catch (e) { /* ignore */ }
     try { applyPolicies(data, f); } catch (e) { /* ignore */ }
     if (typeof window.sxUseLivePricing === 'function') window.sxUseLivePricing(data);
   }
