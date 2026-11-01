@@ -4195,3 +4195,11 @@ body.qp .qp-done-summary { font-size: 1.08rem; }
   .as-b-photo { aspect-ratio: 16 / 10; }
   .as-b2-svcs img { width: 80px; height: 62px; }
 }
+
+/* How your price works (homepage pricing) */
+.sx-price-how { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; max-width: 980px; margin: 34px auto 0; }
+.sx-price-step { display: flex; gap: 12px; align-items: flex-start; text-align: left; padding: 16px 18px; border: 1px solid var(--sx-line); border-radius: var(--sx-radius); background: var(--sx-bg); }
+.sx-price-step > b { flex: none; display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: var(--sx-blue); color: #fff; font-weight: 700; font-size: .9rem; }
+.sx-price-step > span { color: var(--sx-text); font-size: .9rem; line-height: 1.5; }
+.sx-price-step strong { display: block; color: var(--sx-ink); font-size: 1rem; margin-bottom: 2px; }
+@media (max-width: 760px) { .sx-price-how { grid-template-columns: 1fr; gap: 10px; margin-top: 24px; } }
