@@ -172,4 +172,10 @@
     <loc>https://sharkexteriorcleaning.com/areas</loc>
     <lastmod>2026-10-14</lastmod>
   </url>
+  <url>
+    <loc>https://sharkexteriorcleaning.com/careers</loc>
+    <lastmod>2026-10-29</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
 </urlset>
